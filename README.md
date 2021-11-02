@@ -1,7 +1,7 @@
-# LMSPurchasePlugin
+# LMSPurchasePlugin 
 
 Opis:
-LMS Purchases documents Plugin (PD)
+Wtyczka: LMS Purchases documents Plugin (PD)  [ W przygotowaniu ]
 
 Wtyczka z listą dokumentów zakupowych.
 
