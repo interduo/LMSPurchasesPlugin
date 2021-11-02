@@ -1,0 +1,88 @@
+{extends file="layout.html"}
+{block name=title}{$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+
+<h1>{$pagetitle|escape}</h1>
+
+<table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
+    <thead>
+        <tr class="bold">
+            <td>
+                {icon name="id" label="ID"}
+            </td>
+            <td>
+                {icon name="summary" label="Purchase document number"}
+            </td>
+            <td>
+                {icon name="value" label="Value"}
+            </td>
+            <td>
+                {icon name="timetable" label="Document date"}
+            </td>
+            <td>
+                {icon name="deadline" label="Deadline"}
+            </td>
+            <td>
+                {icon name="money" label="Pay date"}
+            </td>
+            <td>
+                {icon name="description" label="Description"}
+            </td>
+            <td>
+                {icon name="customer" label="Supplier"}
+            </td>
+            <td class="text-right" class="lms-ui-box-buttons">
+                {button name="addpd" id="addpdbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach $pdlist as $pd}
+        <tr class="highlight {if $pd.paydate}blend{/if}" data-template-id="{$pd.id}">
+            <td>
+                {$pd.id}
+            </td>
+            <td data-template-fullnumber="{$pd.fullnumber}">
+                {$pd.fullnumber|escape}
+            </td>
+            <td data-template-value="{$pd.value}" data-order="{$pd.value}">
+                {$pd.value|escape} PLN
+            </td>
+            <td data-template-sdate="{$pd.sdate|date_format:"%Y/%m/%d"}">
+                {$pd.sdate|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td data-template-deadline="{$pd.deadline|date_format:"%Y/%m/%d"}">
+                {$pd.deadline|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td data-template-paydate="{$pd.paydate|date_format:"%Y/%m/%d"}">
+                {$pd.paydate|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td data-template-description="{$pd.description}" {tip text=$pd.description}>
+                {$pd.description|trunescape:40}
+            </td>
+            <td data-template-customerid="{$pd.customerid}" {tip text=$pd.customername}>
+                <a href="?m=customerinfo&id={$pd.customerid}">{$pd.customername|trunescape:25:"&hellip;":true}</a>
+           </td>
+            <td class="buttons">
+                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
+                {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+{include file="pdmodify-dialog.html"}
+
+<script>
+    $(function() {
+        $( '.delete-pd' ).click(function() {
+            confirmDialog( $t("Are you sure, you want to delete that purchase document?") , this).done(function() {
+                location.href = $(this).attr('href');
+            });
+            return false;
+        });
+    });
+</script>
+
+{/block}

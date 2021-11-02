@@ -1,0 +1,157 @@
+<style>
+    #addpdmodal {
+        overflow: visible;
+    }
+    input {
+        margin-top: 5px;
+    }
+    .button-bar {
+        padding-top: 20px;
+    }
+</style>
+
+<div id="addpdmodal" class="lms-ui-modal-dialog">
+    <form method="POST" action="?m=pdlist&action={if $action == 'modify'}modify&id={$pdinfo.id}{else}add{/if}"
+              name="addpd" id="addpd-form">
+        <table>
+            <tbody>
+                {if $action == 'modify'}
+                    <tr>
+                        <td>
+                            <input type="text" name="addpd[id]" value="{$pdinfo.id}" hidden>
+                        </td>
+                    </tr>
+                {/if}
+                <tr>
+                    <td>
+                        {icon name="summary" label="Purchase document number"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{$pdinfo.fullnumber}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="value" label="Value"}
+                    </td>
+                    <td>
+                       <input type="text" id="dialog-value" name="addpd[value]" value="{$pdinfo.value}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="timetable" label="Document date"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
+                            required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="money" label="Pay date"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="description" label="Description"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-description" name="addpd[description]" value="{$pdinfo.description|escape}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="deadline" label="Deadline"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-deadline" name="addpd[deadline]" value="{$pdinfo.deadline}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}
+                            required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="customer" label="Supplier"}
+                    </td>
+                    <td>
+                        {customerlist
+                            version=2
+                            input_id="dialog-customer_selector"
+                            form="addpd-form"
+                            selected="{$pdinfo.customerid}"
+                            inputname="addpd[customerid]"
+                            required=true
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="fileupload" label="Document scan"}
+                    </td>
+                    <td>
+                        {fileupload id="attachments" fileupload=$fileupload form="addp-form"}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="button-bar text-center">
+                        {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
+                        {button label="Cancel" icon="cancel" id="close"}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+</div>
+
+<script>
+    $( "#addpdmodal" ).dialog( {
+        autoOpen: {if $action}true{else}false{/if},
+        resizable: false,
+        width: 'auto',
+        modal: true,
+        title: "{if $action == 'modify'}{trans("Modify purchase document")} {$pdinfo.id}{else}{trans("Add purchase document")}{/if}"
+    });
+
+    $( "#close" ).click(function() {
+        $( "#addpdmodal" ).dialog( "close" );
+    });
+
+    function open_add_dialog() {
+        $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+
+        $( "#dialog-id", "#dialog-fullnumber", "#dialog-value", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description"  ).val();
+
+        $( "#dialog-customer_selector" ).val('').trigger('input');
+        $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
+    };
+
+    function open_modify_dialog (template_id) {
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
+        $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
+        if (template_id) {
+            var row = $('[data-template-id=' + template_id + ']');
+            $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
+            $("#dialog-value").val($(row).find("[data-template-value]").attr('data-template-value'));
+            $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
+            $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
+            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+
+            var customeridedit = $(row).find("[data-template-customerid]").attr('data-template-customerid');
+            $( "#dialog-customer_selector" ).removeAttr('data-customer-name', 'data-prev-value').val(customeridedit).trigger('input');
+        }
+        $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
+    };
+</script>
