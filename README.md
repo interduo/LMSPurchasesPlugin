@@ -13,7 +13,9 @@ Instalacja wtyczki:
 
 TODO:
 - wrzucanie scanów dokumentów kosztowych,
-- export nierozliczonych dokumentów kosztowych do banku jako lista płatności,
+- dodatkowy filtr tylko nierozliczone,
+- dodatkowy filtr okresu (ostatni rok, ostatni kwartał, ostatni miesiąc, ostatni tydzień, dzisiaj)
+- export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 - wsparcie dla MySQL (jeśli komuś potrzebne),
 
 Jarosław Kłopotek <jkl@interduo.pl>
