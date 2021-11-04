@@ -2,7 +2,7 @@
 
 class PURCHASES
 {
-<-->private $db;            // database object
+private $db;            // database object
 
     public function __construct()
     {
