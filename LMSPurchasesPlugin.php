@@ -10,8 +10,8 @@
 class LMSPurchasesPlugin extends LMSPlugin {
 	const plugin_directory_name = 'LMSPurchasesPlugin';
 	const PLUGIN_DBVERSION = '2021103100';
-	const PLUGIN_NAME = 'LMSPurchases';
-	const PLUGIN_DESCRIPTION = 'Purchases Plugin';
+	const PLUGIN_NAME = 'LMSPurchasesPlugin';
+	const PLUGIN_DESCRIPTION = 'Wtyczka służąca do ewidencji dokumentów kosztowych.';
 	const PLUGIN_AUTHOR = 'Jarosław Kłopotek &lt;jkl@interduo.pl&gt;';
 
 	private static $purchases = null;
