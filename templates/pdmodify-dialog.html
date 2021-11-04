@@ -40,6 +40,14 @@
                 </tr>
                 <tr>
                     <td>
+                        {icon name="value" label="Gross Value"}
+                    </td>
+                    <td>
+                       <input type="text" id="dialog-grossvalue" name="addpd[grossvalue]" value="{$pdinfo.grossvalue}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         {icon name="timetable" label="Document date"}
                     </td>
                     <td>
@@ -86,14 +94,11 @@
                         {icon name="customer" label="Supplier"}
                     </td>
                     <td>
-                        {customerlist
-                            version=2
-                            input_id="dialog-customer_selector"
-                            form="addpd-form"
-                            selected="{$pdinfo.customerid}"
-                            inputname="addpd[customerid]"
-                            required=true
-                        }
+                        <select id="dialog-customerid" name="addpd[customerid]" class="lms-ui-advanced-select" required>
+                        {foreach $supplierslist as $s}
+                            <option value="{$s.id}">{$s.lastname|trunescape:"25"}</option>
+                        {/foreach}
+                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -132,9 +137,8 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
-        $( "#dialog-id", "#dialog-fullnumber", "#dialog-value", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description"  ).val();
-
-        $( "#dialog-customer_selector" ).val('').trigger('input');
+        $( "#dialog-id", "#dialog-fullnumber", "#dialog-value", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-customerid"  ).val();
+        updateAdvancedSelects("#dialog-customerid");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
     };
 
@@ -145,6 +149,7 @@
             var row = $('[data-template-id=' + template_id + ']');
             $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
             $("#dialog-value").val($(row).find("[data-template-value]").attr('data-template-value'));
+            $("#dialog-grossvalue").val($(row).find("[data-template-grossvalue]").attr('data-template-grossvalue'));
             $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
             $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
             $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));

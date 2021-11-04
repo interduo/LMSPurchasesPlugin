@@ -59,6 +59,7 @@ switch ($action) {
     default:
         break;
 }
+$SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('action', $action);
 $SMARTY->assign('pdlist', $pdlist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);

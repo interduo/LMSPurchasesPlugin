@@ -1,0 +1,1 @@
+../../lib/locale/pl/strings.php

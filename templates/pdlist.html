@@ -3,7 +3,11 @@
 {block name=module_content}
 
 <h1>{$pagetitle|escape}</h1>
-
+<style>
+red {
+    color: red;
+    }
+    </style>
 <table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
     <thead>
         <tr class="bold">
@@ -15,6 +19,9 @@
             </td>
             <td>
                 {icon name="value" label="Value"}
+            </td>
+            <td>
+                {icon name="value" label="Gross Value"}
             </td>
             <td>
                 {icon name="timetable" label="Document date"}
@@ -38,7 +45,7 @@
     </thead>
     <tbody>
         {foreach $pdlist as $pd}
-        <tr class="highlight {if $pd.paydate}blend{/if}" data-template-id="{$pd.id}">
+        <tr class="highlight {if $pd.paydate}{if $pd.paydate>$smarty.now}red{else}blend{/if}{/if}" data-template-id="{$pd.id}">
             <td>
                 {$pd.id}
             </td>
@@ -48,20 +55,25 @@
             <td data-template-value="{$pd.value}" data-order="{$pd.value}">
                 {$pd.value|escape} PLN
             </td>
-            <td data-template-sdate="{$pd.sdate|date_format:"%Y/%m/%d"}">
+            <td data-template-grossvalue="{$pd.grossvalue}" data-order="{$pd.grossvalue}">
+                {$pd.grossvalue|escape} PLN
+            </td>
+            <td data-template-sdate="{$pd.sdate|date_format:'%Y/%m/%d'}">
                 {$pd.sdate|escape|date_format:"%Y/%m/%d"}
             </td>
-            <td data-template-deadline="{$pd.deadline|date_format:"%Y/%m/%d"}">
+            <td data-template-deadline="{$pd.deadline|date_format:'%Y/%m/%d'}">
                 {$pd.deadline|escape|date_format:"%Y/%m/%d"}
             </td>
-            <td data-template-paydate="{$pd.paydate|date_format:"%Y/%m/%d"}">
+            <td data-template-paydate="{$pd.paydate|date_format:'%Y/%m/%d'}">
                 {$pd.paydate|escape|date_format:"%Y/%m/%d"}
             </td>
             <td data-template-description="{$pd.description}" {tip text=$pd.description}>
                 {$pd.description|trunescape:40}
             </td>
             <td data-template-customerid="{$pd.customerid}" {tip text=$pd.customername}>
-                <a href="?m=customerinfo&id={$pd.customerid}">{$pd.customername|trunescape:25:"&hellip;":true}</a>
+                <a href="?m=customerinfo&id={$pd.customerid}">
+                    {$pd.customername|trunescape:25:"&hellip;":true}
+                </a>
            </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
