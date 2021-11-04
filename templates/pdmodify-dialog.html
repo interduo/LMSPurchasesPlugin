@@ -86,15 +86,11 @@
                         {icon name="customer" label="Supplier"}
                     </td>
                     <td>
-                        {customerlist
-                            version=2
-                            customers=supplierslist
-                            input_id="dialog-customer_selector"
-                            form="addpd-form"
-                            selected="{$pdinfo.customerid}"
-                            inputname="addpd[customerid]"
-                            required=true
-                        }
+                        <select id="dialog-customerid" name="addpd[customerid]" required class="lms-ui-advanced-select">
+                        {foreach $supplierslist as $s}
+                            <option value="{$s.id}">{$s.lastname|trunescape:"25"}</option>
+                        {/foreach}
+                        </select>
                     </td>
                 </tr>
                 <tr>
