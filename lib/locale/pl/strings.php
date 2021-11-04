@@ -50,5 +50,6 @@ $_LANG['Today date of payment'] = 'Dzisiaj termin płatności';
 $_LANG['Pay date'] = 'Data zapłaty';
 $_LANG['Document scan'] = 'Skan dokumentu';
 $_LANG['Show All'] = 'Pokaż wszystkie';
+$_LANG['Gross Value'] = 'Wartość brutto';
 
 ?>

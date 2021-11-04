@@ -17,6 +17,9 @@
                 {icon name="value" label="Value"}
             </td>
             <td>
+                {icon name="value" label="Gross Value"}
+            </td>
+            <td>
                 {icon name="timetable" label="Document date"}
             </td>
             <td>
@@ -47,6 +50,9 @@
             </td>
             <td data-template-value="{$pd.value}" data-order="{$pd.value}">
                 {$pd.value|escape} PLN
+            </td>
+            <td data-template-grossvalue="{$pd.grossvalue}" data-order="{$pd.grossvalue}">
+                {$pd.grossvalue|escape} PLN
             </td>
             <td data-template-sdate="{$pd.sdate|date_format:"%Y/%m/%d"}">
                 {$pd.sdate|escape|date_format:"%Y/%m/%d"}

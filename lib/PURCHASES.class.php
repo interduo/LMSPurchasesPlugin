@@ -39,7 +39,7 @@ private $db;            // database object
         }
 
         return $this->db->GetAllByKey(
-            'SELECT pds.id, pds.fullnumber, pds.value, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
+            'SELECT pds.id, pds.fullnumber, pds.value, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
                     pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.customerid = cv.id) '
@@ -50,7 +50,7 @@ private $db;            // database object
 
     public function GetPurchaseDocumentInfo($id)
     {
-        $result = $this->db->GetAll('SELECT pds.id, pds.fullnumber, pds.value, pds.cdate, 
+        $result = $this->db->GetAll('SELECT pds.id, pds.fullnumber, pds.value, pds.grossvalue, pds.cdate, 
             pds.sdate, pds.deadline, pds.paydate, pds.description,
             pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
             FROM pds
@@ -67,6 +67,7 @@ private $db;            // database object
         $args = array(
             'fullnumber' => $args['fullnumber'],
             'value' => str_replace(",",".",$args['value']),
+            'grossvalue' => str_replace(",",".",$args['grossvalue']),
             'sdate' => !empty($args['sdate']) ? date_to_timestamp($args['sdate']) : null,
             'deadline' => !empty($args['deadline']) ? date_to_timestamp($args['deadline']) : null,
             'paydate' => !empty($args['paydate']) ? date_to_timestamp($args['paydate']) : null,
@@ -75,8 +76,8 @@ private $db;            // database object
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (fullnumber, value, cdate, sdate, deadline, paydate, description, customerid) 
-                    VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
+            'INSERT INTO pds (fullnumber, value, grossvalue, cdate, sdate, deadline, paydate, description, customerid) 
+                    VALUES (?, ?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
         );
 
         return $result;
@@ -92,6 +93,7 @@ private $db;            // database object
         $args = array(
             'fullnumber' => $args['fullnumber'],
             'value' => str_replace(",",".",$args['value']),
+            'grossvalue' => str_replace(",",".",$args['grossvalue']),
             'sdate' => !empty($args['sdate']) ? date_to_timestamp($args['sdate']) : null,
             'deadline' => !empty($args['deadline']) ? date_to_timestamp($args['deadline']) : null,
             'paydate' => !empty($args['paydate']) ? date_to_timestamp($args['paydate']) : null,
@@ -101,7 +103,7 @@ private $db;            // database object
         );
 
         $result = $this->db->Execute(
-            'UPDATE pds SET fullnumber = ?, value = ?, sdate = ?, deadline = ?,
+            'UPDATE pds SET fullnumber = ?, value = ?, grossvalue = ?, sdate = ?, deadline = ?,
                     paydate = ? , description = ?, customerid = ? WHERE id = ?',
                     $args
             );
