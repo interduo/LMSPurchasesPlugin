@@ -108,4 +108,18 @@ private $db;            // database object
 
         return $result;
     }
+    
+    public function GetSuppliers()
+    {
+        return $this->db->GetAllByKey(
+            'SELECT *
+            FROM customerview
+            WHERE (flags & ? = ?)',
+            'id',
+            array(
+                CUSTOMER_FLAG_SUPPLIER,
+                CUSTOMER_FLAG_SUPPLIER
+            )
+        );
+    }
 }
