@@ -2,6 +2,14 @@
 
 class PURCHASES
 {
+<-->private $db;            // database object
+
+    public function __construct()
+    {
+ // class variables setting
+        $this->db = LMSDB::getInstance();
+    }
+
     public function GetPurchaseDocumentList($params = array())
     {
         if (!empty($params)) {
