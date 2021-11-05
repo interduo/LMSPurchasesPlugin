@@ -6,7 +6,7 @@ private $db;            // database object
 
     public function __construct()
     {
- // class variables setting
+    // class variables setting
         $this->db = LMSDB::getInstance();
     }
 
