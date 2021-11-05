@@ -34,6 +34,6 @@ CREATE TABLE pdattachments (
 	contenttype varchar(255) DEFAULT '' NOT NULL,
 );
 
-CREATE INDEX rtattachments_message_idx ON rtattachments (messageid);
+/* CREATE INDEX rtattachments_message_idx ON rtattachments (messageid); */
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021110501');
