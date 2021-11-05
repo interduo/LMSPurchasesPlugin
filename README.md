@@ -6,10 +6,8 @@ Wtyczka: LMS Purchases documents Plugin (PD)  [ W przygotowaniu ]
 Wtyczka z listą dokumentów zakupowych.
 
 Instalacja wtyczki:
-1. Zawartość paczki umieścić w katalogu plugins w LMS.
-2. composer update --no-dev -n
-3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
-4. Nadać uprawnienia do wtyczki dla użytkownika.
+1. cd lms/plugins; git clone https://github.com/interduo/LMSPurchasesPlugin; composer update --no-dev -n
+2. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 
 TODO:
 - wrzucanie scanów dokumentów kosztowych,
