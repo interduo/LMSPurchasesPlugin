@@ -24,8 +24,9 @@
  *  $Id$
  */
 
+$_LANG['Mark invoice as paid'] = 'Oznacz fakturę jako zapłaconą';
 $_LANG['Purchase document list'] = 'Lista dokumentów kosztowych';
-$_LANG['Are you sure, you want to delete that purchase document?'] = 'Czy jesteś pewien że chcesz skasować ten dokument kosztowy?';
+$_LANG['Are you sure you want to delete that purchase document?'] = 'Czy jesteś pewien że chcesz skasować ten dokument kosztowy?';
 $_LANG['Purchase document number'] = 'Numer dokumentu kosztowego';
 $_LANG['Supplier'] = 'Dostawca';
 $_LANG['Document date'] = 'Data dokumentu';

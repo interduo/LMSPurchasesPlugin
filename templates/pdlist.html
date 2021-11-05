@@ -3,12 +3,7 @@
 {block name=module_content}
 
 <h1>{$pagetitle|escape}</h1>
-<style>
-red {
-    color: red;
-    background: red;
-    }
-    </style>
+
 <table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
     <thead>
         <tr class="bold">
@@ -92,7 +87,7 @@ red {
 <script>
     $(function() {
         $( '.delete-pd' ).click(function() {
-            confirmDialog( $t("Are you sure, you want to delete that purchase document?") , this).done(function() {
+            confirmDialog( $t("Are you sure you want to delete that purchase document?") , this).done(function() {
                 location.href = $(this).attr('href');
             });
             return false;
