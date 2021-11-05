@@ -6,7 +6,7 @@ private $db;            // database object
 
     public function __construct()
     {
-    // class variables setting
+        // class variables setting
         $this->db = LMSDB::getInstance();
     }
 
@@ -86,6 +86,11 @@ private $db;            // database object
     public function DeletePurchaseDocument($id)
     {
         return $this->db->Execute('DELETE FROM pds WHERE id = ?', array($id));
+    }
+
+    public function MarkAsPaid($id)
+    {
+        return $this->db->Execute('UPDATE pds SET paydate = ?NOW? WHERE id = ?', array($id));
     }
 
     public function UpdatePurchaseDocument($args)

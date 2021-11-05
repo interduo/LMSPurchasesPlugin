@@ -56,6 +56,12 @@ switch ($action) {
             $SESSION->redirect('?m=pdlist');
         }
         break;
+    case 'markaspaid':
+        if (!empty($id)) {
+            $PURCHASES->MarkAsPaid($id);
+            $SESSION->redirect('?m=pdlist');
+        }
+        break;
     default:
         break;
 }
