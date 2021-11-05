@@ -6,6 +6,7 @@
 <style>
 red {
     color: red;
+    background: red;
     }
     </style>
 <table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
@@ -45,7 +46,7 @@ red {
     </thead>
     <tbody>
         {foreach $pdlist as $pd}
-        <tr class="highlight {if $pd.paydate}{if $pd.paydate>$smarty.now}red{else}blend{/if}{/if}" data-template-id="{$pd.id}">
+        <tr class="highlight {if $pd.paydate != 0}blend{elseif $smarty.now > $pd.deadline}red{/if}" data-template-id="{$pd.id}">
             <td>
                 {$pd.id}
             </td>

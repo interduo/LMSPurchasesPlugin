@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
     id smallint DEFAULT nextval('pds_id_seq'::text) NOT NULL,
     fullnumber varchar(50) NOT NULL,
-    value numeric(9,2) NOT NULL,
+    netvalue numeric(9,2) NOT NULL,
     grossvalue numeric(9,2) NOT NULL,
     cdate integer NOT NULL,
     sdate integer NOT NULL,
