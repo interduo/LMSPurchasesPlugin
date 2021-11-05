@@ -9,6 +9,7 @@ CREATE TABLE pds (
     id smallint DEFAULT nextval('pds_id_seq'::text) NOT NULL,
     fullnumber varchar(50) NOT NULL,
     value numeric(9,2) NOT NULL,
+    grossvalue numeric(9,2) NOT NULL,
     cdate integer NOT NULL,
     sdate integer NOT NULL,
     deadline integer DEFAULT NULL,
@@ -20,5 +21,5 @@ CREATE TABLE pds (
     CONSTRAINT pds_customerid_ukey UNIQUE (fullnumber, customerid)
 );
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021103100');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021110401');
 
