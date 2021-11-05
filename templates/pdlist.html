@@ -46,7 +46,8 @@ red {
     </thead>
     <tbody>
         {foreach $pdlist as $pd}
-        <tr class="highlight {if $pd.paydate != 0}blend{elseif $smarty.now > $pd.deadline}red{/if}" data-template-id="{$pd.id}">
+        <tr class="{if $smarty.now > $pd.deadline && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight"
+            data-template-id="{$pd.id}">
             <td>
                 {$pd.id}
             </td>
