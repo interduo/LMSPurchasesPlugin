@@ -31,7 +31,7 @@ CREATE TABLE pdattachments (
 	pdid integer NOT NULL
 	    REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
 	filename varchar(255) DEFAULT '' NOT NULL,
-	contenttype varchar(255) DEFAULT '' NOT NULL,
+	contenttype varchar(255) DEFAULT '' NOT NULL
 );
 
 /* CREATE INDEX rtattachments_message_idx ON rtattachments (messageid); */
