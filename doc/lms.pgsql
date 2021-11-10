@@ -23,6 +23,21 @@ CREATE TABLE pds (
 );
 
 /* --------------------------------------------------------
+Structure of table "pdtypes"
+-------------------------------------------------------- */
+
+DROP SEQUENCE IF EXISTS pdtypes_id_seq;
+CREATE SEQUENCE pdtypes_id_seq;
+
+DROP TABLE IF EXISTS pdtypes CASCADE;
+CREATE TABLE pdtypes (
+    id smallint DEFAULT nextval('pdtypes_id_seq'::text) NOT NULL,
+    name varchar(50) NOT NULL,
+    description varchar(254) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+/* --------------------------------------------------------
 Structure of table "pdattachments"
 -------------------------------------------------------- */
 
@@ -36,4 +51,4 @@ CREATE TABLE pdattachments (
 
 /* CREATE INDEX rtattachments_message_idx ON rtattachments (messageid); */
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021110501');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111001');

@@ -1,0 +1,83 @@
+<style>
+    #addpdmodal {
+        overflow: visible;
+    }
+    input {
+        margin-top: 5px;
+    }
+    .button-bar {
+        padding-top: 20px;
+    }
+</style>
+
+<div id="addpdtmodal" class="lms-ui-modal-dialog">
+    <form method="POST" action="?m=pdtlist&action={if $action == 'modify'}modify&id={$pdtinfo.id}{else}add{/if}"
+              name="addpdt" id="addpdt-form">
+        <table>
+            <tbody>
+                {if $action == 'modify'}
+                    <tr>
+                        <td>
+                            <input type="text" name="addpdt[id]" value="{$pdtinfo.id}" hidden>
+                        </td>
+                    </tr>
+                {/if}
+                <tr>
+                    <td>
+                        {icon name="summary" label="Purchase document type name"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-name" name="addpdt[name]" value="{$pdtinfo.name}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="description" label="Description"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-description" name="addpdt[description]" value="{$pdtinfo.description|escape}">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="button-bar text-center">
+                        {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
+                        {button label="Cancel" icon="cancel" id="close"}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+</div>
+
+<script>
+    $( "#addpdtmodal" ).dialog( {
+        autoOpen: {if $action}true{else}false{/if},
+        resizable: false,
+        width: 'auto',
+        modal: true,
+        title: "{if $action == 'modify'}{trans("Modify purchase type")} {$pdtinfo.id}{else}{trans("Add purchase document type")}{/if}"
+    });
+
+    $( "#close" ).click(function() {
+        $( "#addpdtmodal" ).dialog( "close" );
+    });
+
+    function open_add_dialog() {
+        $( "#addpdt-form" ).attr('action', '?m=pdtlist&action=add');
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+
+        $( "#dialog-id", "#dialog-name", "#dialog-description" ).val();
+        $( "#addpdtmodal" ).dialog( "option", "title", "{trans("Add purchase document type")}").dialog( "open" );
+    };
+
+    function open_modify_dialog (template_id) {
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
+        $( "#addpdt-form" ).attr('action', '?m=pdtlist&action=modify&id=' + template_id);
+        if (template_id) {
+            var row = $('[data-template-id=' + template_id + ']');
+            $("#dialog-name").val($(row).find("[data-template-name]").attr('data-template-name'));
+            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+        }
+        $( "#addpdtmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
+    };
+</script>

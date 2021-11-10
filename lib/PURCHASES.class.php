@@ -114,7 +114,7 @@ private $db;            // database object
 
         return $result;
     }
-    
+
     public function GetSuppliers()
     {
         return $this->db->GetAllByKey(
@@ -127,5 +127,77 @@ private $db;            // database object
                 CUSTOMER_FLAG_SUPPLIER
             )
         );
+    }
+
+    public function GetPurchaseDocumentTypesList($params = array())
+    {
+        if (!empty($params)) {
+            extract($params);
+        }
+
+        switch ($orderby) {
+            case 'name':
+                $orderby = ' ORDER BY pdtypes.name';
+                break;
+            case 'description':
+                $orderby = ' ORDER BY pdtypes.description';
+                break;
+            case 'id':
+            default:
+                $orderby = ' ORDER BY pdtypes.id';
+                break;
+        }
+
+        return $this->db->GetAllByKey(
+            'SELECT pdtypes.id, pdtypes.name, pdtypes.description
+                FROM pdtypes '
+            . $orderby,
+            'id'
+        );
+    }
+    public function GetPurchaseTypeInfo($id)
+    {
+        $result = $this->db->GetAll('SELECT pdtypes.id, pdtypes.name, pdtypes.description
+            FROM pdtypes
+            WHERE pdtypes.id = ?',
+            array($id)
+        );
+
+        return $result;
+    }
+
+    public function AddPurchaseType($args)
+    {
+        $args = array(
+            'name' => $args['name'],
+            'description' => empty($args['description']) ? null : $args['description']
+        );
+
+        $result = $this->db->Execute(
+            'INSERT INTO pdtypes (name, description)
+                    VALUES (?, ?)', $args
+        );
+
+        return $result;
+    }
+
+    public function DeletePurchaseTypeDocument($id)
+    {
+        return $this->db->Execute('DELETE FROM pdtypes WHERE id = ?', array($id));
+    }
+
+    public function UpdatePurchaseTypeDocument($args)
+    {
+        $args = array(
+            'name' => $args['name'],
+            'description' => empty($args['description']) ? null : $args['description'],
+            'id' => $args['id'],
+        );
+
+        $result = $this->db->Execute(
+            'UPDATE pdtypes SET name = ?, description = ? WHERE id = ?', $args
+            );
+
+        return $result;
     }
 }
