@@ -1,0 +1,59 @@
+{extends file="layout.html"}
+{block name=title}{$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+
+<h1>{$pagetitle|escape}</h1>
+
+<table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
+    <thead>
+        <tr class="bold">
+            <td>
+                {icon name="id" label="ID"}
+            </td>
+            <td>
+                {icon name="name" label="Purchase document type name"}
+            </td>
+            <td>
+                {icon name="description" label="Description"}
+            </td>
+            <td class="text-right" class="lms-ui-box-buttons">
+                {button name="addpdt" id="addpdtbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach $pdtlist as $pdt}
+        <tr class="highlight"
+            data-template-id="{$pdt.id}">
+            <td>
+                {$pdt.id}
+            </td>
+            <td data-template-name="{$pdt.name}">
+                {$pdt.name|escape}
+            </td>
+            <td data-template-description="{$pdt.description}" {tip text=$pdt.description}>
+                {$pdt.description|trunescape:40}
+            </td>
+            <td class="buttons">
+                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pdt.id})"}
+                {button type="link" icon="delete" href="?m=pdtlist&action=delete&id={$pdt.id}" tip="Delete" class="delete-pdt"}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+{include file="pdtmodify-dialog.html"}
+
+<script>
+    $(function() {
+        $( '.delete-pdt' ).click(function() {
+            confirmDialog( $t("Are you sure you want to delete that purchase type?") , this).done(function() {
+                location.href = $(this).attr('href');
+            });
+            return false;
+        });
+    });
+</script>
+
+{/block}
