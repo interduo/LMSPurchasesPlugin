@@ -46,7 +46,7 @@ switch ($action) {
         $SMARTY->assign('pdtinfo', $pdtinfo);
         if (isset($pdtinfo)) {
             $addpdt['id'] = $id;
-            $PURCHASES->UpdatePurchaseTypeDocument($addpd);
+            $PURCHASES->UpdatePurchaseTypeDocument($addpdt);
             $SESSION->redirect('?m=pdtlist');
         }
         break;
