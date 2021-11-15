@@ -38,6 +38,7 @@ private $db;            // database object
                 break;
         }
 
+        // PAYMENT FILTERS
         if ($payments) {
             switch ($payments) {
                 case '-1':
@@ -48,6 +49,37 @@ private $db;            // database object
                     break;
                 case 'all':
                 default:
+                    $paymentsfilter = '';
+                    break;
+            }
+        }
+
+        // PERIOD FILTER
+        if ($period) {
+            switch ($period) {
+                case '1':
+                    $currentweek_firstday = strtotime("monday");
+                    $currentweek_lastday = strtotime("monday")+604799;
+                    $periodfilter = ' AND sdate BETWEEN ' . $currentweek_firstday . ' AND ' . $currentweek_lastday;
+                    break;
+                case '2':
+                    $previousweek_firstday = strtotime("last week monday");
+                    $previousweek_lastday = strtotime("last week sunday")+604799;
+                    $periodfilter = ' AND sdate BETWEEN ' . $previousweek_firstday . ' AND ' . $previousweek_lastday;
+                    break;
+                case '3':
+                    $currentmonth_firstday = date_to_timestamp(date('Y/m/01', strtotime("now")));
+                    $currentmonth_lastday = date_to_timestamp(date('Y/m/t', strtotime("now")));
+                    $periodfilter = ' AND sdate BETWEEN ' . $currentmonth_firstday . ' AND ' . $currentmonth_lastday;
+                    break;
+                case '4':
+                    $previousmonth_firstday = date_to_timestamp(date('Y/m/01', strtotime("last month")));
+                    $previousmonth_lastday = date_to_timestamp(date('Y/m/t', strtotime("last month")));
+                    $periodfilter = ' AND sdate BETWEEN ' . $previousmonth_firstday . ' AND ' . $previousmonth_lastday;
+                    break;
+                case 'all':
+                default:
+                    $periodfilter = '';
                     break;
             }
         }
@@ -59,6 +91,7 @@ private $db;            // database object
                     LEFT JOIN customers cv ON (pds.customerid = cv.id)
                 WHERE 1=1'
             . $paymentsfilter
+            . $periodfilter
             . $orderby,
             'id'
         );
