@@ -11,8 +11,9 @@ Instalacja wtyczki:
 2. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 
 TODO:
-- wrzucanie scanów dokumentów kosztowych,
+- wrzucanie skanów dokumentów kosztowych,
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
+- podsumowanie dokumentów kosztowych na dashboard,
 
-Jarosław Kłopotek <jkl@interduo.pl>
+Jarosław Kłopotek <jkl@interduo.pl>,
 Grzegorz Cichowski <gc@ptlanet.pl>
