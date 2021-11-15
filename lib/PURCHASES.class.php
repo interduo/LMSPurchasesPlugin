@@ -85,7 +85,7 @@ private $db;            // database object
         }
 
         return $this->db->GetAllByKey(
-            'SELECT pds.id, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
+            'SELECT pds.id, pds.pdtypeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
                     pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.customerid = cv.id)
@@ -99,7 +99,7 @@ private $db;            // database object
 
     public function GetPurchaseDocumentInfo($id)
     {
-        $result = $this->db->GetAll('SELECT pds.id, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
+        $result = $this->db->GetAll('SELECT pds.id, pds.pdtypeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
             pds.sdate, pds.deadline, pds.paydate, pds.description,
             pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
             FROM pds
@@ -114,6 +114,7 @@ private $db;            // database object
     public function AddPurchaseDocument($args)
     {
         $args = array(
+            'pdtypeid' => $args['pdtypeid'],
             'fullnumber' => $args['fullnumber'],
             'netvalue' => str_replace(",",".",$args['netvalue']),
             'grossvalue' => str_replace(",",".",$args['grossvalue']),
@@ -125,8 +126,8 @@ private $db;            // database object
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, customerid) 
-                    VALUES (?, ?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
+            'INSERT INTO pds (pdtypeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, customerid) 
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
         );
 
         return $result;
@@ -145,6 +146,7 @@ private $db;            // database object
     public function UpdatePurchaseDocument($args)
     {
         $args = array(
+            'pdtypeid' => $args['pdtypeid'],
             'fullnumber' => $args['fullnumber'],
             'netvalue' => str_replace(",",".",$args['netvalue']),
             'grossvalue' => str_replace(",",".",$args['grossvalue']),
@@ -157,7 +159,7 @@ private $db;            // database object
         );
 
         $result = $this->db->Execute(
-            'UPDATE pds SET fullnumber = ?, netvalue = ?, grossvalue = ?, sdate = ?, deadline = ?,
+            'UPDATE pds SET pdtypeid = ?, fullnumber = ?, netvalue = ?, grossvalue = ?, sdate = ?, deadline = ?,
                     paydate = ? , description = ?, customerid = ? WHERE id = ?', $args
             );
 
@@ -175,6 +177,15 @@ private $db;            // database object
                 CUSTOMER_FLAG_SUPPLIER,
                 CUSTOMER_FLAG_SUPPLIER
             )
+        );
+    }
+
+    public function GetTypes()
+    {
+        return $this->db->GetAllByKey(
+            'SELECT *
+            FROM pdtypes
+            ORDER BY id'
         );
     }
 

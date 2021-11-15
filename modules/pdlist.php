@@ -63,6 +63,7 @@ switch ($action) {
 }
 
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
+$SMARTY->assign('typeslist', $PURCHASES->GetTypes());
 $SMARTY->assign('action', $action);
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);

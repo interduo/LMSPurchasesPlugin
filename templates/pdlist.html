@@ -39,6 +39,9 @@
                 {icon name="id" label="ID"}
             </td>
             <td>
+                {icon name="type" label="Type"}
+            </td>
+            <td>
                 {icon name="summary" label="Purchase document number"}
             </td>
             <td>
@@ -73,6 +76,9 @@
             data-template-id="{$pd.id}">
             <td>
                 {$pd.id}
+            </td>
+            <td data-template-type="{$pd.pdtypeid}">
+                {$pd.pdtypeid|escape}
             </td>
             <td data-template-fullnumber="{$pd.fullnumber}">
                 {$pd.fullnumber|escape}
