@@ -27,7 +27,7 @@
                         {icon name="description" label="Type"}
                     </td>
                     <td>
-                        <select id="dialog-pdtypeid" name="addpd[pdtypeid]" class="lms-ui-advanced-select" required>
+                        <select id="dialog-pdtypeid" name="addpd[pdtypeid]" class="lms-ui-advanced-select">
                         {foreach $typeslist as $pd}
                             <option value="{$pd.id}">#{$pd.id} - {$pd.name|trunescape:"25"}</option>
                         {/foreach}

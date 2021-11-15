@@ -85,10 +85,11 @@ private $db;            // database object
         }
 
         return $this->db->GetAllByKey(
-            'SELECT pds.id, pds.pdtypeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
+            'SELECT pds.id, pds.pdtypeid, ' . $this->db->Concat('pt.name') . ' AS pdtypename, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
                     pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.customerid = cv.id)
+                    LEFT JOIN pdtypes pt ON (pds.pdtypeid = pt.id)
                 WHERE 1=1'
             . $paymentsfilter
             . $periodfilter
