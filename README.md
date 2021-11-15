@@ -4,16 +4,18 @@ Opis:
 Wtyczka: LMS Purchases documents Plugin (PD)  [ W przygotowaniu ]
 
 Wtyczka z listą dokumentów zakupowych.
+**Wsparcie tylko dla postgresql.**
 
 Instalacja wtyczki:
-1. cd lms/plugins; git clone https://github.com/interduo/LMSPurchasesPlugin; composer update --no-dev -n
-2. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
+1. cd lms/plugins; git clone https://github.com/interduo/LMSPurchasesPlugin; 
+2. composer update --no-dev
+3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
+4. Nadaj uprawnienia użytkownikowi do wtyczki
 
 TODO:
-- wrzucanie scanów dokumentów kosztowych,
-- dodatkowy filtr okresu (ostatni rok, ostatni kwartał, ostatni miesiąc, ostatni tydzień, dzisiaj)
+- wrzucanie skanów dokumentów kosztowych,
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
-- wsparcie dla MySQL (jeśli komuś potrzebne),
+- podsumowanie dokumentów kosztowych na dashboard,
 
-Jarosław Kłopotek <jkl@interduo.pl>
+Jarosław Kłopotek <jkl@interduo.pl>,
 Grzegorz Cichowski <gc@ptlanet.pl>
