@@ -7,25 +7,11 @@
     <thead>
         <tr>
             <td colspan="2" class="text-center bold nobr">
-                <i class="lms-ui-icon-customer"></i> {trans("suppliers:")}
+                <i class="lms-ui-icon-customer"></i> {trans("Suppliers:")}
             </td>
         </tr>
     </thead>
     <tbody>
-		{foreach $_CSTATUSES as $statusidx => $status}
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=customerlist&amp;s={$statusidx}">{$status.summarylabel}</a>
-            </td>
-            <td>
-                {$alias = $status.alias}
-                {$supplierstats.$alias}
-                {if $statusidx == $smarty.const.CSTATUS_DEBT_COLLECTION}
-                    ({trans("amount")} {moneyf($supplierstats.debtcollectionvalue)})
-                {/if}
-            </td>
-        </tr>
-        {/foreach}
         <tr>
             <td class="text-right bold">
                 <a href="?m=customerlist&amp;s=0">{trans("Total:")}</a>
@@ -37,31 +23,21 @@
         {if ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkConfig('privileges.hide_finances')}
         <tr>
             <td class="text-right bold">
-                <a href="?m=customerlist&amp;s=52">{trans("Total Dues:")}</a>
+                <a href="?m=customerlist&amp;s=52">{trans("Total Dues to:")}</a>
             </td>
             <td>
                 {$supplierstats.debt} ({trans("amount")} {moneyf($supplierstats.debtvalue)})
             </td>
         </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=customerlist&amp;s=52">{trans("Biggest debt:")}</a>
+            </td>
+            <td>
+                {$supplierstats.biggestdebt} ({trans("amount")} {moneyf($supplierstats.debtvalue)})
+            </td>
+        </tr>
         {/if}
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=documentlist&amp;s=0">{trans("Documents waiting for approval")}:</a>
-            </td>
-            <td>
-                {$documentsnotapproved}
-            </td>
-        </tr>
-	{if $supplierschanges}
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=userpanel&module=info&f=changes">{trans("Changes of suppliers waiting for approval:")}</a>
-            </td>
-            <td>
-                {$supplierschanges}
-            </td>
-        </tr>
-	{/if}
     </tbody>
 </table>
 {/if}
