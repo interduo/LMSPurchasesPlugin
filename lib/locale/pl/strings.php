@@ -48,4 +48,10 @@ $_LANG['Document scan'] = 'Skan dokumentu';
 $_LANG['Show All'] = 'Pokaż wszystkie';
 $_LANG['Gross Value'] = 'Wartość brutto';
 
+$_LANG['Purchase document types'] = 'Typy dokumentów kosztowych';
+$_LANG['Chart of accounts'] = 'konta księgowe';
+$_LANG['Add purchase document type'] = 'Dodaj typ zakupu';
+$_LANG['Modify purchase document type'] = 'Modyfikuj typ zakupu';
+$_LANG['Are you sure you want to delete that purchase type?'] = 'Czy jesteś pewien że chcesz skasować ten typ dokumentu?';
+
 ?>
