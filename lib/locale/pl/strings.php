@@ -53,5 +53,9 @@ $_LANG['Chart of accounts'] = 'konta księgowe';
 $_LANG['Add purchase document type'] = 'Dodaj typ zakupu';
 $_LANG['Modify purchase document type'] = 'Modyfikuj typ zakupu';
 $_LANG['Are you sure you want to delete that purchase type?'] = 'Czy jesteś pewien że chcesz skasować ten typ dokumentu?';
+$_LANG['Payment filter'] = 'Filtr płatności';
+$_LANG['Unpaid only'] = 'Tylko niezapłacone';
+$_LANG['Filter off'] = 'Filtr wyłączony';
+$_LANG['with upcoming payment date'] = 'ze zbliżającym się terminem płatności';
 
 ?>
