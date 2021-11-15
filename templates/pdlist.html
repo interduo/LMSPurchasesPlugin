@@ -3,7 +3,22 @@
 {block name=module_content}
 
 <h1>{$pagetitle|escape}</h1>
-
+<form method="GET" action="?m=pdlist" name="filter" form="filter-form">
+    <table class="lmsbox">
+        <tr>
+            <td>{trans("Payment filter")}</td>
+            <td>
+                <input type="submit" class="hiddenbtn">
+                <input type="hidden" name="m" value="pdlist">
+                <select size="1" name="payments" onchange="document.filter.submit();">
+                    <option value="" {if empty($params.payments)} selected{/if}>{trans("Filter off")}</option>
+                    <option value="-1" {if !empty($params.payments) && $params.payments=='-1'} selected{/if}>{trans("Unpaid only")}</option>
+                    <option value="-2" {if !empty($params.payments) && $params.payments=='-2'} selected{/if}>{trans("with upcoming payment date")}</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</form>
 <table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
     <thead>
         <tr class="bold">

@@ -23,7 +23,6 @@
  *
  *  $Id$
  */
-
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
 $action = $_GET['action'];
@@ -32,8 +31,16 @@ $id = $_GET['id'];
 $addpd = $_POST['addpd'];
 $layout['pagetitle'] = trans('Purchase document list');
 
-$params['orderby'] = $_GET['orderby'];
-
+// payments filter
+if (empty($_GET['payments'])) {
+    unset($params['payments']);
+} else {
+    if ($_GET['payments'] == 'all') {
+        $params['payments'] = array();
+    } else {
+        $params['payments'] = intval($_GET['payments']);
+    }
+}
 $pdlist = $PURCHASES->GetPurchaseDocumentList($params);
 
 switch ($action) {
@@ -65,8 +72,10 @@ switch ($action) {
     default:
         break;
 }
+
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('action', $action);
+$SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
 $SMARTY->display('pdlist.html');

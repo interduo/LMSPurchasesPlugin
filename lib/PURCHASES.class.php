@@ -38,11 +38,27 @@ private $db;            // database object
                 break;
         }
 
+        if ($payments) {
+            switch ($payments) {
+                case '-1':
+                    $paymentsfilter = ' AND paydate IS NULL';
+                    break;
+                case '-2':
+                    $paymentsfilter = ' AND paydate IS NULL AND (deadline - ?NOW? > 259200)';
+                    break;
+                case 'all':
+                default:
+                    break;
+            }
+        }
+
         return $this->db->GetAllByKey(
             'SELECT pds.id, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
                     pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
                 FROM pds
-                    LEFT JOIN customers cv ON (pds.customerid = cv.id) '
+                    LEFT JOIN customers cv ON (pds.customerid = cv.id)
+                WHERE 1=1'
+            . $paymentsfilter
             . $orderby,
             'id'
         );
