@@ -57,7 +57,7 @@
             </td>
         </tr>
 	{foreach $layout.plugins as $plugin_name => $plugin}
-	{if $plugin.enabled}
+	{if $plugin.enabled && $plugin_name == "LMSPurchasesPlugin" }
 	<tr>
 		<td class="text-right bold">
 			{$plugin_name}DB:

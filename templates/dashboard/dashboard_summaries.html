@@ -57,7 +57,7 @@
                 <a href="?m=nodelist">{trans("Total:")}</a>
             </td>
             <td>
-                {$nodestats.total}
+                {$pdstats.total}
             </td>
         </tr>
         <tr>
@@ -69,15 +69,7 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=5">{trans("In 2 days")}:</a>
-            </td>
-            <td>
-                {$pdstats.in2days}
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=5">{trans("In 3 days")}:</a>
+                <a href="?m=pdlist&payments=-2&period=3">{trans("In 3 days")}:</a>
             </td>
             <td>
                 {$pdstats.in3days}
@@ -85,15 +77,7 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=6">{trans("In 5 days")}:</a>
-            </td>
-            <td>
-                {$pdstats.in5days}
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=6">{trans("In 7 days")}:</a>
+                <a href="?m=pdlist&payments=-3&period=3">{trans("In 7 days")}:</a>
             </td>
             <td>
                 {$pdstats.in7days}
@@ -101,7 +85,7 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=6">{trans("In 14 days")}:</a>
+                <a href="?m=pdlist&payments=-4&period=3">{trans("In 14 days")}:</a>
             </td>
             <td>
                 {$pdstats.in14days}
@@ -109,7 +93,15 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=6">{trans("To end ot current month")}:</a>
+                <a href="?m=pdlist&payments=-1&period=3">{trans("To end ot current month")}:</a>
+            </td>
+            <td>
+                {$pdstats.toendmonth}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-1">{trans("All not payed")}:</a>
             </td>
             <td>
                 {$pdstats.toendmonth}
