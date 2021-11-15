@@ -1,0 +1,62 @@
+{if !ConfigHelper::checkPrivilege('hide_sysinfo')}
+<table class="lmsbox" id="lms-ui-dashboard-box-about-system">
+    <colgroup>
+        <col style="width: 50%;">
+        <col style="width: 50%;">
+    </colgroup>
+    <thead>
+        <tr onclick="showOrHide('dashboard_sysinfo_about_system-{$layout.module}');">
+            <td class="text-center bold nobr" colspan="2">
+                <i class="lms-ui-icon-optional-info"></i> {trans("About system:")}
+            </td>
+        </tr>
+    </thead>
+    <tbody id="dashboard_sysinfo_about_system-{$layout.module}" style="display:none;">
+        <tr>
+            <td class="text-right bold">
+                {trans("Hostname:")}
+            </td>
+            <td>
+                {$sysinfo.hostname}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                {trans("System version:")}
+            </td>
+            <td>
+                {$sysinfo.kernel}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                {trans("Uptime:")}
+            </td>
+            <td>
+                {$sysinfo.uptime}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                {trans("Users logged in:")}
+            </td>
+            <td>
+                {$sysinfo.users}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                {trans("Load:")}
+            </td>
+            <td>
+                {$sysinfo.loadavg.0} {$sysinfo.loadavg.1} {$sysinfo.loadavg.2}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script type="text/javascript">
+if (getCookie('dashboard_sysinfo_about_system-{$layout.module}') == '1'){
+    document.getElementById('dashboard_sysinfo_about_system-{$layout.module}').style.display = '';
+}
+</script>
+{/if}

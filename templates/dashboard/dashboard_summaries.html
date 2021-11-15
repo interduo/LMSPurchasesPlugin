@@ -1,0 +1,73 @@
+{if !ConfigHelper::checkPrivilege('hide_summaries')}
+<table class="lmsbox" id="lms-ui-welcome-box-summaries">
+    <colgroup>
+        <col style="width: 50%;">
+        <col style="width: 50%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <td colspan="2" class="text-center bold">
+                <i class="lms-ui-icon-node"></i> {trans("Nodes:")}
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist&amp;s=3">{trans("Online:")}</a>
+            </td>
+            <td>
+                {$nodestats.online}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist&amp;s=7">{trans("With warning")}:</a>
+            </td>
+            <td>
+                {$nodestats.withwarning}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist&amp;s=1">{trans("Connected<!nodes>:")}</a>
+            </td>
+            <td>
+                {$nodestats.connected}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist&amp;s=2">{trans("Disconnected:")}</a>
+            </td>
+            <td>
+                {$nodestats.disconnected}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist&amp;s=5">{trans("TERRIT not specified")}:</a>
+            </td>
+            <td>
+                {$nodestats.withoutterryt}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist&amp;s=6">{trans("Net Device not specified")}:</a>
+            </td>
+            <td>
+                {$nodestats.withoutnetdev}
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=nodelist">{trans("Total:")}</a>
+            </td>
+            <td>
+                {$nodestats.total}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{/if}
