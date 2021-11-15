@@ -7,8 +7,10 @@ Wtyczka z listą dokumentów zakupowych.
 **Wsparcie tylko dla postgresql.**
 
 Instalacja wtyczki:
-1. cd lms/plugins; git clone https://github.com/interduo/LMSPurchasesPlugin; composer update --no-dev -n
-2. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
+1. cd lms/plugins; git clone https://github.com/interduo/LMSPurchasesPlugin; 
+2. composer update --no-dev
+3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
+4. Nadaj uprawnienia użytkownikowi do wtyczki
 
 TODO:
 - wrzucanie skanów dokumentów kosztowych,
