@@ -6,14 +6,28 @@
 <form method="GET" action="?m=pdlist" name="filter" form="filter-form">
     <table class="lmsbox">
         <tr>
-            <td>{trans("Payment filter")}</td>
             <td>
+                {trans("Filters")}
+                {icon name="filter"}
                 <input type="submit" class="hiddenbtn">
                 <input type="hidden" name="m" value="pdlist">
+            </td>
+            <td>
+                {icon name="money" label="Payment"}
                 <select size="1" name="payments" onchange="document.filter.submit();">
-                    <option value="" {if empty($params.payments)} selected{/if}>{trans("Filter off")}</option>
+                    <option value="" {if empty($params.payments)} selected{/if}>{trans("filter off")}</option>
                     <option value="-1" {if !empty($params.payments) && $params.payments=='-1'} selected{/if}>{trans("Unpaid only")}</option>
                     <option value="-2" {if !empty($params.payments) && $params.payments=='-2'} selected{/if}>{trans("with upcoming payment date")}</option>
+                </select>
+            </td>
+            <td>
+                {icon name="timetable" label="Document date"}
+                <select size="1" name="period" onchange="document.filter.submit();">
+                    <option value="" {if empty($params.period)} selected{/if}>{trans("filter off")}</option>
+                    <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("this week")}</option>
+                    <option value="2" {if !empty($params.period) && $params.period=='2'} selected{/if}>{trans("previous week")}</option>
+                    <option value="3" {if !empty($params.period) && $params.period=='3'} selected{/if}>{trans("this month")}</option>
+                    <option value="4" {if !empty($params.period) && $params.period=='4'} selected{/if}>{trans("previous month")}</option>
                 </select>
             </td>
         </tr>

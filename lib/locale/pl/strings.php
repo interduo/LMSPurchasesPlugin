@@ -55,7 +55,13 @@ $_LANG['Modify purchase document type'] = 'Modyfikuj typ zakupu';
 $_LANG['Are you sure you want to delete that purchase type?'] = 'Czy jesteś pewien że chcesz skasować ten typ dokumentu?';
 $_LANG['Payment filter'] = 'Filtr płatności';
 $_LANG['Unpaid only'] = 'Tylko niezapłacone';
-$_LANG['Filter off'] = 'Filtr wyłączony';
+$_LANG['filter off'] = 'filtr wyłączony';
 $_LANG['with upcoming payment date'] = 'ze zbliżającym się terminem płatności';
+$_LANG['Filters'] = 'Filtry';
+$_LANG['this week'] = 'obecny tydzień';
+$_LANG['previous week'] = 'poprzedni tydzień';
+$_LANG['this month'] = 'obecny miesiąc';
+$_LANG['previous quater'] = 'poprzedni kwartał';
+$_LANG['this quater'] = 'obecny kwartał';
 
 ?>
