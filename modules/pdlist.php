@@ -9,24 +9,38 @@ $addpd = $_POST['addpd'];
 $layout['pagetitle'] = trans('Purchase document list');
 
 // payments filter
-if (empty($_GET['payments'])) {
+if (empty($_GET['payments']) || $_GET['payments'] == 'all') {
     unset($params['payments']);
 } else {
-    if ($_GET['payments'] == 'all') {
-        $params['payments'] = array();
-    } else {
-        $params['payments'] = intval($_GET['payments']);
-    }
+    $params['payments'] = intval($_GET['payments']);
 }
 
 // period filter
-if (empty($_GET['period'])) {
+if (empty($_GET['period']) || $_GET['payments'] == 'all') {
     unset($params['period']);
 } else {
-    if ($_GET['period'] == 'all') {
-        $params['period'] = array();
+    $params['period'] = intval($_GET['period']);
+}
+
+// value from filter
+if (empty($_GET['valuefrom'])) {
+    unset($params['valuefrom']);
+} else {
+    if ($_GET['valuefrom'] == 'all') {
+        $params['valuefrom'] = array();
     } else {
-        $params['period'] = intval($_GET['period']);
+        $params['valuefrom'] = intval($_GET['valuefrom']);
+    }
+}
+
+// valueto filter
+if (empty($_GET['valueto'])) {
+    unset($params['valueto']);
+} else {
+    if ($_GET['valueto'] == 'all') {
+        $params['valueto'] = null;
+    } else {
+        $params['valueto'] = intval($_GET['valueto']);
     }
 }
 
@@ -63,6 +77,7 @@ switch ($action) {
 }
 
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
+$SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
 $SMARTY->assign('action', $action);
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);
