@@ -174,7 +174,7 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
         if (template_id) {
             var row = $('[data-template-id=' + template_id + ']');
-            $("#dialog-typeid").val($(row).find("[data-template-pdtypeid]").attr('data-template-pdtypeid'));
+            $("#dialog-typeid").val($(row).find("[data-template-typeid]").attr('data-template-typeid'));
             updateAdvancedSelects("#dialog-typeid");
             $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
             $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));

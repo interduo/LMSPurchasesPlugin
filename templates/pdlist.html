@@ -88,8 +88,8 @@
             <td>
                 {$pd.id}
             </td>
-            <td data-template-type="{$pd.pdtypeid}">
-                {$pd.pdtypename|escape}
+            <td data-template-typeid="{$pd.typeid}">
+                {$pd.typename|escape}
             </td>
             <td data-template-fullnumber="{$pd.fullnumber}">
                 {$pd.fullnumber|escape}
@@ -118,11 +118,11 @@
                 </a>
            </td>
            <td>
-           {foreach $pd.projects as $p}
-               <a href="?m=invprojectedit&id={$p.id}">
-                   {$p.name|trunescape:25:"&hellip;":true}
-               </a>
-           {/foreach}
+               {foreach $pd.projects as $p}
+                   <a href="?m=invprojectedit&id={$p.id}">
+                       {$p.name|trunescape:25:"&hellip;":true}
+                   </a>
+               {/foreach}
           </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
