@@ -29,6 +29,7 @@ $_LANG['Purchase document list'] = 'Lista dokumentów kosztowych';
 $_LANG['Are you sure you want to delete that purchase document?'] = 'Czy jesteś pewien że chcesz skasować ten dokument kosztowy?';
 $_LANG['Purchase document number'] = 'Numer dokumentu kosztowego';
 $_LANG['Supplier'] = 'Dostawca';
+$_LANG['Select supplier'] = 'Wybierz dostawcę';
 $_LANG['Document date'] = 'Data dokumentu';
 $_LANG['Document upload date'] = 'Data wgrania dokumnetu';
 $_LANG['Payment date'] = 'Termin płatności';
@@ -46,7 +47,7 @@ $_LANG['Pay date'] = 'Data zapłaty';
 $_LANG['Document scan'] = 'Skan dokumentu';
 $_LANG['Show All'] = 'Pokaż wszystkie';
 $_LANG['Gross Value'] = 'Wartość brutto';
-
+$_LANG['Inv. Project'] = 'Projekt Inv.';
 $_LANG['Purchase document types'] = 'Typy dokumentów kosztowych';
 $_LANG['Chart of accounts'] = 'konta księgowe';
 $_LANG['Add purchase document type'] = 'Dodaj typ zakupu';
