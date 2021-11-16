@@ -22,7 +22,7 @@ if (empty($_GET['period']) || $_GET['payments'] == 'all') {
     $params['period'] = intval($_GET['period']);
 }
 
-// value from filter
+// valuefrom filter
 if (empty($_GET['valuefrom'])) {
     unset($params['valuefrom']);
 } else {
@@ -77,6 +77,7 @@ switch ($action) {
 }
 
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
+$SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
 $SMARTY->assign('action', $action);
 $SMARTY->assign('params', $params);

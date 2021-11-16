@@ -108,10 +108,22 @@
                     </td>
                     <td>
                         <select id="dialog-customerid" name="addpd[customerid]" class="lms-ui-advanced-select" required>
-                            <option value="">{trans("unknown")}</option>
+                        <option value="">{trans("Select supplier")}</option>
                         {foreach $supplierslist as $s}
-                            <option value="{$s.id}" {if $is.id == $addpd.customerid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
+                            <option value="{$s.id}" {if $s.id == $addpd.customerid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
                         {/foreach}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="invproject" label="Inv. Project"}
+                    </td>
+                    <td>
+                        <select id="dialog-invprojects" name="addpd[invprojects][]" class="lms-ui-advanced-select" multiple>
+                            {foreach $projectslist as $p}
+                                <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
+                            {/foreach}
                         </select>
                     </td>
                 </tr>
@@ -151,7 +163,7 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-customerid" ).val();
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-customerid", "#dialog-invprojects" ).val();
         updateAdvancedSelects("#dialog-typeid");
         updateAdvancedSelects("#dialog-customerid");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );

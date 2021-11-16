@@ -107,7 +107,7 @@ private $db;            // database object
             $valuetofilter = ' AND grossvalue <= ' . $valueto;
         }
 
-        return $this->db->GetAllByKey(
+        $result = $this->db->GetAllByKey(
             'SELECT pds.id, pds.typeid, ' . $this->db->Concat('pt.name') . ' AS pdtypename, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
                     pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
                 FROM pds
@@ -121,6 +121,37 @@ private $db;            // database object
             . $orderby,
             'id'
         );
+        foreach ($result as $idx=>$val) {
+            $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
+        }
+        return $result;
+    }
+
+    public function GetAssignedProjects($pdid) {
+        return $this->db->GetAll(
+            'SELECT inv.id AS id, inv.name AS name
+                FROM pdsprojects AS pdp
+                    LEFT JOIN invprojects inv ON (pdp.projectid = inv.id)
+                WHERE pdid = ?',
+            array($pdid)
+        );
+    }
+
+    public function SetAssignedProjects($params) {
+        if (!empty($params['pdid'])) {
+            $this->db->Execute(
+                'DELETE FROM pdsprojects WHERE pdid = ?',
+                array($params['pdid'])
+            );
+
+            foreach ($params['invprojects'] as $p)
+                $this->db->Execute(
+                    'INSERT INTO pdsprojects (pdid, projectid) VALUES (?, ?)',
+                    array($params['pdid'], $p)
+                );
+            }
+
+        return null;
     }
 
     public function GetPurchaseDocumentInfo($id)
@@ -139,6 +170,8 @@ private $db;            // database object
 
     public function AddPurchaseDocument($args)
     {
+        $invprojects = empty($args['invprojects']) ? null : $args['invprojects'];
+
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
@@ -156,6 +189,12 @@ private $db;            // database object
                     VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
         );
 
+        if (!empty($invprojects)) {
+            $params['invprojects'] = $invprojects;
+            $params['pdid'] = $this->db->GetLastInsertID('pds');
+            $this->SetAssignedProjects($params);
+        }
+
         return $result;
     }
 
@@ -171,6 +210,12 @@ private $db;            // database object
 
     public function UpdatePurchaseDocument($args)
     {
+        if (!empty($args['invprojects'])) {
+            $params['pdid'] = $args['id'];
+            $params['invprojects'] = $args['invprojects'];
+            $this->SetAssignedProjects($params);
+        }
+
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
