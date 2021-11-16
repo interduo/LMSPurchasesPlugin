@@ -7,57 +7,57 @@
     <thead>
         <tr>
             <td colspan="2" class="text-center bold">
-                <i class="lms-ui-icon-node"></i> {trans("Purchase documents:")}
+                <i class="lms-ui-icon-node"></i> {trans("Purchase documents in current month:")}
             </td>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=3">{trans("Payed:")}</a>
+                <a href="">{trans("Payed:")}</a>
             </td>
             <td>
-                {$pdstats.payed}
+                {$pdstats.payed} ({trans("amount")} {moneyf($pdstats.payedvalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=3">{trans("Overdue:")}</a>
+                <a href="?m=pdlist&payments=-5">{trans("Overdue:")}</a>
             </td>
             <td>
-                {$pdstats.overdue}
+                {$pdstats.overdue} ({trans("amount")} {moneyf($pdstats.overduevalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=7">{trans("Today")}:</a>
+                <a href="">{trans("Today")}:</a>
             </td>
             <td>
-                {$pdestats.today}
+                {$pdestats.today} ({trans("amount")} {moneyf($pdstats.todayvalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=1">{trans("Tomorrow")}</a>
+                <a href="">{trans("Tomorrow")}</a>
             </td>
             <td>
-                {$pdstats.tomorrow}
+                {$pdstats.tomorrow} ({trans("amount")} {moneyf($pdstats.tomorrowdvalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist&amp;s=6">{trans("Later")}:</a>
+                <a href="">{trans("Later")}:</a>
             </td>
             <td>
-                {$pdstats.later}
+                {$pdstats.later} ({trans("amount")} {moneyf($pdstats.latervalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=nodelist">{trans("Total:")}</a>
+                <a href="?m=pdlist&payments=-5">{trans("All unpaid:")}</a>
             </td>
             <td>
-                {$pdstats.total}
+                {$pdstats.unpaid} ({trans("amount")} {moneyf($pdstats.unpaidvalue)})
             </td>
         </tr>
         <tr>
@@ -72,7 +72,7 @@
                 <a href="?m=pdlist&payments=-2&period=3">{trans("In 3 days")}:</a>
             </td>
             <td>
-                {$pdstats.in3days}
+                {$pdstats.in3days} ({trans("amount")} {moneyf($pdstats.in3daysvalue)})
             </td>
         </tr>
         <tr>
@@ -80,7 +80,7 @@
                 <a href="?m=pdlist&payments=-3&period=3">{trans("In 7 days")}:</a>
             </td>
             <td>
-                {$pdstats.in7days}
+                {$pdstats.in7days} ({trans("amount")} {moneyf($pdstats.in7daysvalue)})
             </td>
         </tr>
         <tr>
@@ -88,15 +88,15 @@
                 <a href="?m=pdlist&payments=-4&period=3">{trans("In 14 days")}:</a>
             </td>
             <td>
-                {$pdstats.in14days}
+                {$pdstats.in14days} ({trans("amount")} {moneyf($pdstats.in14daysvalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=pdlist&payments=-1&period=3">{trans("To end ot current month")}:</a>
+                <a href="?m=pdlist&payments=-1&period=3">{trans("Unpaid ot current month")}:</a>
             </td>
             <td>
-                {$pdstats.toendmonth}
+                {$pdstats.unpaidmonth} ({trans("amount")} {moneyf($pdstats.unpaidvalue)})
             </td>
         </tr>
         <tr>
@@ -104,7 +104,7 @@
                 <a href="?m=pdlist&payments=-1">{trans("All not payed")}:</a>
             </td>
             <td>
-                {$pdstats.toendmonth}
+                {$pdstats.allunpaidmonth} ({trans("amount")} {moneyf($pdstats.allunpaidvalue)})
             </td>
         </tr>
     </tbody>
