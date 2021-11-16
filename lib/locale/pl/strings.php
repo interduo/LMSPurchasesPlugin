@@ -39,8 +39,7 @@ $_LANG['Enter document deadline date in YYYY/MM/DD format or click to select it 
 $_LANG['Add purchase document'] = 'Dodaj dokument zakupu';
 $_LANG['Modify purchase document'] = 'Modyfikuj dokument zakupu';
 
-$_LANG['Show only unpaid'] = 'Tylko niezapłacone';
-$_LANG['Show only expired'] = 'Tylko przeterminowane';
+$_LANG['expired only'] = 'tylko przeterminowane';
 $_LANG['Today date of payment'] = 'Dzisiaj termin płatności';
 
 $_LANG['Pay date'] = 'Data zapłaty';
@@ -54,9 +53,11 @@ $_LANG['Add purchase document type'] = 'Dodaj typ zakupu';
 $_LANG['Modify purchase document type'] = 'Modyfikuj typ zakupu';
 $_LANG['Are you sure you want to delete that purchase type?'] = 'Czy jesteś pewien że chcesz skasować ten typ dokumentu?';
 $_LANG['Payment filter'] = 'Filtr płatności';
-$_LANG['Unpaid only'] = 'Tylko niezapłacone';
+$_LANG['unpaid only'] = 'tylko niezapłacone';
 $_LANG['filter off'] = 'filtr wyłączony';
-$_LANG['with upcoming payment date'] = 'ze zbliżającym się terminem płatności';
+$_LANG['with upcoming payment date (to 3 days)'] = 'ze zbliżającym się terminem płatności (do 3 dni)';
+$_LANG['with upcoming payment date (to 7 days)'] = 'ze zbliżającym się terminem płatności (do 7 dni)';
+$_LANG['with upcoming payment date (to 14 days)'] = 'ze zbliżającym się terminem płatności (do 14 dni)';
 $_LANG['Filters'] = 'Filtry';
 $_LANG['this week'] = 'obecny tydzień';
 $_LANG['previous week'] = 'poprzedni tydzień';
