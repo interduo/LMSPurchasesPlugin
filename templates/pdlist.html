@@ -73,6 +73,9 @@
             <td>
                 {icon name="customer" label="Supplier"}
             </td>
+            <td>
+                {icon name="invproject" label="Inv. Project"}
+            </td>
             <td class="text-right" class="lms-ui-box-buttons">
                 {button name="addpd" id="addpdbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
             </td>
@@ -114,6 +117,13 @@
                     {$pd.customername|trunescape:25:"&hellip;":true}
                 </a>
            </td>
+           <td>
+           {foreach $pd.projects as $p}
+               <a href="?m=invprojectedit&id={$p.id}">
+                   {$p.name|trunescape:25:"&hellip;":true}
+               </a>
+           {/foreach}
+          </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
