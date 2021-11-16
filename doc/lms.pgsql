@@ -41,8 +41,9 @@ CREATE TABLE pdtypes (
 
 INSERT INTO public.pdtypes (id, name, description) VALUES (1, 'faktura VAT', NULL);
 INSERT INTO public.pdtypes (id, name, description) VALUES (2, 'faktura VAT-marża', NULL);
-INSERT INTO public.pdtypes (id, name, description) VALUES (3, 'rachunek', NULL);
-INSERT INTO public.pdtypes (id, name, description) VALUES (4, 'decyzja płatnicza', NULL);
-INSERT INTO public.pdtypes (id, name, description) VALUES (5, 'opłata za rachunek bankowy', NULL);
+INSERT INTO public.pdtypes (id, name, description) VALUES (3, 'korekta', NULL);
+INSERT INTO public.pdtypes (id, name, description) VALUES (4, 'rachunek', NULL);
+INSERT INTO public.pdtypes (id, name, description) VALUES (5, 'decyzja płatnicza', NULL);
+INSERT INTO public.pdtypes (id, name, description) VALUES (6, 'opłata za rachunek bankowy', NULL);
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021115001');
