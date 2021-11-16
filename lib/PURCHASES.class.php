@@ -130,7 +130,7 @@ private $db;            // database object
     public function GetAssignedProjects($pdid) {
         return $this->db->GetAll(
             'SELECT inv.id AS id, inv.name AS name
-                FROM pdsprojects AS pdp
+                FROM pdprojects AS pdp
                     LEFT JOIN invprojects inv ON (pdp.projectid = inv.id)
                 WHERE pdid = ?',
             array($pdid)
@@ -140,13 +140,13 @@ private $db;            // database object
     public function SetAssignedProjects($params) {
         if (!empty($params['pdid'])) {
             $this->db->Execute(
-                'DELETE FROM pdsprojects WHERE pdid = ?',
+                'DELETE FROM pdprojects WHERE pdid = ?',
                 array($params['pdid'])
             );
 
             foreach ($params['invprojects'] as $p)
                 $this->db->Execute(
-                    'INSERT INTO pdsprojects (pdid, projectid) VALUES (?, ?)',
+                    'INSERT INTO pdprojects (pdid, projectid) VALUES (?, ?)',
                     array($params['pdid'], $p)
                 );
             }
