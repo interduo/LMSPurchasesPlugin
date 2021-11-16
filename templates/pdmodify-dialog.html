@@ -27,7 +27,7 @@
                         {icon name="description" label="Type"}
                     </td>
                     <td>
-                        <select id="dialog-pdtypeid" name="addpd[pdtypeid]" class="lms-ui-advanced-select">
+                        <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select">
                         {foreach $typeslist as $pd}
                             <option value="{$pd.id}">#{$pd.id} - {$pd.name|trunescape:"25"}</option>
                         {/foreach}
@@ -149,8 +149,8 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
-        $( "#dialog-id", "#dialog-pdtypeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-customerid" ).val();
-        updateAdvancedSelects("#dialog-pdtypeid");
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-customerid" ).val();
+        updateAdvancedSelects("#dialog-typeid");
         updateAdvancedSelects("#dialog-customerid");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
     };
@@ -160,8 +160,8 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
         if (template_id) {
             var row = $('[data-template-id=' + template_id + ']');
-            $("#dialog-pdtypeid").val($(row).find("[data-template-pdtypeid]").attr('data-template-pdtypeid'));
-            updateAdvancedSelects("#dialog-pdtypeid");
+            $("#dialog-typeid").val($(row).find("[data-template-pdtypeid]").attr('data-template-pdtypeid'));
+            updateAdvancedSelects("#dialog-typeid");
             $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
             $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
             $("#dialog-grossvalue").val($(row).find("[data-template-grossvalue]").attr('data-template-grossvalue'));
