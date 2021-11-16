@@ -15,9 +15,17 @@
                 {icon name="money" label="Payment"}
                 <select size="1" name="payments" onchange="document.filter.submit();">
                     <option value="" {if empty($params.payments)} selected{/if}>{trans("filter off")}</option>
-                    <option value="-1" {if !empty($params.payments) && $params.payments=='-1'} selected{/if}>{trans("Unpaid only")}</option>
-                    <option value="-2" {if !empty($params.payments) && $params.payments=='-2'} selected{/if}>{trans("with upcoming payment date")}</option>
+                    <option value="-1" {if !empty($params.payments) && $params.payments=='-1'} selected{/if}>{trans("unpaid only")}</option>
+                    <option value="-2" {if !empty($params.payments) && $params.payments=='-2'} selected{/if}>{trans("with upcoming payment date (to 3 days)")}</option>
+                    <option value="-3" {if !empty($params.payments) && $params.payments=='-3'} selected{/if}>{trans("with upcoming payment date (to 7 days)")}</option>
+                    <option value="-4" {if !empty($params.payments) && $params.payments=='-4'} selected{/if}>{trans("with upcoming payment date (to 14 days)")}</option>
+                    <option value="-5" {if !empty($params.payments) && $params.payments=='-5'} selected{/if}>{trans("expired only")}</option>
                 </select>
+            </td>
+            <td>
+                {icon name="money" label="Gross value"}
+                <input type="text" size="6" name="valuefrom" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();">
+                <input type="text" size="6" name="valueto" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();">
             </td>
             <td>
                 {icon name="timetable" label="Document date"}
@@ -37,6 +45,9 @@
         <tr class="bold">
             <td>
                 {icon name="id" label="ID"}
+            </td>
+            <td>
+                {icon name="type" label="Type"}
             </td>
             <td>
                 {icon name="summary" label="Purchase document number"}
@@ -73,6 +84,9 @@
             data-template-id="{$pd.id}">
             <td>
                 {$pd.id}
+            </td>
+            <td data-template-type="{$pd.pdtypeid}">
+                {$pd.pdtypename|escape}
             </td>
             <td data-template-fullnumber="{$pd.fullnumber}">
                 {$pd.fullnumber|escape}
