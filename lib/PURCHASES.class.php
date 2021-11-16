@@ -108,7 +108,7 @@ private $db;            // database object
         }
 
         $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, ' . $this->db->Concat('pt.name') . ' AS pdtypename, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
                     pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.customerid = cv.id)
