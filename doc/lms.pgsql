@@ -18,6 +18,8 @@ CREATE TABLE pds (
     description varchar(254) DEFAULT NULL,
     customerid integer NOT NULL
         CONSTRAINT pds_customerid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    typeid integer DEFAULT NULL
+        CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY (id),
     CONSTRAINT pds_customerid_ukey UNIQUE (fullnumber, customerid)
 );
@@ -37,18 +39,4 @@ CREATE TABLE pdtypes (
     PRIMARY KEY (id)
 );
 
-/* --------------------------------------------------------
-Structure of table "pdattachments"
--------------------------------------------------------- */
-
-DROP TABLE IF EXISTS pdattachments CASCADE;
-CREATE TABLE pdattachments (
-	pdid integer NOT NULL
-	    REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
-	filename varchar(255) DEFAULT '' NOT NULL,
-	contenttype varchar(255) DEFAULT '' NOT NULL
-);
-
-/* CREATE INDEX rtattachments_message_idx ON rtattachments (messageid); */
-
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111001');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021115001');
