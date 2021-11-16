@@ -29,6 +29,9 @@ private $db;            // database object
             case 'netvalue':
                 $orderby = ' ORDER BY pds.netvalue';
                 break;
+            case 'grossvalue':
+                $orderby = ' ORDER BY pds.grossvalue';
+                break;
             case 'description':
                 $orderby = ' ORDER BY pds.description';
                 break;
@@ -45,7 +48,16 @@ private $db;            // database object
                     $paymentsfilter = ' AND paydate IS NULL';
                     break;
                 case '-2':
-                    $paymentsfilter = ' AND paydate IS NULL AND (deadline - ?NOW? > 259200)';
+                    $paymentsfilter = ' AND paydate IS NULL AND (deadline - ?NOW? < 3*86400)';
+                    break;
+                case '-3':
+                    $paymentsfilter = ' AND paydate IS NULL AND (deadline - ?NOW? < 7*86400)';
+                    break;
+                case '-4':
+                    $paymentsfilter = ' AND paydate IS NULL AND (deadline - ?NOW? < 14*86400)';
+                    break;
+                case '-5':
+                    $paymentsfilter = ' AND paydate IS NULL AND (deadline+86399 < ?NOW?)';
                     break;
                 case 'all':
                 default:
@@ -80,8 +92,19 @@ private $db;            // database object
                 case 'all':
                 default:
                     $periodfilter = '';
+                    $paymentsfilter = '';
                     break;
             }
+        }
+
+        // VALUE FROM FILTER
+        $valuefrom = intval($valuefrom);
+        if (!empty($valuefrom)) {
+            $valuefromfilter = ' AND grossvalue >= ' . $valuefrom;
+        }
+        $valueto = intval($valueto);
+        if (!empty($valueto)) {
+            $valuetofilter = ' AND grossvalue <= ' . $valueto;
         }
 
         return $this->db->GetAllByKey(
@@ -93,6 +116,8 @@ private $db;            // database object
                 WHERE 1=1'
             . $paymentsfilter
             . $periodfilter
+            . $valuefromfilter
+            . $valuetofilter
             . $orderby,
             'id'
         );
