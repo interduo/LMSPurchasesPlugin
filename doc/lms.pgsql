@@ -45,5 +45,7 @@ INSERT INTO public.pdtypes (id, name, description) VALUES (3, 'korekta', NULL);
 INSERT INTO public.pdtypes (id, name, description) VALUES (4, 'rachunek', NULL);
 INSERT INTO public.pdtypes (id, name, description) VALUES (5, 'decyzja płatnicza', NULL);
 INSERT INTO public.pdtypes (id, name, description) VALUES (6, 'opłata za rachunek bankowy', NULL);
+INSERT INTO public.pdtypes (id, name, description) VALUES (7, 'proforma', NULL);
+INSERT INTO public.pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021115001');
