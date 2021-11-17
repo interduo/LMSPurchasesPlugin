@@ -4,7 +4,7 @@ Opis:
 Wtyczka: LMS Purchases documents Plugin (PD)
 
 Wtyczka z listą dokumentów zakupowych.
-**Wsparcie tylko dla postgresql.**
+**UWAGA: Wsparcie tylko dla PostgreSQL.**
 
 Instalacja wtyczki:
 1. git submodule add https://github.com/interduo/LMSPurchasesPlugin/ plugins/LMSPurchasesPlugin
