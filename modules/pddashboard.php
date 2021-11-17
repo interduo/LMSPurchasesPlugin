@@ -24,6 +24,7 @@
  *  $Id$
  */
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
+$PD_STATS = LMSPurchasesPlugin::getPurchasesStats();
 
 $layout['pagetitle'] = trans('Purchase documents dashboard');
 
@@ -41,6 +42,7 @@ if (empty($_GET['payments'])) {
 if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkConfig('privileges.hide_sysinfo')) {
     $SI = new Sysinfo;
     $SMARTY->assign('sysinfo', $SI->get_sysinfo());
+    $SMARTY->assign('pdstats', $PD_STATS->PDStats());
 }
 
 $layout['plugins'] = $plugin_manager->getAllPluginInfo();
