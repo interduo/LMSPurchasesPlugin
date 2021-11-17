@@ -24,8 +24,8 @@
             </td>
             <td>
                 {icon name="money" label="Gross value"}
-                <input type="text" size="6" name="valuefrom" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();">
-                <input type="text" size="6" name="valueto" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();">
+                <input type="text" size="6" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();">
+                <input type="text" size="6" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();">
             </td>
             <td>
                 {icon name="timetable" label="Document date"}
@@ -126,7 +126,9 @@
           </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
-                {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
+                {if !$pd.paydate}
+                    {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
+                {/if}
                 {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
             </td>
         </tr>

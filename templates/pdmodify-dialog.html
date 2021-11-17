@@ -107,11 +107,11 @@
                         {icon name="customer" label="Supplier"}
                     </td>
                     <td>
-                        <select id="dialog-customerid" name="addpd[customerid]" class="lms-ui-advanced-select" required>
-                        <option value="">{trans("Select supplier")}</option>
-                        {foreach $supplierslist as $s}
+                        <select id="dialog-customerid" name="addpd[customerid]" onChange="updateAdvancedSelects('#dialog-customerid')" class="lms-ui-advanced-select" required>
+                            <option value="">{trans("Select supplier")}</option>
+                            {foreach $supplierslist as $s}
                             <option value="{$s.id}" {if $s.id == $addpd.customerid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
-                        {/foreach}
+                            {/foreach}
                         </select>
                     </td>
                 </tr>
@@ -172,6 +172,7 @@
     function open_modify_dialog (template_id) {
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
+
         if (template_id) {
             var row = $('[data-template-id=' + template_id + ']');
             $("#dialog-typeid").val($(row).find("[data-template-typeid]").attr('data-template-typeid'));
