@@ -11,41 +11,24 @@ private $db;
     {
         $this->db = LMSDB::getInstance();
     }
+
     public function PDStats()
     {
-        global $PDSTATUSES;
+        global $PDSTATS;
         $sql = '';
-        foreach ($PDSTATUSES as $statusidx => $status) {
-            $sql .= ' COUNT(CASE WHEN status = ' . $statusidx . ' THEN 1 END) AS ' . $status['alias'] . ',';
-        }
+            $sql .= ' COUNT(*) AS overdue,';
         $result = $this->db->GetRow(
-            'SELECT ' . $sql . ' COUNT(id) AS total
+            'SELECT
+            SUM(grossvalue) AS overduevalue,
+            ' . $sql . '  COUNT(id) AS total
             FROM pds
+            WHERE paydate IS NULL AND (deadline+86399 < ?NOW?)
             '
         );
-
-        $tmp = $this->db->GetRow(
-            'SELECT
-                SUM(a.value) * -1 AS debtvalue,
-                COUNT(*) AS debt,
-                SUM(CASE WHEN a.status = ? THEN a.value ELSE 0 END) * -1 AS debtcollectionvalue
-            FROM (
-                SELECT status, balance AS value
-                FROM pds
-            ) a',
-            array(
-                PD_DEBT_COLLECTION,
-            )
-        );
-
-        if (is_array($tmp)) {
-            $result = array_merge($result, $tmp);
-        }
-
         return $result;
+    }
 
-        }
-
+// copied from CustomerStats:
     public function SupplierStats()
     {
         global $CSTATUSES;

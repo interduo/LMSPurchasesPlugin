@@ -1,4 +1,3 @@
-BEGIN;
 
 /* --------------------------------------------------------
 Structure of table "pdtypes"
@@ -67,4 +66,3 @@ INSERT INTO pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111601');
 
-COMMIT;
