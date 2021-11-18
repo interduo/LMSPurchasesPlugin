@@ -13,11 +13,11 @@ Instalacja wtyczki:
 4. Nadaj uprawnienia użytkownikowi do wtyczki
 
 **TODO: (dla wersji beta)**
-- wrzucanie skanów dokumentów kosztowych,
+- wrzucanie skanów dokumentów kosztowych z podglądem,
 - kategorie dla dokumentów finansowych,
-- rozbijanie dokumentów na "wydatki",
 
 **TODO: (po beta)**
+- rozbijanie dokumentów na "wydatki",
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 - podsumowanie dokumentów kosztowych na dashboard,
 
