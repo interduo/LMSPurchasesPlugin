@@ -107,10 +107,11 @@
                         {icon name="customer" label="Supplier"}
                     </td>
                     <td>
-                        <select id="dialog-customerid" name="addpd[customerid]" onChange="updateAdvancedSelects('#dialog-customerid')" class="lms-ui-advanced-select" required>
+                        <select id="dialog-supplierid" name="addpd[supplierid]" onChange="updateAdvancedSelects( '#dialog-supplierid' )"
+                            class="lms-ui-advanced-select" required>
                             <option value="">{trans("Select supplier")}</option>
                             {foreach $supplierslist as $s}
-                            <option value="{$s.id}" {if $s.id == $addpd.customerid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
+                            <option value="{$s.id}" {if $s.id == $addpd.supplierid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                     </td>
@@ -162,10 +163,11 @@
     function open_add_dialog() {
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-customerid", "#dialog-invprojects" ).val();
+        $( "#dialog-fullnumber" ).removeAttr('value');
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val();
         updateAdvancedSelects("#dialog-typeid");
-        updateAdvancedSelects("#dialog-customerid");
+        $('#dialog-supplierid option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-supplierid");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
     };
 
@@ -184,8 +186,12 @@
             $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
             $("#dialog-paydate").val($(row).find("[data-template-paydate]").attr('data-template-paydate'));
             $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
-            $("#dialog-customerid").val($(row).find("[data-template-customerid]").attr('data-template-customerid'));
-            updateAdvancedSelects("#dialog-customerid");
+            var selectedsupplier = $(row).find("[data-template-supplierid]").attr('data-template-supplierid');
+            $('#dialog-supplierid option').removeAttr('selected');
+            $("#dialog-supplierid option[value='" + selectedsupplier + "']").attr("selected", "true");
+            $("#dialog-supplierid").val( selectedsupplier );
+            $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
+            updateAdvancedSelects("#dialog-supplierid");
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
     };
