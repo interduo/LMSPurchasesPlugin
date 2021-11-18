@@ -156,14 +156,18 @@ private $db;            // database object
 
     public function GetPurchaseDocumentInfo($id)
     {
-        $result = $this->db->GetAll('SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
+        $result = $this->db->GetRow('SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
             pds.sdate, pds.deadline, pds.paydate, pds.description,
-            pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
+            pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
             WHERE pds.id = ?',
             array($id)
         );
+
+        if ($result) {
+            $result['projects'] = $this->GetAssignedProjects($id);
+        }
 
         return $result;
     }

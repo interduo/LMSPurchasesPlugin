@@ -29,9 +29,9 @@
                     <td>
                         <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select">
                             <option value="">{trans("undefined")}</option>
-                        {foreach $typeslist as $pd}
-                            <option value="{$pd.id}">{$pd.name|trunescape:"25"}</option>
-                        {/foreach}
+                            {foreach $typeslist as $pd}
+                            <option value="{$pd.id}" {if $pdinfo.typeid == $pd.id} selected{/if}>{$pd.name|trunescape:"25"}</option>
+                            {/foreach}
                         </select>
                     </td>
                 </tr>
@@ -65,7 +65,7 @@
                     </td>
                     <td>
                         <input
-                            type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate}"
+                            type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate|date_format:'%Y/%m/%d'}"
                             placeholder="{trans('yyyy/mm/dd')}"
                             {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
                             required>
@@ -77,7 +77,7 @@
                     </td>
                     <td>
                         <input
-                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate}"
+                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
                             placeholder="{trans('yyyy/mm/dd')}"
                             {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
                     </td>
@@ -96,7 +96,7 @@
                     </td>
                     <td>
                         <input
-                            type="text" id="dialog-deadline" name="addpd[deadline]" value="{$pdinfo.deadline}"
+                            type="text" id="dialog-deadline" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:'%Y/%m/%d'}"
                             placeholder="{trans('yyyy/mm/dd')}"
                             {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}
                             required>
@@ -111,7 +111,7 @@
                             class="lms-ui-advanced-select" required>
                             <option value="">{trans("Select supplier")}</option>
                             {foreach $supplierslist as $s}
-                            <option value="{$s.id}" {if $s.id == $addpd.supplierid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
+                            <option value="{$s.id}" {if $s.id == $pdinfo.supplierid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                     </td>
@@ -123,7 +123,7 @@
                     <td>
                         <select id="dialog-invprojects" name="addpd[invprojects][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
-                                <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
+                                <option value="{$p.id}" {foreach $pdinfo.projects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                     </td>
@@ -165,10 +165,11 @@
         $( "#addpd-form" )[0].reset();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
         $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
-
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
+        $('#dialog-invprojects option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-invprojects");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
     };
 
@@ -193,6 +194,11 @@
             $("#dialog-supplierid").val( selectedsupplier );
             $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
             updateAdvancedSelects("#dialog-supplierid");
+
+            var assignedprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
+            console.log(assignedprojects);
+            $("#dialog-invprojects option[value='" + assignedprojects + "']").attr("selected", "true");
+            updateAdvancedSelects("#dialog-invprojects");
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
     };
