@@ -32,12 +32,12 @@ CREATE TABLE pds (
     deadline integer DEFAULT NULL,
     paydate integer DEFAULT NULL,
     description varchar(254) DEFAULT NULL,
-    customerid integer NOT NULL
-        CONSTRAINT pds_customerid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    supplierid integer NOT NULL
+        CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
     typeid integer DEFAULT NULL
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY (id),
-    CONSTRAINT pds_customerid_ukey UNIQUE (fullnumber, customerid)
+    CONSTRAINT pds_supplierid_ukey UNIQUE (fullnumber, supplierid)
 );
 
 /* --------------------------------------------------------

@@ -55,7 +55,7 @@ switch ($action) {
     case 'modify':
         $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
         $SMARTY->assign('pdinfo', $pdinfo);
-        if (isset($pdinfo)) {
+        if (isset($addpd)) {
             $addpd['id'] = $id;
             $PURCHASES->UpdatePurchaseDocument($addpd);
             $SESSION->redirect('?m=pdlist');
