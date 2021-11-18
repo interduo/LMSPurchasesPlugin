@@ -196,8 +196,11 @@
             updateAdvancedSelects("#dialog-supplierid");
 
             var assignedprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
-            /// TUTAJ UZUPELNIJ TO
-            $("#dialog-invprojects option[value='" + assignedprojects + "']").attr("selected", "true");
+            var match = assignedprojects.split(";");
+            $('#dialog-invprojects option:selected').removeAttr('selected');
+            match.forEach(function(item) {
+                $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
+            });
             updateAdvancedSelects("#dialog-invprojects");
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
