@@ -112,18 +112,16 @@
             <td data-template-description="{$pd.description}" {tip text=$pd.description}>
                 {$pd.description|trunescape:40}
             </td>
-            <td data-template-customerid="{$pd.customerid}" {tip text=$pd.customername}>
-                <a href="?m=customerinfo&id={$pd.customerid}">
-                    {$pd.customername|trunescape:25:"&hellip;":true}
+            <td data-template-supplierid="{$pd.supplierid}" {tip text=$pd.suppliername}>
+                <a href="?m=customerinfo&id={$pd.supplierid}">
+                    {$pd.suppliername|trunescape:25:"&hellip;":true}
                 </a>
-           </td>
-           <td>
-               {foreach $pd.projects as $p}
-                   <a href="?m=invprojectedit&id={$p.id}">
-                       {$p.name|trunescape:25:"&hellip;":true}
-                   </a>
-               {/foreach}
-          </td>
+            </td>
+            <td data-template-invprojects="TUTAJ UZUPELNIJ DANE">
+                {foreach $pd.projects as $p}
+                    <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a>
+                {/foreach}
+            </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {if !$pd.paydate}

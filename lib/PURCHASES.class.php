@@ -17,8 +17,8 @@ private $db;            // database object
         }
 
         switch ($orderby) {
-            case 'customerid':
-                $orderby = ' ORDER BY pds.customerid';
+            case 'supplierid':
+                $orderby = ' ORDER BY pds.supplierid';
                 break;
             case 'sdate':
                 $orderby = ' ORDER BY pds.sdate';
@@ -109,9 +109,9 @@ private $db;            // database object
 
         $result = $this->db->GetAllByKey(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
-                    pds.description, pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
+                    pds.description, pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
-                    LEFT JOIN customers cv ON (pds.customerid = cv.id)
+                    LEFT JOIN customers cv ON (pds.supplierid = cv.id)
                     LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
                 WHERE 1=1'
             . $paymentsfilter
@@ -156,14 +156,18 @@ private $db;            // database object
 
     public function GetPurchaseDocumentInfo($id)
     {
-        $result = $this->db->GetAll('SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
+        $result = $this->db->GetRow('SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
             pds.sdate, pds.deadline, pds.paydate, pds.description,
-            pds.customerid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS customername
+            pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
-                LEFT JOIN customers cv ON (pds.customerid = cv.id)
+                LEFT JOIN customers cv ON (pds.supplierid = cv.id)
             WHERE pds.id = ?',
             array($id)
         );
+
+        if ($result) {
+            $result['projects'] = $this->GetAssignedProjects($id);
+        }
 
         return $result;
     }
@@ -181,11 +185,11 @@ private $db;            // database object
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'description' => empty($args['description']) ? null : $args['description'],
-            'customerid' => $args['customerid'],
+            'supplierid' => $args['supplierid'],
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, customerid) 
+            'INSERT INTO pds (typeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, supplierid) 
                     VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
         );
 
@@ -225,13 +229,13 @@ private $db;            // database object
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'description' => empty($args['description']) ? null : $args['description'],
-            'customerid' => $args['customerid'],
+            'supplierid' => $args['supplierid'],
             'id' => $args['id'],
         );
 
         $result = $this->db->Execute(
             'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, grossvalue = ?, sdate = ?, deadline = ?,
-                    paydate = ? , description = ?, customerid = ? WHERE id = ?', $args
+                    paydate = ? , description = ?, supplierid = ? WHERE id = ?', $args
             );
 
         return $result;
