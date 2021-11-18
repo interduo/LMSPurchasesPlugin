@@ -162,9 +162,10 @@
 
     function open_add_dialog() {
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
+        $( "#addpd-form" )[0].reset();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $( "#dialog-fullnumber" ).removeAttr('value');
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val();
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
+
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
