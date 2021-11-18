@@ -117,7 +117,7 @@
                     {$pd.suppliername|trunescape:25:"&hellip;":true}
                 </a>
             </td>
-            <td data-template-invprojects="TUTAJ UZUPELNIJ DANE">
+            <td data-template-invprojects="{foreach $pd.projects as $p}{$p.id};{/foreach}">
                 {foreach $pd.projects as $p}
                     <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a>
                 {/foreach}
