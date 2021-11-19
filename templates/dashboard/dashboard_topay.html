@@ -1,0 +1,116 @@
+{if !ConfigHelper::checkPrivilege('hide_summaries')}
+<table class="lmsbox" id="lms-ui-welcome-box-topay">
+    <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 25%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <td colspan="2" class="text-center bold">
+                <i class="lms-ui-icon-value"></i> {trans("To pay at")}
+            </td>
+            <td colspan="2" class="text-center bold">
+                <i class="lms-ui-icon-value"></i> {trans("To pay to")}
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-5">{trans("Overdue")}:</a>
+            </td>
+            <td>
+                {$pdstats.overdue} ({trans("amount")} {moneyf($pdstats.overduevalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-5">{trans("Overdue")}:</a>
+            </td>
+            <td>
+                {$pdstats.overdue} ({trans("amount")} {moneyf($pdstats.overduevalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="">{trans("Today")}:</a>
+            </td>
+            <td>
+                {$pdstats.today} ({trans("amount")} {moneyf($pdstats.todayvalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="">{trans("Today")}:</a>
+            </td>
+            <td>
+                {$pdstats.2today} ({trans("amount")} {moneyf($pdstats.2todayvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="">{trans("Tomorrow")}:</a>
+            </td>
+            <td>
+                {$pdstats.tomorrow} ({trans("amount")} {moneyf($pdstats.tomorrowvalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="">{trans("Tomorrow")}:</a>
+            </td>
+            <td>
+                {$pdstats.2tomorrow} ({trans("amount")} {moneyf($pdstats.2tomorrowvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="">{trans("two days")}:</a>
+            </td>
+            <td>
+                {$pdstats.twodays} ({trans("amount")} {moneyf($pdstats.twodaysvalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="">{trans("two days")}:</a>
+            </td>
+            <td>
+                {$pdstats.2twodays} ({trans("amount")} {moneyf($pdstats.2twodaysvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-2&period=3">{trans("at 3 days")}:</a>
+            </td>
+            <td>
+                {$pdstats.in3days} ({trans("amount")} {moneyf($pdstats.in3daysvalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-2&period=3">{trans("in 3 days")}:</a>
+            </td>
+            <td>
+                {$pdstats.in3days} ({trans("amount")} {moneyf($pdstats.in3daysvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-3&period=3">{trans("at 7 days")}:</a>
+            </td>
+            <td>
+                {$pdstats.in7days} ({trans("amount")} {moneyf($pdstats.in7daysvalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-3&period=3">{trans("In 7 days")}:</a>
+            </td>
+            <td>
+                {$pdstats.in7days} ({trans("amount")} {moneyf($pdstats.in7daysvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+            </td>
+            <td>
+            </td>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-4&period=3">{trans("In 14 days")}:</a>
+            </td>
+            <td>
+                {$pdstats.in14days} ({trans("amount")} {moneyf($pdstats.in14daysvalue)})
+            </td>
+        </tr>
+    </tbody>
+</table>
+{/if}

@@ -1,13 +1,13 @@
 {if !ConfigHelper::checkPrivilege('hide_summaries')}
 <table class="lmsbox" id="lms-ui-welcome-box-summaries">
     <colgroup>
-        <col style="width: 50%;">
-        <col style="width: 50%;">
+        <col style="width: 25%;">
+        <col style="width: 25%;">
     </colgroup>
     <thead>
         <tr>
             <td colspan="2" class="text-center bold">
-                <i class="lms-ui-icon-node"></i> {trans("Purchase documents in current month:")}
+                <i class="lms-ui-icon-value"></i> {trans("Purchases")}
             </td>
         </tr>
     </thead>
@@ -30,65 +30,10 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="">{trans("Today")}:</a>
-            </td>
-            <td>
-                {$pdstats.today} ({trans("amount")} {moneyf($pdstats.todayvalue)})
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="">{trans("Tomorrow")}:</a>
-            </td>
-            <td>
-                {$pdstats.tomorrow} ({trans("amount")} {moneyf($pdstats.tomorrowvalue)})
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="">{trans("Later")}:</a>
-            </td>
-            <td>
-                {$pdstats.later} ({trans("amount")} {moneyf($pdstats.latervalue)})
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
                 <a href="?m=pdlist&payments=-5">{trans("All unpaid:")}</a>
             </td>
             <td>
                 {$pdstats.unpaid} ({trans("amount")} {moneyf($pdstats.unpaidvalue)})
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                To pay in next:
-            </td>
-            <td>
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=pdlist&payments=-2&period=3">{trans("In 3 days")}:</a>
-            </td>
-            <td>
-                {$pdstats.in3days} ({trans("amount")} {moneyf($pdstats.in3daysvalue)})
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=pdlist&payments=-3&period=3">{trans("In 7 days")}:</a>
-            </td>
-            <td>
-                {$pdstats.in7days} ({trans("amount")} {moneyf($pdstats.in7daysvalue)})
-            </td>
-        </tr>
-        <tr>
-            <td class="text-right bold">
-                <a href="?m=pdlist&payments=-4&period=3">{trans("In 14 days")}:</a>
-            </td>
-            <td>
-                {$pdstats.in14days} ({trans("amount")} {moneyf($pdstats.in14daysvalue)})
             </td>
         </tr>
         <tr>
@@ -102,6 +47,14 @@
         <tr>
             <td class="text-right bold">
                 <a href="?m=pdlist&payments=-1">{trans("All not paid")}:</a>
+            </td>
+            <td>
+                {$pdstats.allunpaidmonth} ({trans("amount")} {moneyf($pdstats.allunpaidvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-1">{trans("To pay in next month")}:</a>
             </td>
             <td>
                 {$pdstats.allunpaidmonth} ({trans("amount")} {moneyf($pdstats.allunpaidvalue)})
