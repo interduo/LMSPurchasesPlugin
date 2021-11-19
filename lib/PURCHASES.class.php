@@ -207,7 +207,67 @@ private $db;            // database object
         return $result;
     }
 
-    public function AddPurchaseDocument($args)
+    private function SavePDAttachments($ticketid, $messageid, $files, $cleanup = false)
+    {
+        $pd_dir = ConfigHelper::getConfig('pd.mail_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', ConfigHelper::getConfig('pd.mail_dir_permission', '0700')), 8);
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'root');
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'root');
+
+        if (!empty($files) && $pd_dir) {
+            $ticket_dir = $pd_dir . DIRECTORY_SEPARATOR . sprintf('%06d', $ticketid);
+            $message_dir = $ticket_dir . DIRECTORY_SEPARATOR . sprintf('%06d', $messageid);
+
+            @umask(0007);
+
+            @mkdir($ticket_dir, $storage_dir_permission);
+            @chown($ticket_dir, $storage_dir_owneruid);
+            @chgrp($ticket_dir, $storage_dir_ownergid);
+            @mkdir($message_dir, $storage_dir_permission);
+            @chown($message_dir, $storage_dir_owneruid);
+            @chgrp($message_dir, $storage_dir_ownergid);
+
+            $dirs_to_be_deleted = array();
+            foreach ($files as $file) {
+                // handle spaces and unknown characters in filename
+                // on systems having problems with that
+                $filename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
+                $dstfile = $message_dir . DIRECTORY_SEPARATOR . $filename;
+                if (isset($file['content'])) {
+                    $fh = @fopen($dstfile, 'w');
+                    if (empty($fh)) {
+                        continue;
+                    }
+                    fwrite($fh, $file['content'], strlen($file['content']));
+                    fclose($fh);
+                } else {
+                    if ($cleanup) {
+                        $dirs_to_be_deleted[] = dirname($file['name']);
+                    }
+                    if (!@rename(isset($file['tmp_name']) ? $file['tmp_name'] : $file['name'], $dstfile)) {
+                        continue;
+                    }
+                }
+
+                @chown($dstfile, $storage_dir_owneruid);
+                @chgrp($dstfile, $storage_dir_ownergid);
+
+                $this->db->Execute(
+                    'INSERT INTO pdattachments (pdid, filename, contenttype)
+                    VALUES (?, ?, ?)',
+                    array($messageid, $filename, $file['type'])
+                );
+            }
+            if (!empty($dirs_to_be_deleted)) {
+                $dirs_to_be_deleted = array_unique($dirs_to_be_deleted);
+                foreach ($dirs_to_be_deleted as $dir) {
+                    rrmdir($dir);
+                }
+            }
+        }
+    }
+
+    public function AddPurchaseDocument($args, $files = null)
     {
         $invprojects = empty($args['invprojects']) ? null : $args['invprojects'];
 
@@ -233,6 +293,8 @@ private $db;            // database object
             $params['pdid'] = $this->db->GetLastInsertID('pds');
             $this->SetAssignedProjects($params);
         }
+
+        $this->SavePDAttachments($params['pdid'], $params['pdid'], $files);
 
         return $result;
     }

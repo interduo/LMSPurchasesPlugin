@@ -63,4 +63,16 @@ INSERT INTO pdtypes (id, name, description) VALUES (6, 'opłata za rachunek bank
 INSERT INTO pdtypes (id, name, description) VALUES (7, 'proforma', NULL);
 INSERT INTO pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111601');
+/* --------------------------------------------------------
+Structure of table "pdattachments"
+-------------------------------------------------------- */
+
+DROP TABLE IF EXISTS pdattachments CASCADE;
+CREATE TABLE pdattachments (
+    pdid integer NOT NULL
+        REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    filename varchar(255) DEFAULT '' NOT NULL,
+    contenttype varchar(255) DEFAULT '' NOT NULL
+);
+
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111901');

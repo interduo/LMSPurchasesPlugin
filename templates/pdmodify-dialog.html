@@ -130,10 +130,11 @@
                 </tr>
                 <tr>
                     <td class="nobr">
-                        {icon name="fileupload" label="Document scan"}
+                        {box_row icon="attachment" label="Attachments" icon_class="fa-fw"}
                     </td>
                     <td>
-                        {fileupload id="attachments" fileupload=$fileupload form="addp-form"}
+                        {fileupload id="files" fileupload=$fileupload form="addpd-form"}
+                        {/box_row}
                     </td>
                 </tr>
                 <tr>
