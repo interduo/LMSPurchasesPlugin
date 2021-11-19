@@ -40,10 +40,10 @@ class PurchasesInitHandler {
      */
 	public function menuInit(array $hook_data = array()) {
 		$hook_data['finances']['submenu'][] = array(
-			'name' => trans('Purchase documents dashboard'),
+			'name' => trans('Dashboard'),
 			'link' => '?m=pddashboard',
 			'tip' => trans('Purchase documents dashboard'),
-			'prio' => 181,
+			'prio' => 180,
 		);
 		$hook_data['finances']['submenu'][] = array(
 			'name' => trans('Purchase document list'),

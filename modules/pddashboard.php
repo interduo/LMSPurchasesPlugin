@@ -44,7 +44,6 @@ if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkCon
     $SMARTY->assign('pdstats', $PD_STATS->PDStats());
 }
 
-
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
 $SMARTY->assign('dashboard_sortable_order', json_encode($SESSION->get_persistent_setting('dashboard-sortable-order')));

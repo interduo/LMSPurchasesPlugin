@@ -14,15 +14,15 @@
     <tbody>
         <tr>
             <td class="text-right bold">
-                <a href="">{trans("Payed:")}</a>
+                <a href="">{trans("Paid")}:</a>
             </td>
             <td>
-                {$pdstats.payed} ({trans("amount")} {moneyf($pdstats.payedvalue)})
+                {$pdstats.paid} ({trans("amount")} {moneyf($pdstats.paidvalue)})
             </td>
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=pdlist&payments=-5">{trans("Overdue:")}</a>
+                <a href="?m=pdlist&payments=-5">{trans("Overdue")}:</a>
             </td>
             <td>
                 {$pdstats.overdue} ({trans("amount")} {moneyf($pdstats.overduevalue)})
@@ -38,10 +38,10 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="">{trans("Tomorrow")}</a>
+                <a href="">{trans("Tomorrow")}:</a>
             </td>
             <td>
-                {$pdstats.tomorrow} ({trans("amount")} {moneyf($pdstats.tomorrowdvalue)})
+                {$pdstats.tomorrow} ({trans("amount")} {moneyf($pdstats.tomorrowvalue)})
             </td>
         </tr>
         <tr>
@@ -101,7 +101,7 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=pdlist&payments=-1">{trans("All not payed")}:</a>
+                <a href="?m=pdlist&payments=-1">{trans("All not paid")}:</a>
             </td>
             <td>
                 {$pdstats.allunpaidmonth} ({trans("amount")} {moneyf($pdstats.allunpaidvalue)})

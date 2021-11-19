@@ -66,5 +66,8 @@ $_LANG['previous week'] = 'poprzedni tydzień';
 $_LANG['this month'] = 'obecny miesiąc';
 $_LANG['previous quater'] = 'poprzedni kwartał';
 $_LANG['this quater'] = 'obecny kwartał';
+$_LANG['Paid'] = 'Opłacone';
+$_LANG['Overdue'] = 'Przeterminowane';
+$_LANG['Hi'] = 'Cześć';
 
 ?>

@@ -17,7 +17,7 @@ private $db;
     {
 
 // pdstats definitions - todo: wynieść ponad funkcję, klasę, może nawet w osobny plik i korzystać równeiż w filtrach
-define('PD_PAYED', 0);
+define('PD_PAID', 0);
 define('PD_OVERDUE', 1);
 define('PD_TODAY', 2);
 define('PD_IN3DAYS', 3);
@@ -25,10 +25,10 @@ define('PD_IN7DAYS', 4);
 define('PD_IN14DAYS', 5);
 
 $PDSTATS = array(
-    PD_PAYED => array(
-        'summarylabel' => trans('Payed:'),
+    PD_PAID => array(
+        'summarylabel' => trans('Paid:'),
         'filter' => 'paydate IS NOT NULL',
-        'alias' => 'payed'
+        'alias' => 'paid'
     ),
     PD_OVERDUE => array(
         'summarylabel' => trans('Today:'),
