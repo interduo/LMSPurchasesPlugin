@@ -1,0 +1,62 @@
+{if !ConfigHelper::checkPrivilege('hide_sale')}
+<table class="lmsbox" id="lms-ui-welcome-box-sale">
+    <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 25%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <td colspan="2" class="text-center bold">
+                <i class="lms-ui-icon-value"></i> {trans("SALE")}:
+            </td>
+            <td colspan="2" class="text-center bold">
+                <i class="lms-ui-icon-value"></i> {trans("INCOME")}:
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=print">{trans("Two months ago:")}</a>
+            </td>
+            <td>
+                {$dashboardstats.s2ma} ({trans("amount")} {moneyf($dashboardstats.s2mavalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="?m=print">{trans("Two months ago:")}</a>
+            </td>
+            <td>
+                {$dashboardstats.i2ma} ({trans("amount")} {moneyf($dashboardstats.i2mavalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=print">{trans("Last month")}:</a>
+            </td>
+            <td>
+                {$dashboardstats.s1ma} ({trans("amount")} {moneyf($dashboardstats.s1mavalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="?m=print">{trans("Last month")}:</a>
+            </td>
+            <td>
+                {$dashboardstats.i1ma} ({trans("amount")} {moneyf($dashboardstats.i1mavalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=print">{trans("Current month")}:</a>
+            </td>
+            <td>
+                {$dashboardstats.scm} ({trans("amount")} {moneyf($dashboardstats.scmavalue)})
+            </td>
+            <td class="text-right bold">
+                <a href="?m=print">{trans("Current month")}:</a>
+            </td>
+            <td>
+                {$dashboardstats.icm} ({trans("amount")} {moneyf($dashboardstats.icmavalue)})
+            </td>
+        </tr>
+    </tbody>
+</table>
+{/if}

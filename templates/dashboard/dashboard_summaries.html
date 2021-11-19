@@ -1,0 +1,65 @@
+{if !ConfigHelper::checkPrivilege('hide_summaries')}
+<table class="lmsbox" id="lms-ui-welcome-box-summaries">
+    <colgroup>
+        <col style="width: 25%;">
+        <col style="width: 25%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <td colspan="2" class="text-center bold">
+                <i class="lms-ui-icon-value"></i> {trans("Purchases")}
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-right bold">
+                <a href="">{trans("Paid")}:</a>
+            </td>
+            <td>
+                {$pdstats.paid} ({trans("amount")} {moneyf($pdstats.paidvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-5">{trans("Overdue")}:</a>
+            </td>
+            <td>
+                {$pdstats.overdue} ({trans("amount")} {moneyf($pdstats.overduevalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-5">{trans("All unpaid:")}</a>
+            </td>
+            <td>
+                {$pdstats.unpaid} ({trans("amount")} {moneyf($pdstats.unpaidvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-1&period=3">{trans("Unpaid ot current month")}:</a>
+            </td>
+            <td>
+                {$pdstats.unpaidmonth} ({trans("amount")} {moneyf($pdstats.unpaidvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-1">{trans("All not paid")}:</a>
+            </td>
+            <td>
+                {$pdstats.allunpaidmonth} ({trans("amount")} {moneyf($pdstats.allunpaidvalue)})
+            </td>
+        </tr>
+        <tr>
+            <td class="text-right bold">
+                <a href="?m=pdlist&payments=-1">{trans("To pay in next month")}:</a>
+            </td>
+            <td>
+                {$pdstats.allunpaidmonth} ({trans("amount")} {moneyf($pdstats.allunpaidvalue)})
+            </td>
+        </tr>
+    </tbody>
+</table>
+{/if}
