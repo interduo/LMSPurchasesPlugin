@@ -65,6 +65,7 @@ $_LANG['this week'] = 'obecny tydzień';
 $_LANG['previous week'] = 'poprzedni tydzień';
 $_LANG['this month'] = 'obecny miesiąc';
 $_LANG['previous quater'] = 'poprzedni kwartał';
-$_LANG['this quater'] = 'obecny kwartał';
+$_LANG['current quarter'] = 'obecny kwartał';
+$_LANG['current year'] = 'obecny rok';
 
 ?>
