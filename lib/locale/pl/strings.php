@@ -66,6 +66,9 @@ $_LANG['previous week'] = 'poprzedni tydzień';
 $_LANG['this month'] = 'obecny miesiąc';
 $_LANG['previous quater'] = 'poprzedni kwartał';
 $_LANG['this quater'] = 'obecny kwartał';
+$_LANG['Current month'] = 'Bieżący miesiąc';
+$_LANG['current quarter'] = 'obecny kwartał';
+$_LANG['current year'] = 'obecny rok';
 $_LANG['Paid'] = 'Opłacone';
 $_LANG['Overdue'] = 'Przeterminowane';
 $_LANG['Hi'] = 'Cześć';
@@ -76,6 +79,5 @@ $_LANG['INCOME'] = 'PRZYCHÓD';
 $_LANG['PAYMENTS'] = 'PŁATNOŚCI';
 $_LANG['Two months ago:'] = 'Dwa miesiące temu:';
 $_LANG['Last month'] = 'Poprzedni miesiąc';
-$_LANG['Current month'] = 'Bieżący miesiąc';
 
 ?>

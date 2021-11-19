@@ -89,6 +89,41 @@ private $db;            // database object
                     $previousmonth_lastday = date_to_timestamp(date('Y/m/t', strtotime("last month")));
                     $periodfilter = ' AND sdate BETWEEN ' . $previousmonth_firstday . ' AND ' . $previousmonth_lastday;
                     break;
+                case '5':
+                    $currentmonth = date('n');
+                    switch ($currentmonth) {
+                        case 1:
+                        case 2:
+                        case 3:
+                            $startq = 1;
+                            break;
+                        case 4:
+                        case 5:
+                        case 6:
+                            $startq = 4;
+                            break;
+                        case 7:
+                        case 8:
+                        case 9:
+                            $startq = 7;
+                            break;
+                        case 10:
+                        case 11:
+                        case 12:
+                            $startq = 10;
+                            break;
+                        default:
+                            break;
+                    }
+                    $quarter_start = mktime(0, 0, 0, $startq, 1, date('Y'));
+                    $quarter_end = mktime(0, 0, 0, $startq + 3, 1, date('Y'))-1;
+                    $periodfilter = ' AND sdate BETWEEN ' . $quarter_start . ' AND ' . $quarter_end;
+                    break;
+                case '6':
+                    $currentyear_firstday = date_to_timestamp(date('Y/01/01', strtotime("now")));
+                    $currentyear_lastday = date_to_timestamp(date('Y/12/31', strtotime("now")));
+                    $periodfilter = ' AND sdate BETWEEN ' . $currentyear_firstday . ' AND ' . $currentyear_lastday;
+                    break;
                 case 'all':
                 default:
                     $periodfilter = '';
