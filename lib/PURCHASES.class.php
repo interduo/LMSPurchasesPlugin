@@ -119,6 +119,11 @@ private $db;            // database object
                     $quarter_end = mktime(0, 0, 0, $startq + 3, 1, date('Y'))-1;
                     $periodfilter = ' AND sdate BETWEEN ' . $quarter_start . ' AND ' . $quarter_end;
                     break;
+                case '6':
+                    $currentyear_firstday = date_to_timestamp(date('Y/01/01', strtotime("now")));
+                    $currentyear_lastday = date_to_timestamp(date('Y/12/31', strtotime("now")));
+                    $periodfilter = ' AND sdate BETWEEN ' . $currentyear_firstday . ' AND ' . $currentyear_lastday;
+                    break;
                 case 'all':
                 default:
                     $periodfilter = '';
