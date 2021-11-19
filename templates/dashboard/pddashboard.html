@@ -7,13 +7,16 @@
 		<div id="lms-ui-dashboard-main-panels">
 			<div id="lms-ui-dashboard-panel-1" class="lms-ui-dashboard-main-panel">
 				{block name="dashboard-left-panel"}
-					{include file="dashboard/dashboard_sysinfo_suppliers.html"}
-					{include file="dashboard/dashboard_sysinfo_pdstats.html"}
+					{include file="dashboard/dashboard_welcome.html"}
+					{include file="dashboard/dashboard_sale.html"}
+					{include file="dashboard/dashboard_purchases.html"}
 				{/block}
 			</div>
 			<div id="lms-ui-dashboard-panel-2" class="lms-ui-dashboard-main-panel">
 				{block name="dashboard-right-panel"}
+					{include file="dashboard/dashboard_sysinfo_suppliers.html"}
 					{include file="dashboard/dashboard_summaries.html"}
+					{include file="dashboard/dashboard_sysinfo_pdstats.html"}
 				{/block}
 			</div>
 			{for $panel=3 to intval(ConfigHelper::getConfig('phpui.dashboard_panels', 2))}
@@ -25,18 +28,6 @@
 			{block name="extra-panel"}
 			{/block}
 		</div>
-		{if !ConfigHelper::checkConfig('phpui.hide_fortunes')}
-			<div id="lms-ui-dashboard-bottom-panel">
-				{block name="fortune-panel"}
-					{if $layout.fortune}
-						<div id="fortune" class="cf fall superlight" style="padding: 10px;">
-							<img src="img/totd.gif" alt="Fortune" class="lf" style="margin-right: 10px;">
-							<p class="txt">{$layout.fortune|replace:"\n":"<br>"}</p>
-						</div>
-					{/if}
-				{/block}
-			</div>
-		{/if}
 	</div>
 	<script>
 

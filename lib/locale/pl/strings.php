@@ -69,5 +69,13 @@ $_LANG['this quater'] = 'obecny kwartał';
 $_LANG['Paid'] = 'Opłacone';
 $_LANG['Overdue'] = 'Przeterminowane';
 $_LANG['Hi'] = 'Cześć';
+$_LANG['Today is'] = 'Dzisiaj jest';
+$_LANG['SALE'] = 'SPRZEDAŻ';
+$_LANG['PURCHASES'] = 'KOSZTY';
+$_LANG['INCOME'] = 'PRZYCHÓD';
+$_LANG['PAYMENTS'] = 'PŁATNOŚCI';
+$_LANG['Two months ago:'] = 'Dwa miesiące temu:';
+$_LANG['Last month'] = 'Poprzedni miesiąc';
+$_LANG['Current month'] = 'Bieżący miesiąc';
 
 ?>

@@ -26,7 +26,10 @@
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 $PD_STATS = LMSPurchasesPlugin::getPurchasesStats();
 
-$layout['pagetitle'] = trans('Purchase documents dashboard');
+$layout['pagetitle'] = trans('Finances dashboard');
+
+$date['date']=date("Y-m-d");
+$date['day']=strftime("%A");
 
 // payments filter
 if (empty($_GET['payments'])) {
@@ -44,6 +47,7 @@ if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkCon
     $SMARTY->assign('pdstats', $PD_STATS->PDStats());
 }
 
+$SMARTY->assign('date', $date);
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
 $SMARTY->assign('dashboard_sortable_order', json_encode($SESSION->get_persistent_setting('dashboard-sortable-order')));

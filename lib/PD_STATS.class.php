@@ -16,29 +16,39 @@ private $db;
     public function PDStats()
     {
 
-// pdstats definitions - todo: wynieść ponad funkcję, klasę, może nawet w osobny plik i korzystać równeiż w filtrach
+// pdstats definitions
+// todo:
+// - wynieść ponad funkcję, klasę, może nawet w osobny plik i korzystać równeiż w filtrach
+// - porobic odpowiednie filtry po zakonczeniu templ i okresleniu ktore dane sa potrzebne
+
 define('PD_PAID', 0);
 define('PD_OVERDUE', 1);
 define('PD_TODAY', 2);
-define('PD_IN3DAYS', 3);
-define('PD_IN7DAYS', 4);
-define('PD_IN14DAYS', 5);
+define('PD_TOMORROW', 3);
+define('PD_IN3DAYS', 4);
+define('PD_IN7DAYS', 5);
+define('PD_IN14DAYS', 6);
 
 $PDSTATS = array(
     PD_PAID => array(
-        'summarylabel' => trans('Paid:'),
+        'summarylabel' => trans('Paid'),
         'filter' => 'paydate IS NOT NULL',
         'alias' => 'paid'
     ),
     PD_OVERDUE => array(
-        'summarylabel' => trans('Today:'),
-        'filter' => 'paydate IS NULL AND deadline = ?NOW?',
-        'alias' => 'today'
+        'summarylabel' => trans('Overdue'),
+        'filter' => 'paydate IS NULL AND (deadline+86399 < ?NOW?)',
+        'alias' => 'overdue'
     ),
     PD_TODAY => array(
-        'summarylabel' => trans('Overdue:'),
-        'filter' => 'paydate IS NULL AND deadline+86399 < ?NOW?',
-        'alias' => 'overdue'
+        'summarylabel' => trans('Today'),
+        'filter' => 'paydate IS NULL AND (deadline+86399 > ?NOW?) AND (deadline - ?NOW? < 86399)',
+        'alias' => 'today'
+    ),
+    PD_TOMORROW => array(
+        'summarylabel' => trans('Tomorrow'),
+        'filter' => 'paydate IS NULL AND (deadline+2*86399 > ?NOW?) AND (deadline - ?NOW? < 2*86399)',
+        'alias' => 'tomorrow'
     ),
     PD_IN3DAYS => array(
         'summarylabel' => trans('In 3 days:'),
