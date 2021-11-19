@@ -68,7 +68,7 @@ class PurchasesInitHandler {
 	public function accessTableInit() {
 		$access = AccessRights::getInstance();
 
-		$access->insertPermission(new Permission('Purchases', trans('Purchase document list'), '^Purchases$'),
+		$access->insertPermission(new Permission('Purchases', trans('Purchase document list'), '^pd.*$'),
 			AccessRights::FIRST_FORBIDDEN_PERMISSION);
 	}
 }
