@@ -15,6 +15,7 @@ class LMSPurchasesPlugin extends LMSPlugin {
 	const PLUGIN_AUTHOR = 'Jarosław Kłopotek &lt;jkl@interduo.pl&gt;<br>Grzegorz Cichowski &lt;gc@ptlanet.pl&gt;';
 
 	private static $purchases = null;
+	private static $pd_stats = null;
 
     public static function getPurchasesInstance()
     {
@@ -22,6 +23,13 @@ class LMSPurchasesPlugin extends LMSPlugin {
             self::$purchases = new PURCHASES();
         }
         return self::$purchases;
+    }
+    public static function getPurchasesStats()
+    {
+        if (empty(self::$pd_stats)) {
+            self::$pd_stats = new PD_STATS();
+        }
+        return self::$pd_stats;
     }
 
 	public function registerHandlers() {
