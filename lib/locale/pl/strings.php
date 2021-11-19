@@ -63,7 +63,6 @@ $_LANG['with upcoming payment date (to 14 days)'] = 'ze zbliżającym się termi
 $_LANG['Filters'] = 'Filtry';
 $_LANG['this week'] = 'obecny tydzień';
 $_LANG['previous week'] = 'poprzedni tydzień';
-$_LANG['this month'] = 'obecny miesiąc';
 $_LANG['previous quater'] = 'poprzedni kwartał';
 $_LANG['Current month'] = 'Bieżący miesiąc';
 $_LANG['current quarter'] = 'obecny kwartał';
