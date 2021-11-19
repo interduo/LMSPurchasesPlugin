@@ -64,18 +64,7 @@ $_LANG['Filters'] = 'Filtry';
 $_LANG['this week'] = 'obecny tydzień';
 $_LANG['previous week'] = 'poprzedni tydzień';
 $_LANG['previous quater'] = 'poprzedni kwartał';
-$_LANG['Current month'] = 'Bieżący miesiąc';
 $_LANG['current quarter'] = 'obecny kwartał';
 $_LANG['current year'] = 'obecny rok';
-$_LANG['Paid'] = 'Opłacone';
-$_LANG['Overdue'] = 'Przeterminowane';
-$_LANG['Hi'] = 'Cześć';
-$_LANG['Today is'] = 'Dzisiaj jest';
-$_LANG['SALE'] = 'SPRZEDAŻ';
-$_LANG['PURCHASES'] = 'KOSZTY';
-$_LANG['INCOME'] = 'PRZYCHÓD';
-$_LANG['PAYMENTS'] = 'PŁATNOŚCI';
-$_LANG['Two months ago:'] = 'Dwa miesiące temu:';
-$_LANG['Last month'] = 'Poprzedni miesiąc';
 
 ?>
