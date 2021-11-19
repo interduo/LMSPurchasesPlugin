@@ -23,7 +23,6 @@ if (empty($_GET['period']) || $_GET['payments'] == 'all') {
 }
 
 // valuefrom filter
-
 if (empty($_GET['valuefrom'])) {
     unset($params['valuefrom']);
 } else {
