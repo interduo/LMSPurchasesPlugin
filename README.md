@@ -11,6 +11,7 @@ Instalacja wtyczki:
 2. composer update --no-dev
 3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 4. Nadaj uprawnienia użytkownikowi do wtyczki
+5. Określ w konfiguracji położenie katalogu na upload dokumentów - ConfigHelper::getConfig('pd.mail_dir)
 
 **TODO: (dla wersji beta)**
 - wrzucanie skanów dokumentów kosztowych z podglądem,

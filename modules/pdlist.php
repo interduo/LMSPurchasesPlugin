@@ -1,11 +1,40 @@
 <?php
 
+check_file_uploads();
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
 $action = $_GET['action'];
 $id = $_GET['id'];
 
-$addpd = $_POST['addpd'];
+if (isset($_POST['addpd'])) {
+    $addpd = $_POST['addpd'];
+
+    $result = handle_file_uploads('files', $error);
+    extract($result);
+    $SMARTY->assign('fileupload', $fileupload);
+
+        $attachments = null;
+
+        if (!empty($files)) {
+            foreach ($files as &$file) {
+                $attachments[] = array(
+                    'content_type' => $file['type'],
+                    'filename' => $file['name'],
+                    'data' => file_get_contents($tmppath . DIRECTORY_SEPARATOR . $file['name']),
+                );
+                $file['name'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
+            }
+            unset($file);
+        }
+//$id = $LMS->TicketAdd($ticket, $files);
+
+//        // deletes uploaded files
+//        if (!empty($files) && !empty($tmppath)) {
+//            rrmdir($tmppath);
+//        }
+
+}
+
 $layout['pagetitle'] = trans('Purchase document list');
 
 // payments filter
@@ -48,7 +77,7 @@ $pdlist = $PURCHASES->GetPurchaseDocumentList($params);
 
 switch ($action) {
     case 'add':
-            $PURCHASES->AddPurchaseDocument($addpd);
+            $PURCHASES->AddPurchaseDocument($addpd, $files);
             $SESSION->redirect('?m=pdlist');
         break;
     case 'modify':
