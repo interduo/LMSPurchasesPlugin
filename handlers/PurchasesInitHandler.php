@@ -51,7 +51,7 @@ class PurchasesInitHandler {
 			'tip' => trans('Purchase document list'),
 			'prio' => 181,
 		);
-		$hook_data['finances']['submenu'][] = array(
+		$hook_data['config']['submenu'][] = array(
 			'name' => trans('Purchase document types'),
 			'link' => '?m=pdtlist',
 			'tip' => trans('Chart of accounts'),
