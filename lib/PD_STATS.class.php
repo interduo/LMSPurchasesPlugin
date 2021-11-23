@@ -120,4 +120,28 @@ $PDSTATS = array(
         return $result;
     }
 
+// bazuje na https://github.com/kyob/LMSIncomePlugin
+    public function SalePerMonth($only_year)
+    {
+        $income = $this->db->GetAll(
+               'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
+                   FROM cash
+                   WHERE value<0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
+        ');
+        return $income;
+    }
+
+// bazuje na https://github.com/kyob/LMSIncomePlugin
+    public function IncomePerMonth($only_year)
+    {
+        $income = $this->db->GetAll(
+               'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value) AS suma
+                   FROM cash
+                   WHERE importid IS NOT NULL AND value>0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
+        ');
+        return $income;
+    }
+
 }
