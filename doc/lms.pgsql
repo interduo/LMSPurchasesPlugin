@@ -7,7 +7,7 @@ CREATE SEQUENCE pdtypes_id_seq;
 
 DROP TABLE IF EXISTS pdtypes CASCADE;
 CREATE TABLE pdtypes (
-    id smallint DEFAULT nextval('pdtypes_id_seq'::text) NOT NULL,
+    id integer DEFAULT nextval('pdtypes_id_seq'::text) NOT NULL,
     name varchar(50) NOT NULL,
     description varchar(254) DEFAULT NULL,
     PRIMARY KEY (id)
@@ -22,7 +22,7 @@ CREATE SEQUENCE pds_id_seq;
 
 DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
-    id smallint DEFAULT nextval('pds_id_seq'::text) NOT NULL,
+    id integer DEFAULT nextval('pds_id_seq'::text) NOT NULL,
     fullnumber varchar(50) NOT NULL,
     netvalue numeric(9,2) NOT NULL,
     grossvalue numeric(9,2) NOT NULL,
@@ -48,9 +48,9 @@ CREATE SEQUENCE pdprojects_id_seq;
 
 DROP TABLE IF EXISTS pdprojects CASCADE;
 CREATE TABLE pdprojects (
-    id smallint DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
-    pdid smallint NOT NULL,
-    projectid smallint NOT NULL,
+    id integer DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
+    pdid integer NOT NULL,
+    projectid integer NOT NULL,
     PRIMARY KEY (id)
 );
 
