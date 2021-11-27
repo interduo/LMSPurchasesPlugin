@@ -78,6 +78,9 @@
             <td>
                 {icon name="invproject" label="Inv. Project"}
             </td>
+            <td>
+                {icon name="user" label="User"}
+            </td>
             <td class="text-right" class="lms-ui-box-buttons">
                 {button name="addpd" id="addpdbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
             </td>
@@ -124,6 +127,10 @@
                     <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a>
                 {/foreach}
             </td>
+            <td data-template-user="{$pd.userid}">
+                <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
+            </td>
+            {debug}
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {if !$pd.paydate}

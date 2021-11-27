@@ -35,6 +35,8 @@ CREATE TABLE pds (
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
     typeid integer DEFAULT NULL
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    userid integer DEFAULT NULL
+        CONSTRAINT pds_userid_fkey REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY (id),
     CONSTRAINT pds_supplierid_ukey UNIQUE (fullnumber, supplierid)
 );
@@ -75,4 +77,4 @@ CREATE TABLE pdattachments (
     contenttype varchar(255) DEFAULT '' NOT NULL
 );
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111901');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700');
