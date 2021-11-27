@@ -26,13 +26,6 @@ if (isset($_POST['addpd'])) {
             }
             unset($file);
         }
-//$id = $LMS->TicketAdd($ticket, $files);
-
-//        // deletes uploaded files
-//        if (!empty($files) && !empty($tmppath)) {
-//            rrmdir($tmppath);
-//        }
-
 }
 
 $layout['pagetitle'] = trans('Purchase document list');
@@ -45,7 +38,7 @@ if (empty($_GET['payments']) || $_GET['payments'] == 'all') {
 }
 
 // period filter
-if (empty($_GET['period']) || $_GET['payments'] == 'all') {
+if (empty($_GET['period']) || $_GET['period'] == 'all') {
     unset($params['period']);
 } else {
     $params['period'] = intval($_GET['period']);

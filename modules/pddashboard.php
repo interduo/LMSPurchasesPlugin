@@ -46,6 +46,7 @@ if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkCon
     $SI = new Sysinfo;
     $SMARTY->assign('pdstats', $PD_STATS->PDStats());
 }
+
 $SMARTY->assign('IncomePerMonth', $PD_STATS->IncomePerMonth(date("Y")));
 $SMARTY->assign('SalePerMonth', $PD_STATS->SalePerMonth(date("Y")));
 $SMARTY->assign('date', $date);

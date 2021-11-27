@@ -311,11 +311,11 @@ private $db;            // database object
 
     public function UpdatePurchaseDocument($args)
     {
-        if (!empty($args['invprojects'])) {
-            $params['pdid'] = $args['id'];
-            $params['invprojects'] = $args['invprojects'];
-            $this->SetAssignedProjects($params);
-        }
+        ///porównać to co jest aktualnie w projekcie i to co wybieramy i warunkowo odpalić ten kod -
+        $params['pdid'] = $args['id'];
+        $params['invprojects'] = !empty($args['invprojects']) ? $args['invprojects'] : null;
+        $this->SetAssignedProjects($params);
+        ///
 
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
