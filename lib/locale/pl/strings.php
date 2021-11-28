@@ -1,29 +1,5 @@
 <?php
 
-/*
- *  LMS version 1.11-git
- *
- *  Copyright (C) 2001-2015 LMS Developers
- *
- *  Please, see the doc/AUTHORS for more information about authors!
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License Version 2 as
- *  published by the Free Software Foundation.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
- *  USA.
- *
- *  $Id$
- */
-
 $_LANG['Purchase Documents'] = 'Dokumenty Kosztowe';
 $_LANG['Mark invoice as paid'] = 'Oznacz fakturę jako zapłaconą';
 $_LANG['Purchase document list'] = 'Lista dokumentów kosztowych';
@@ -47,7 +23,8 @@ $_LANG['Today date of payment'] = 'Dzisiaj termin płatności';
 $_LANG['Pay date'] = 'Data zapłaty';
 $_LANG['Document scan'] = 'Skan dokumentu';
 $_LANG['Show All'] = 'Pokaż wszystkie';
-$_LANG['Gross Value'] = 'Wartość brutto';
+$_LANG['Net value'] = 'Wartość netto';
+$_LANG['Gross value'] = 'Wartość brutto';
 $_LANG['Inv. Project'] = 'Projekt Inv.';
 $_LANG['Purchase document types'] = 'Typy dokumentów kosztowych';
 $_LANG['Chart of accounts'] = 'konta księgowe';
@@ -60,16 +37,19 @@ $_LANG['filter off'] = 'filtr wyłączony';
 $_LANG['with upcoming payment date (to 3 days)'] = 'ze zbliżającym się terminem płatności (do 3 dni)';
 $_LANG['with upcoming payment date (to 7 days)'] = 'ze zbliżającym się terminem płatności (do 7 dni)';
 $_LANG['with upcoming payment date (to 14 days)'] = 'ze zbliżającym się terminem płatności (do 14 dni)';
-$_LANG['Filters'] = 'Filtry';
-$_LANG['this week'] = 'obecny tydzień';
-$_LANG['previous week'] = 'poprzedni tydzień';
-$_LANG['previous quater'] = 'poprzedni kwartał';
-$_LANG['current quarter'] = 'obecny kwartał';
-$_LANG['current year'] = 'obecny rok';
+$_LANG['filters'] = 'filtry';
 
-$_LANG['Current month'] = 'Bieżący miesiąc';
-$_LANG['current quarter'] = 'obecny kwartał';
-$_LANG['current year'] = 'obecny rok';
+$_LANG['previous day'] = 'wczoraj';
+$_LANG['previous week'] = 'poprzedni tydzień';
+$_LANG['previous quarter'] = 'poprzedni kwartał';
+$_LANG['previous year'] = 'poprzedni rok';
+
+$_LANG['current day'] = 'dzisiaj';
+$_LANG['current week'] = 'bieżący tydzień';
+$_LANG['current month'] = 'bieżący miesiąc';
+$_LANG['current quarter'] = 'bieżący kwartał';
+$_LANG['current year'] = 'bieżący rok';
+
 $_LANG['Paid'] = 'Opłacone';
 $_LANG['Overdue'] = 'Przeterminowane';
 $_LANG['Hi'] = 'Cześć';

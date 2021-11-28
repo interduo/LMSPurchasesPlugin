@@ -143,11 +143,14 @@ private $db;            // database object
         }
 
         $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate,
-                    pds.description, pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
+            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, 
+                    pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate, pds.description, 
+                    pds.supplierid, pds.userid, u.name AS username, '
+                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.supplierid = cv.id)
                     LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
+                    LEFT JOIN vusers u ON (pds.userid = u.id)
                 WHERE 1=1'
             . $paymentsfilter
             . $periodfilter
@@ -281,11 +284,12 @@ private $db;            // database object
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'description' => empty($args['description']) ? null : $args['description'],
             'supplierid' => $args['supplierid'],
+            'userid' => Auth::GetCurrentUser(),
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, supplierid) 
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?)', $args
+            'INSERT INTO pds (typeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, supplierid, userid) 
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)', $args
         );
 
         if (!empty($invprojects)) {
@@ -311,11 +315,11 @@ private $db;            // database object
 
     public function UpdatePurchaseDocument($args)
     {
-        if (!empty($args['invprojects'])) {
-            $params['pdid'] = $args['id'];
-            $params['invprojects'] = $args['invprojects'];
-            $this->SetAssignedProjects($params);
-        }
+        ///porównać to co jest aktualnie w projekcie i to co wybieramy i warunkowo odpalić ten kod -
+        $params['pdid'] = $args['id'];
+        $params['invprojects'] = !empty($args['invprojects']) ? $args['invprojects'] : null;
+        $this->SetAssignedProjects($params);
+        ///
 
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],

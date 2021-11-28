@@ -1,3 +1,5 @@
+BEGIN;
+
 /* --------------------------------------------------------
 Structure of table "pdtypes"
 -------------------------------------------------------- */
@@ -7,7 +9,7 @@ CREATE SEQUENCE pdtypes_id_seq;
 
 DROP TABLE IF EXISTS pdtypes CASCADE;
 CREATE TABLE pdtypes (
-    id smallint DEFAULT nextval('pdtypes_id_seq'::text) NOT NULL,
+    id integer DEFAULT nextval('pdtypes_id_seq'::text) NOT NULL,
     name varchar(50) NOT NULL,
     description varchar(254) DEFAULT NULL,
     PRIMARY KEY (id)
@@ -22,7 +24,7 @@ CREATE SEQUENCE pds_id_seq;
 
 DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
-    id smallint DEFAULT nextval('pds_id_seq'::text) NOT NULL,
+    id integer DEFAULT nextval('pds_id_seq'::text) NOT NULL,
     fullnumber varchar(50) NOT NULL,
     netvalue numeric(9,2) NOT NULL,
     grossvalue numeric(9,2) NOT NULL,
@@ -35,6 +37,8 @@ CREATE TABLE pds (
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
     typeid integer DEFAULT NULL
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    userid integer DEFAULT NULL
+        CONSTRAINT pds_userid_fkey REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY (id),
     CONSTRAINT pds_supplierid_ukey UNIQUE (fullnumber, supplierid)
 );
@@ -48,9 +52,9 @@ CREATE SEQUENCE pdprojects_id_seq;
 
 DROP TABLE IF EXISTS pdprojects CASCADE;
 CREATE TABLE pdprojects (
-    id smallint DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
-    pdid smallint NOT NULL,
-    projectid smallint NOT NULL,
+    id integer DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
+    pdid integer NOT NULL,
+    projectid integer NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -75,4 +79,12 @@ CREATE TABLE pdattachments (
     contenttype varchar(255) DEFAULT '' NOT NULL
 );
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021111901');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') 
+ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
+
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
+('pd', 'mail_dir', '/var/www/html/lms/pdattachements', 'Katalog skanów dokumentów kosztowych', false),
+('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', false)
+ON CONFLICT DO NOTHING;
+
+COMMIT;

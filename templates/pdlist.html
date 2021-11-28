@@ -7,7 +7,7 @@
     <table class="lmsbox">
         <tr>
             <td>
-                {icon name="filter"}
+                {icon name="filter" tip="filters"}
                 <input type="submit" class="hiddenbtn">
                 <input type="hidden" name="m" value="pdlist">
             </td>
@@ -30,10 +30,10 @@
             <td>
                 {icon name="timetable" label="Document date"}
                 <select size="1" name="period" onchange="document.filter.submit();">
-                    <option value="" {if empty($params.period)} selected{/if}>{trans("filter off")}</option>
-                    <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("this week")}</option>
+                    <option value="-1" {if $params.period=='-1'} selected{/if}>{trans("filter off")}</option>
+                    <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("current week")}</option>
                     <option value="2" {if !empty($params.period) && $params.period=='2'} selected{/if}>{trans("previous week")}</option>
-                    <option value="3" {if !empty($params.period) && $params.period=='3'} selected{/if}>{trans("this month")}</option>
+                    <option value="3" {if !empty($params.period) && $params.period=='3'} selected{/if}>{trans("current month")}</option>
                     <option value="4" {if !empty($params.period) && $params.period=='4'} selected{/if}>{trans("previous month")}</option>
                     <option value="5" {if !empty($params.period) && $params.period=='5'} selected{/if}>{trans("current quarter")}</option>
                     <option value="6" {if !empty($params.period) && $params.period=='6'} selected{/if}>{trans("current year")}</option>
@@ -55,10 +55,10 @@
                 {icon name="summary" label="Purchase document number"}
             </td>
             <td>
-                {icon name="value" label="Value"}
+                {icon name="value" label="Net value"}
             </td>
             <td>
-                {icon name="value" label="Gross Value"}
+                {icon name="value" label="Gross value"}
             </td>
             <td>
                 {icon name="timetable" label="Document date"}
@@ -77,6 +77,9 @@
             </td>
             <td>
                 {icon name="invproject" label="Inv. Project"}
+            </td>
+            <td>
+                {icon name="user" label="User"}
             </td>
             <td class="text-right" class="lms-ui-box-buttons">
                 {button name="addpd" id="addpdbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
@@ -120,9 +123,12 @@
                 </a>
             </td>
             <td data-template-invprojects="{foreach $pd.projects as $p}{$p.id};{/foreach}">
-                {foreach $pd.projects as $p}
-                    <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a>
-                {/foreach}
+            {foreach $pd.projects as $p}
+                <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
+            {/foreach}
+            </td>
+            <td data-template-user="{$pd.userid}">
+                <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
             </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
