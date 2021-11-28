@@ -168,11 +168,13 @@ private $db;            // database object
     }
 
     public function GetPurchaseDocumentFiles($pdid) {
+        $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd');
+
         return $this->db->GetAll(
-            'SELECT filename, contenttype
+            'SELECT filename, contenttype, CONCAT_WS(\'' . DIRECTORY_SEPARATOR . '\', \'' . $storage_dir . '\', ?, filename) AS fullpath
             FROM pdattachments
             WHERE pdid = ?',
-            array($pdid)
+            array($pdid, $pdid)
         );
     }
 

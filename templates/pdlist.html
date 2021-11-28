@@ -134,7 +134,7 @@
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {if $pd.files}
                     {foreach $pd.files as $file}
-                        {button type='link' icon='fileupload' tip=$file.filename href=$file.filename}
+                        {button type='link' icon='fileupload' tip=$file.filename href=$file.fullpath}
                     {/foreach}
                 {/if}
                 {if !$pd.paydate}
