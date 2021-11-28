@@ -145,12 +145,13 @@ private $db;            // database object
         $result = $this->db->GetAllByKey(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, 
                     pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate, pds.description, 
-                    pds.supplierid, pds.userid, u.name AS username, '
+                    pds.supplierid, pds.userid, u.name AS username,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.supplierid = cv.id)
                     LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
                     LEFT JOIN vusers u ON (pds.userid = u.id)
+                    LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $paymentsfilter
             . $periodfilter
@@ -161,8 +162,18 @@ private $db;            // database object
         );
         foreach ($result as $idx=>$val) {
             $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
+            $result[$idx]['files'] = $this->GetPurchaseDocumentFiles($idx);
         }
         return $result;
+    }
+
+    public function GetPurchaseDocumentFiles($pdid) {
+        return $this->db->GetAll(
+            'SELECT filename, contenttype
+            FROM pdattachments
+            WHERE pdid = ?',
+            array($pdid)
+        );
     }
 
     public function GetAssignedProjects($pdid) {
@@ -182,12 +193,15 @@ private $db;            // database object
                 array($params['pdid'])
             );
 
-            foreach ($params['invprojects'] as $p)
-                $this->db->Execute(
-                    'INSERT INTO pdprojects (pdid, projectid) VALUES (?, ?)',
-                    array($params['pdid'], $p)
-                );
+            if (!empty($params['invprojects'])) {
+                foreach ($params['invprojects'] as $p) {
+                    $this->db->Execute(
+                        'INSERT INTO pdprojects (pdid, projectid) VALUES (?, ?)',
+                        array($params['pdid'], $p)
+                    );
+                }
             }
+        }
 
         return null;
     }
@@ -210,32 +224,26 @@ private $db;            // database object
         return $result;
     }
 
-    private function SavePDAttachments($ticketid, $messageid, $files, $cleanup = false)
+    private function SavePDAttachments($pdid, $files, $cleanup = false)
     {
-        $pd_dir = ConfigHelper::getConfig('pd.mail_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
-        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', ConfigHelper::getConfig('pd.mail_dir_permission', '0700')), 8);
-        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'root');
-        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'root');
+        $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
 
         if (!empty($files) && $pd_dir) {
-            $ticket_dir = $pd_dir . DIRECTORY_SEPARATOR . sprintf('%06d', $ticketid);
-            $message_dir = $ticket_dir . DIRECTORY_SEPARATOR . sprintf('%06d', $messageid);
+            $pdid_dir = $pd_dir . DIRECTORY_SEPARATOR . $pdid;
 
             @umask(0007);
 
-            @mkdir($ticket_dir, $storage_dir_permission);
-            @chown($ticket_dir, $storage_dir_owneruid);
-            @chgrp($ticket_dir, $storage_dir_ownergid);
-            @mkdir($message_dir, $storage_dir_permission);
-            @chown($message_dir, $storage_dir_owneruid);
-            @chgrp($message_dir, $storage_dir_ownergid);
+            @mkdir($pdid_dir, $storage_dir_permission);
+            @chown($pdid_dir, $storage_dir_owneruid);
+            @chgrp($pdid_dir, $storage_dir_ownergid);
 
             $dirs_to_be_deleted = array();
             foreach ($files as $file) {
-                // handle spaces and unknown characters in filename
-                // on systems having problems with that
                 $filename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
-                $dstfile = $message_dir . DIRECTORY_SEPARATOR . $filename;
+                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $filename;
                 if (isset($file['content'])) {
                     $fh = @fopen($dstfile, 'w');
                     if (empty($fh)) {
@@ -256,9 +264,8 @@ private $db;            // database object
                 @chgrp($dstfile, $storage_dir_ownergid);
 
                 $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype)
-                    VALUES (?, ?, ?)',
-                    array($messageid, $filename, $file['type'])
+                    'INSERT INTO pdattachments (pdid, filename, contenttype) VALUES (?, ?, ?)',
+                    array($pdid, $filename, $file['type'])
                 );
             }
             if (!empty($dirs_to_be_deleted)) {
@@ -292,13 +299,15 @@ private $db;            // database object
                     VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)', $args
         );
 
+        $params['pdid'] = $this->db->GetLastInsertID('pds');
+
         if (!empty($invprojects)) {
             $params['invprojects'] = $invprojects;
-            $params['pdid'] = $this->db->GetLastInsertID('pds');
             $this->SetAssignedProjects($params);
         }
-
-        $this->SavePDAttachments($params['pdid'], $params['pdid'], $files);
+        if (!empty($files)) {
+            $this->SavePDAttachments($params['pdid'], $files);
+        }
 
         return $result;
     }
