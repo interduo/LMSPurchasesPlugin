@@ -28,8 +28,8 @@ $PD_STATS = LMSPurchasesPlugin::getPurchasesStats();
 
 $layout['pagetitle'] = trans('Finances dashboard');
 
-$date['date']=date("Y-m-d");
-$date['day']=strftime("%A");
+$date['date'] = date("Y-m-d");
+$date['day'] = strftime("%A");
 
 // payments filter
 if (empty($_GET['payments'])) {

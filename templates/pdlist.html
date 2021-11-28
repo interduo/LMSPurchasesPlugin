@@ -30,7 +30,7 @@
             <td>
                 {icon name="timetable" label="Document date"}
                 <select size="1" name="period" onchange="document.filter.submit();">
-                    <option value="" {if empty($params.period)} selected{/if}>{trans("filter off")}</option>
+                    <option value="-1" {if $params.period=='-1'} selected{/if}>{trans("filter off")}</option>
                     <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("current week")}</option>
                     <option value="2" {if !empty($params.period) && $params.period=='2'} selected{/if}>{trans("previous week")}</option>
                     <option value="3" {if !empty($params.period) && $params.period=='3'} selected{/if}>{trans("current month")}</option>
@@ -55,10 +55,10 @@
                 {icon name="summary" label="Purchase document number"}
             </td>
             <td>
-                {icon name="value" label="Value"}
+                {icon name="value" label="Net value"}
             </td>
             <td>
-                {icon name="value" label="Gross Value"}
+                {icon name="value" label="Gross value"}
             </td>
             <td>
                 {icon name="timetable" label="Document date"}
@@ -123,14 +123,13 @@
                 </a>
             </td>
             <td data-template-invprojects="{foreach $pd.projects as $p}{$p.id};{/foreach}">
-                {foreach $pd.projects as $p}
-                    <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a>
-                {/foreach}
+            {foreach $pd.projects as $p}
+                <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
+            {/foreach}
             </td>
             <td data-template-user="{$pd.userid}">
                 <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
             </td>
-            {debug}
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {if !$pd.paydate}
