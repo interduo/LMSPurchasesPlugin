@@ -1,9 +1,8 @@
 # LMSPurchasePlugin 
 
-Opis:
-Wtyczka: LMS Purchases documents Plugin (PD)
+Wtyczka: LMSPurchase Plugin (PD)
+Opis: wtyczka służąca do ewidencji dokumentów zakupowych.
 
-Wtyczka z listą dokumentów zakupowych.
 **UWAGA: Wsparcie tylko dla PostgreSQL.**
 
 Instalacja wtyczki:
@@ -11,16 +10,19 @@ Instalacja wtyczki:
 2. composer update --no-dev
 3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 4. Nadaj uprawnienia użytkownikowi do wtyczki
-5. Określ w konfiguracji położenie katalogu na upload dokumentów - ConfigHelper::getConfig('pd.mail_dir)
 
 **TODO: (dla wersji beta)**
 - wrzucanie skanów dokumentów kosztowych z podglądem,
 - kategorie dla dokumentów finansowych,
 
-**TODO: (po beta)**
+**TODO:**
 - rozbijanie dokumentów na "wydatki",
+- obsługa walut
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
-- podsumowanie dokumentów kosztowych na dashboard,
+
+Zmienne konfiguracyjne:
+pd.storage_dir - lokalizacja skanów faktur dla nowouploadowanych plików,
+pd.default_filter_period - domyślna wartość filtra okres,
 
 Jarosław Kłopotek <jkl@interduo.pl>,
 Grzegorz Cichowski <gc@ptlanet.pl>

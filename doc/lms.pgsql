@@ -83,7 +83,6 @@ INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '
 ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
-('pd', 'mail_dir', '/var/www/html/lms/pdattachements', 'Katalog skanów dokumentów kosztowych', false),
 ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', false)
 ON CONFLICT DO NOTHING;
 
