@@ -1,3 +1,5 @@
+BEGIN;
+
 /* --------------------------------------------------------
 Structure of table "pdtypes"
 -------------------------------------------------------- */
@@ -77,4 +79,11 @@ CREATE TABLE pdattachments (
     contenttype varchar(255) DEFAULT '' NOT NULL
 );
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700');
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') 
+ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
+
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
+('pd', 'mail_dir', '/var/www/html/lms/pdattachements', 'Katalog skanów dokumentów kosztowych', 0) 
+ON CONFLICT DO NOTHING;
+
+COMMIT;
