@@ -87,6 +87,7 @@ ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
 ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0)
+('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0)
 ON CONFLICT DO NOTHING;
 
 COMMIT;
