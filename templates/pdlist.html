@@ -1,7 +1,11 @@
 {extends file="layout.html"}
 {block name=title}{$layout.pagetitle|striphtml}{/block}
 {block name=module_content}
-
+<style>
+    input.filters {
+        margin: 3px;
+    }
+</style>
 <h1>{$pagetitle|escape}</h1>
 <form method="GET" action="?m=pdlist" name="filter" form="filter-form">
     <table class="lmsbox">
@@ -33,8 +37,8 @@
             </td>
             <td>
                 {icon name="money" label="Gross value"}
-                <input type="text" size="6" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();">
-                <input type="text" size="6" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();">
+                <input type="text" size="8" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();" class="filters">
+                <input type="text" size="8" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td>
                 {icon name="timetable" label="Document date"}
