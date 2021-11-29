@@ -11,13 +11,13 @@ Instalacja wtyczki:
 3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 4. Nadaj uprawnienia użytkownikowi do wtyczki
 
-**TODO: (dla wersji beta)**
-- wrzucanie skanów dokumentów kosztowych z podglądem,
+**TODO: (dla wersji 1.0)**
 - kategorie dla dokumentów finansowych,
 
 **TODO:**
+- podgląd dla wrzuconych dokumentów obok formularza, 
 - rozbijanie dokumentów na "wydatki",
-- obsługa walut
+- obsługa walut,
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 
 Zmienne konfiguracyjne:
