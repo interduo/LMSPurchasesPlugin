@@ -70,12 +70,12 @@ INSERT INTO pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
 /* --------------------------------------------------------
 Structure of table "pdattachments"
 -------------------------------------------------------- */
-DROP SEQUENCE IF EXISTS pdattachements_id_seq;
-CREATE SEQUENCE pdattachements_id_seq;
+DROP SEQUENCE IF EXISTS pdattachments_id_seq;
+CREATE SEQUENCE pdattachments_id_seq;
 
 DROP TABLE IF EXISTS pdattachments CASCADE;
 CREATE TABLE pdattachments (
-    id integer DEFAULT nextval('pdattachements_id_seq'::text) NOT NULL,
+    id integer DEFAULT nextval('pdattachments_id_seq'::text) NOT NULL,
     pdid integer NOT NULL
         REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     filename varchar(255) DEFAULT '' NOT NULL,
