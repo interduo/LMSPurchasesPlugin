@@ -86,7 +86,7 @@ INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '
 ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
-('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', false)
+('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0)
 ON CONFLICT DO NOTHING;
 
 COMMIT;
