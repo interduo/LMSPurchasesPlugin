@@ -12,6 +12,15 @@
                 <input type="hidden" name="m" value="pdlist">
             </td>
             <td>
+                {icon name="customer" label="Supplier"}
+                <select name="supplier" onChange="document.filter.submit();" class="lms-ui-advanced-select">
+                    <option value="">{trans("filter off")}</option>
+                    {foreach $supplierslist as $s}
+                    <option value="{$s.id}" {if $s.id == $params.supplier} selected{/if}>{$s.lastname|trunescape:"25"}</option>
+                    {/foreach}
+                </select>
+            </td>
+            <td>
                 {icon name="money" label="Payment"}
                 <select size="1" name="payments" onchange="document.filter.submit();">
                     <option value="" {if empty($params.payments)} selected{/if}>{trans("filter off")}</option>

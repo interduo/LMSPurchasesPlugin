@@ -41,7 +41,12 @@ private $db;            // database object
                 break;
         }
 
-        // PAYMENT FILTERS
+        // SUPPLIER FILTER
+        if (!empty($supplier)) {
+            $supplierfilter = ' AND supplierid = ' . intval($supplier);
+        }
+
+        // PAYMENT FILTER
         if ($payments) {
             switch ($payments) {
                 case '-1':
@@ -137,6 +142,8 @@ private $db;            // database object
         if (!empty($valuefrom)) {
             $valuefromfilter = ' AND grossvalue >= ' . $valuefrom;
         }
+
+        // VALUE TO FILTER
         $valueto = intval($valueto);
         if (!empty($valueto)) {
             $valuetofilter = ' AND grossvalue <= ' . $valueto;
@@ -153,6 +160,7 @@ private $db;            // database object
                     LEFT JOIN vusers u ON (pds.userid = u.id)
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
+            . $supplierfilter
             . $paymentsfilter
             . $periodfilter
             . $valuefromfilter
