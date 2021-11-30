@@ -69,5 +69,6 @@ $_LANG['Predicted income'] = 'Przewidywany przychód';
 $_LANG['two days'] = 'dwa dni';
 $_LANG['Tomorrow'] = 'Jutro';
 $_LANG['To pay in next month'] = 'Do zapłacenia w następnym miesiącu';
+$_LANG['unpaid with today payment date'] = 'niezapłacone z dzisiejszym terminem płatności';
 
 ?>

@@ -64,6 +64,9 @@ class PURCHASES
                 case '-5':
                     $paymentsfilter = ' AND paydate IS NULL AND (deadline+86399 < ?NOW?)';
                     break;
+                case '-6':
+                    $paymentsfilter = ' AND paydate IS NULL AND deadline = ' . strtotime("today", time());
+                    break;
                 case 'all':
                 default:
                     $paymentsfilter = '';
