@@ -27,6 +27,15 @@ if (isset($_POST['addpd'])) {
 
 $layout['pagetitle'] = trans('Purchase document list');
 
+// supplier filter
+if (!empty($_GET['supplier'])) {
+    if ($_GET['supplier'] == 'all') {
+        unset($params['supplier']);
+    } else {
+        $params['supplier'] = intval($_GET['supplier']);
+    }
+}
+
 // payments filter
 if (!empty($_GET['payments'])) {
     if ($_GET['payments'] == 'all') {

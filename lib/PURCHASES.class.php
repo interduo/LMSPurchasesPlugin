@@ -2,7 +2,7 @@
 
 class PURCHASES
 {
-private $db;            // database object
+    private $db;            // database object
 
     public function __construct()
     {
@@ -41,7 +41,12 @@ private $db;            // database object
                 break;
         }
 
-        // PAYMENT FILTERS
+        // SUPPLIER FILTER
+        if (!empty($supplier)) {
+            $supplierfilter = ' AND supplierid = ' . intval($supplier);
+        }
+
+        // PAYMENT FILTER
         if ($payments) {
             switch ($payments) {
                 case '-1':
@@ -58,6 +63,9 @@ private $db;            // database object
                     break;
                 case '-5':
                     $paymentsfilter = ' AND paydate IS NULL AND (deadline+86399 < ?NOW?)';
+                    break;
+                case '-6':
+                    $paymentsfilter = ' AND paydate IS NULL AND deadline = ' . strtotime("today", time());
                     break;
                 case 'all':
                 default:
@@ -137,6 +145,8 @@ private $db;            // database object
         if (!empty($valuefrom)) {
             $valuefromfilter = ' AND grossvalue >= ' . $valuefrom;
         }
+
+        // VALUE TO FILTER
         $valueto = intval($valueto);
         if (!empty($valueto)) {
             $valuetofilter = ' AND grossvalue <= ' . $valueto;
@@ -145,13 +155,15 @@ private $db;            // database object
         $result = $this->db->GetAllByKey(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, 
                     pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate, pds.description, 
-                    pds.supplierid, pds.userid, u.name AS username, '
+                    pds.supplierid, pds.userid, u.name AS username,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.supplierid = cv.id)
                     LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
                     LEFT JOIN vusers u ON (pds.userid = u.id)
+                    LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
+            . $supplierfilter
             . $paymentsfilter
             . $periodfilter
             . $valuefromfilter
@@ -161,8 +173,20 @@ private $db;            // database object
         );
         foreach ($result as $idx=>$val) {
             $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
+            $result[$idx]['files'] = $this->GetPurchaseDocumentFiles($idx);
         }
         return $result;
+    }
+
+    public function GetPurchaseDocumentFiles($pdid) {
+        $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd');
+
+        return $this->db->GetAll(
+            'SELECT filename, contenttype, CONCAT_WS(\'' . DIRECTORY_SEPARATOR . '\', \'' . $storage_dir . '\', ?, filename) AS fullpath
+            FROM pdattachments
+            WHERE pdid = ?',
+            array($pdid, $pdid)
+        );
     }
 
     public function GetAssignedProjects($pdid) {
@@ -182,12 +206,15 @@ private $db;            // database object
                 array($params['pdid'])
             );
 
-            foreach ($params['invprojects'] as $p)
-                $this->db->Execute(
-                    'INSERT INTO pdprojects (pdid, projectid) VALUES (?, ?)',
-                    array($params['pdid'], $p)
-                );
+            if (!empty($params['invprojects'])) {
+                foreach ($params['invprojects'] as $p) {
+                    $this->db->Execute(
+                        'INSERT INTO pdprojects (pdid, projectid) VALUES (?, ?)',
+                        array($params['pdid'], $p)
+                    );
+                }
             }
+        }
 
         return null;
     }
@@ -210,32 +237,26 @@ private $db;            // database object
         return $result;
     }
 
-    private function SavePDAttachments($ticketid, $messageid, $files, $cleanup = false)
+    private function SavePDAttachments($pdid, $files, $cleanup = false)
     {
-        $pd_dir = ConfigHelper::getConfig('pd.mail_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
-        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', ConfigHelper::getConfig('pd.mail_dir_permission', '0700')), 8);
-        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'root');
-        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'root');
+        $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
 
         if (!empty($files) && $pd_dir) {
-            $ticket_dir = $pd_dir . DIRECTORY_SEPARATOR . sprintf('%06d', $ticketid);
-            $message_dir = $ticket_dir . DIRECTORY_SEPARATOR . sprintf('%06d', $messageid);
+            $pdid_dir = $pd_dir . DIRECTORY_SEPARATOR . $pdid;
 
             @umask(0007);
 
-            @mkdir($ticket_dir, $storage_dir_permission);
-            @chown($ticket_dir, $storage_dir_owneruid);
-            @chgrp($ticket_dir, $storage_dir_ownergid);
-            @mkdir($message_dir, $storage_dir_permission);
-            @chown($message_dir, $storage_dir_owneruid);
-            @chgrp($message_dir, $storage_dir_ownergid);
+            @mkdir($pdid_dir, $storage_dir_permission);
+            @chown($pdid_dir, $storage_dir_owneruid);
+            @chgrp($pdid_dir, $storage_dir_ownergid);
 
             $dirs_to_be_deleted = array();
             foreach ($files as $file) {
-                // handle spaces and unknown characters in filename
-                // on systems having problems with that
                 $filename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
-                $dstfile = $message_dir . DIRECTORY_SEPARATOR . $filename;
+                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $filename;
                 if (isset($file['content'])) {
                     $fh = @fopen($dstfile, 'w');
                     if (empty($fh)) {
@@ -256,9 +277,8 @@ private $db;            // database object
                 @chgrp($dstfile, $storage_dir_ownergid);
 
                 $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype)
-                    VALUES (?, ?, ?)',
-                    array($messageid, $filename, $file['type'])
+                    'INSERT INTO pdattachments (pdid, filename, contenttype) VALUES (?, ?, ?)',
+                    array($pdid, $filename, $file['type'])
                 );
             }
             if (!empty($dirs_to_be_deleted)) {
@@ -292,13 +312,15 @@ private $db;            // database object
                     VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)', $args
         );
 
+        $params['pdid'] = $this->db->GetLastInsertID('pds');
+
         if (!empty($invprojects)) {
             $params['invprojects'] = $invprojects;
-            $params['pdid'] = $this->db->GetLastInsertID('pds');
             $this->SetAssignedProjects($params);
         }
-
-        $this->SavePDAttachments($params['pdid'], $params['pdid'], $files);
+        if (!empty($files)) {
+            $this->SavePDAttachments($params['pdid'], $files);
+        }
 
         return $result;
     }
@@ -426,5 +448,129 @@ private $db;            // database object
         );
 
         return $result;
+    }
+
+    public function PDStats()
+    {
+        define('PD_PAID', 0);
+        define('PD_OVERDUE', 1);
+        define('PD_TODAY', 2);
+        define('PD_TOMORROW', 3);
+        define('PD_IN3DAYS', 4);
+        define('PD_IN7DAYS', 5);
+        define('PD_IN14DAYS', 6);
+
+
+        $PDSTATS = array(
+            PD_PAID => array(
+                'summarylabel' => trans('Paid'),
+                'filter' => 'paydate IS NOT NULL',
+                'alias' => 'paid'
+            ),
+            PD_OVERDUE => array(
+                'summarylabel' => trans('Overdue'),
+                'filter' => 'paydate IS NULL AND (deadline+86399 < ?NOW?)',
+                'alias' => 'overdue'
+            ),
+            PD_TODAY => array(
+                'summarylabel' => trans('Today'),
+                'filter' => 'paydate IS NULL AND (deadline+86399 > ?NOW?) AND (deadline - ?NOW? < 86399)',
+                'alias' => 'today'
+            ),
+            PD_TOMORROW => array(
+                'summarylabel' => trans('Tomorrow'),
+                'filter' => 'paydate IS NULL AND (deadline+2*86399 > ?NOW?) AND (deadline - ?NOW? < 2*86399)',
+                'alias' => 'tomorrow'
+            ),
+            PD_IN3DAYS => array(
+                'summarylabel' => trans('In 3 days:'),
+                'filter' => 'paydate IS NULL AND deadline - ?NOW? < 3*86400',
+                'alias' => 'in3days'
+            ),
+            PD_IN7DAYS => array(
+                'summarylabel' => trans('In 7 days:'),
+                'filter' => 'paydate IS NULL AND deadline - ?NOW? < 7*86400',
+                'alias' => 'in7days'
+            ),
+            PD_IN14DAYS => array(
+                'summarylabel' => trans('In 14 days:'),
+                'filter' => 'paydate IS NULL AND deadline - ?NOW? < 14*86400',
+                'alias' => 'in14days'
+            ),
+        );
+
+        $sql = '';
+        foreach ($PDSTATS as $statusidx => $status) {
+            $sql .= ' COUNT(CASE WHEN ' . $status['filter'] . ' THEN 1 END) AS ' . $status['alias'] . ',
+            SUM(CASE WHEN ' . $status['filter'] . ' THEN grossvalue END) AS '.$status['alias'].'value,
+            ';
+        }
+        $result = $this->db->GetRow(
+            'SELECT
+            ' . $sql . ' COUNT(id) AS unpaid
+            FROM pds
+            '
+        );
+        return $result;
+    }
+
+    public function SupplierStats()
+    {
+        global $CSTATUSES;
+        $sql = '';
+        foreach ($CSTATUSES as $statusidx => $status) {
+            $sql .= ' COUNT(CASE WHEN status = ' . $statusidx . ' THEN 1 END) AS ' . $status['alias'] . ',';
+        }
+        $result = $this->db->GetRow(
+            'SELECT ' . $sql . ' COUNT(id) AS total
+            FROM customerview
+            WHERE deleted=0'
+        );
+
+        $tmp = $this->db->GetRow(
+            'SELECT
+                SUM(a.value) * -1 AS debtvalue,
+                COUNT(*) AS debt,
+                SUM(CASE WHEN a.status = ? THEN a.value ELSE 0 END) * -1 AS debtcollectionvalue
+            FROM (
+                SELECT c.status, b.balance AS value
+                FROM customerbalances b
+                LEFT JOIN customerview c ON (customerid = c.id)
+                WHERE c.deleted = 0 AND b.balance < 0
+            ) a',
+            array(
+                CSTATUS_DEBT_COLLECTION,
+            )
+        );
+
+        if (is_array($tmp)) {
+            $result = array_merge($result, $tmp);
+        }
+
+        return $result;
+    }
+
+// bazuje na https://github.com/kyob/LMSIncomePlugin
+    public function SalePerMonth($only_year)
+    {
+        $income = $this->db->GetAll(
+            'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
+                   FROM cash
+                   WHERE value<0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
+        ');
+        return $income;
+    }
+
+    // bazuje na https://github.com/kyob/LMSIncomePlugin
+    public function IncomePerMonth($only_year)
+    {
+        $income = $this->db->GetAll(
+            'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value) AS suma
+                   FROM cash
+                   WHERE importid IS NOT NULL AND value>0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
+        ');
+        return $income;
     }
 }

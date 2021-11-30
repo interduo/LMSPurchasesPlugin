@@ -23,14 +23,14 @@
                 <thead>
                     <tr>
                         <td colspan="2" class="text-center bold nobr">
-                            <a href="?m=rtticketview&amp;catid={$pdtypesstats.id}" {tip text="Add new ticket" trigger="newticket"}><i class="lms-ui-icon-helpdesk"></i></a>&nbsp;{trans("Helpdesk:")}&nbsp;<a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}">{$pdtypesstats.name}</a>
+                            <a href="?m=rtticketview&amp;catid={$pdtypesstats.id}" {tip text="Add new ticket" trigger="newticket"}><i class="lms-ui-icon-helpdesk"></i></a>&nbsp;{trans("Helpdesk")}&nbsp;<a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}">{$pdtypesstats.name}</a>
                         </td>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td class="text-right bold">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_NEW}&priority=all&unread=-1&amp;o=lastmodified,desc">{trans("New:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_NEW}&priority=all&unread=-1&amp;o=lastmodified,desc">{trans("New")}</a>
                         </td>
                         <td>
                             {$pdtypesstats.new|default:"0"}
@@ -38,7 +38,7 @@
                     </tr>
                     <tr>
                         <td class="text-right bold">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_OPEN}&priority=all&unread=-1&amp;o=lastmodified,desc">{trans("Opened:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_OPEN}&priority=all&unread=-1&amp;o=lastmodified,desc">{trans("Opened")}</a>
                         </td>
                         <td>
                             {$pdtypesstats.opened|default:"0"}
@@ -46,7 +46,7 @@
                     </tr>
                     <tr>
                         <td class="text-right bold">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_DEAD}&priority=all&unread=-1&amp;o=lastmodified,desc">{trans("Dead:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_DEAD}&priority=all&unread=-1&amp;o=lastmodified,desc">{trans("Dead")}</a>
                         </td>
                         <td>
                             {$pdtypesstats.dead|default:"0"}
@@ -54,7 +54,7 @@
                     </tr>
                     <tr>
                         <td class="text-right bold nobr">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&s=-1&priority=all&unread=-1&o=lastmodified,desc">{trans("Unresolved:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&s=-1&priority=all&unread=-1&o=lastmodified,desc">{trans("Unresolved")}</a>
                         </td>
                         <td>
                             {$pdtypesstats.unresolved|default:"0"}
@@ -62,7 +62,7 @@
                     </tr>
                     <tr>
                         <td class="text-right bold">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_RESOLVED}&priority=all&unread=-1o=lastmodified,desc">{trans("Resolved:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s={$smarty.const.RT_RESOLVED}&priority=all&unread=-1o=lastmodified,desc">{trans("Resolved")}</a>
                         </td>
                         <td>
                             {$pdtypesstats.resolved|default:"0"}
@@ -70,7 +70,7 @@
                     </tr>
                     <tr>
                         <td class="text-right bold">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s=-1&priority=all&unread=1&amp;o=lastmodified,desc">{trans("Unread:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}&amp;s=-1&priority=all&unread=1&amp;o=lastmodified,desc">{trans("Unread")}</a>
                         </td>
                         <td>
                             {$pdtypesstats.unread|default:"0"}
@@ -78,7 +78,7 @@
                     </tr>
                     <tr>
                         <td class="text-right bold">
-                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}">{trans("Total:")}</a>
+                            <a href="?m=rtqueueview&amp;catid={$pdtypesstats.id}">{trans("Total")}</a>
                         </td>
                         <td>
                             {math equation="a+b+c+d" a=$pdtypesstats.opened b=$pdtypesstats.new c=$pdtypesstats.dead d=$pdtypesstats.resolved}

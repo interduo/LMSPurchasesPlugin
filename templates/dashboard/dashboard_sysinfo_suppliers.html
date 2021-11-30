@@ -7,14 +7,14 @@
     <thead>
         <tr>
             <td colspan="2" class="text-center bold nobr">
-                <i class="lms-ui-icon-customer"></i> {trans("Suppliers:")}
+                <i class="lms-ui-icon-customer"></i> {trans("Suppliers")}
             </td>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td class="text-right bold">
-                <a href="?m=customerlist&amp;s=0">{trans("Total:")}</a>
+                <a href="?m=customerlist&amp;s=0">{trans("Total")}</a>
             </td>
             <td class="nobr">
                 {$supplierstats.total}
@@ -23,7 +23,7 @@
         {if ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkConfig('privileges.hide_finances')}
         <tr>
             <td class="text-right bold">
-                <a href="?m=customerlist&amp;s=52">{trans("Total Dues to:")}</a>
+                <a href="?m=customerlist&amp;s=52">{trans("Total Dues to")}</a>
             </td>
             <td>
                 {$supplierstats.debt} ({trans("amount")} {moneyf($supplierstats.debtvalue)})
@@ -31,7 +31,7 @@
         </tr>
         <tr>
             <td class="text-right bold">
-                <a href="?m=customerlist&amp;s=52">{trans("Biggest debt:")}</a>
+                <a href="?m=customerlist&amp;s=52">{trans("Biggest debt")}</a>
             </td>
             <td>
                 {$supplierstats.biggestdebt} ({trans("amount")} {moneyf($supplierstats.debtvalue)})

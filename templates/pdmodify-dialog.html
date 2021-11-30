@@ -8,6 +8,9 @@
     .button-bar {
         padding-top: 20px;
     }
+    .hidden {
+        display: none;
+    }
 </style>
 
 <div id="addpdmodal" class="lms-ui-modal-dialog">
@@ -128,7 +131,7 @@
                         </select>
                     </td>
                 </tr>
-                <tr>
+                <tr id="filecontainer">
                     <td class="nobr">
                         {icon name="attachment" label="Attachments"}
                     </td>
@@ -171,6 +174,7 @@
         $('#dialog-invprojects option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-invprojects");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
+        $( "#filecontainer").removeClass('hidden');
     };
 
     function open_modify_dialog (template_id) {
@@ -204,5 +208,6 @@
             updateAdvancedSelects("#dialog-invprojects");
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
+        $( "#filecontainer").addClass('hidden');
     };
 </script>

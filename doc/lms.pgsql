@@ -70,9 +70,12 @@ INSERT INTO pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
 /* --------------------------------------------------------
 Structure of table "pdattachments"
 -------------------------------------------------------- */
+DROP SEQUENCE IF EXISTS pdattachments_id_seq;
+CREATE SEQUENCE pdattachments_id_seq;
 
 DROP TABLE IF EXISTS pdattachments CASCADE;
 CREATE TABLE pdattachments (
+    id integer DEFAULT nextval('pdattachments_id_seq'::text) NOT NULL,
     pdid integer NOT NULL
         REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     filename varchar(255) DEFAULT '' NOT NULL,
@@ -83,8 +86,8 @@ INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '
 ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES
-('pd', 'mail_dir', '/var/www/html/lms/pdattachements', 'Katalog skanów dokumentów kosztowych', false),
-('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', false)
+('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0)
+('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0)
 ON CONFLICT DO NOTHING;
 
 COMMIT;
