@@ -101,7 +101,7 @@
     </thead>
     <tbody>
         {foreach $pdlist as $pd}
-        <tr class="{if $smarty.now > $pd.deadline && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight"
+        <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight"
             data-template-id="{$pd.id}" data-target-url="?m=pdview&id={$pd.id}">
             <td>
                 {$pd.id}
