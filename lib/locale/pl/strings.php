@@ -36,9 +36,9 @@ $_LANG['Payment filter'] = 'Filtr płatności';
 $_LANG['unpaid only'] = 'tylko niezapłacone';
 $_LANG['Unpaid at current month'] = 'Niezapłacone z obecnego miesiąca';
 $_LANG['filter off'] = 'filtr wyłączony';
-$_LANG['unpain with upcoming payment date (to 3 days)'] = 'niezapłacone, ze zbliżającym się terminem płatności (do 3 dni)';
-$_LANG['unpain with upcoming payment date (to 7 days)'] = 'niezapłacone, ze zbliżającym się terminem płatności (do 7 dni)';
-$_LANG['unpain with upcoming payment date (to 14 days)'] = 'niezapłacone, ze zbliżającym się terminem płatności (do 14 dni)';
+$_LANG['unpaid with upcoming payment date (to 3 days)'] = 'niezapłacone, ze zbliżającym się terminem płatności (do 3 dni)';
+$_LANG['unpaid with upcoming payment date (to 7 days)'] = 'niezapłacone, ze zbliżającym się terminem płatności (do 7 dni)';
+$_LANG['unpaid with upcoming payment date (to 14 days)'] = 'niezapłacone, ze zbliżającym się terminem płatności (do 14 dni)';
 $_LANG['filters'] = 'filtry';
 
 $_LANG['previous day'] = 'wczoraj';
