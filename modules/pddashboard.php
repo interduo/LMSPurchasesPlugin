@@ -24,7 +24,6 @@
  *  $Id$
  */
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
-$PD_STATS = LMSPurchasesPlugin::getPurchasesStats();
 
 $layout['pagetitle'] = trans('Finances dashboard');
 
@@ -32,23 +31,23 @@ $date['date'] = date("Y-m-d");
 $date['day'] = strftime("%A");
 
 // payments filter
-if (empty($_GET['payments'])) {
+if (isset($_GET['payments']) && empty($_GET['payments'])) {
     unset($params['payments']);
 } else {
-    if ($_GET['payments'] == 'all') {
+    if (isset($_GET['payments']) && $_GET['payments'] == 'all') {
         $params['payments'] = array();
-    } else {
+    } elseif (isset($_GET['payments'])) {
         $params['payments'] = intval($_GET['payments']);
     }
 }
 
 if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkConfig('privileges.hide_sysinfo')) {
     $SI = new Sysinfo;
-    $SMARTY->assign('pdstats', $PD_STATS->PDStats());
+    $SMARTY->assign('pdstats', $PURCHASES->PDStats());
 }
 
-$SMARTY->assign('IncomePerMonth', $PD_STATS->IncomePerMonth(date("Y")));
-$SMARTY->assign('SalePerMonth', $PD_STATS->SalePerMonth(date("Y")));
+$SMARTY->assign('IncomePerMonth', $PURCHASES->IncomePerMonth(date("Y")));
+$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonth(date("Y")));
 $SMARTY->assign('date', $date);
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
