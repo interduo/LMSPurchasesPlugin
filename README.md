@@ -18,6 +18,7 @@ Instalacja wtyczki:
 - podgląd dla wrzuconych dokumentów obok formularza, 
 - rozbijanie dokumentów na "wydatki",
 - obsługa walut,
+- konta dostawców pobierane z białej listy podatników,
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 
 Zmienne konfiguracyjne:
