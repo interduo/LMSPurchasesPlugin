@@ -130,6 +130,22 @@
                             {/foreach}
                         </select>
                     </td>
+                <tr>
+                    <td>
+                        {icon name="categories" label="Categories"}
+                    </td>
+                    <td>
+                        <select id="dialog-categories" name="addpd[categories][]" class="lms-ui-advanced-select" multiple>
+                            {foreach $categorylist as $p}
+                                <option value="{$p.id}"
+                                    {foreach $pdinfo.categories as $a}
+                                        {if $a.id == $p.id} selected{/if}
+                                    {/foreach}>
+                                    {$p.name|trunescape:"25"}
+                                </option>
+                            {/foreach}
+                        </select>
+                    </td>
                 </tr>
                 <tr id="filecontainer">
                     <td class="nobr">
@@ -173,6 +189,8 @@
         updateAdvancedSelects("#dialog-supplierid");
         $('#dialog-invprojects option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-invprojects");
+        $('#dialog-categories option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-categories");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
     };
@@ -206,6 +224,13 @@
                 $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
             });
             updateAdvancedSelects("#dialog-invprojects");
+            var assignedcategories = $(row).find("[data-template-categories]").attr('data-template-categories');
+            var match = assignedcategories.split(";");
+            $('#dialog-categories option:selected').removeAttr('selected');
+            match.forEach(function(item) {
+                $("#dialog-categories option[value='" + item + "']").attr("selected", "true");
+            });
+            updateAdvancedSelects("#dialog-categories");
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');

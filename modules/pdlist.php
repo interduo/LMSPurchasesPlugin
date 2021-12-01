@@ -82,18 +82,18 @@ if (isset($_GET['valueto'])) {
     }
 }
 
-$pdlist = $PURCHASES->GetPurchaseDocumentList($params);
+$pdlist = $PURCHASES->GetPurchaseList($params);
 
 if (!empty($_GET['action'])) {
     $id = $_GET['id'];
     $action = $_GET['action'];
     switch ($action) {
         case 'add':
-            $PURCHASES->AddPurchaseDocument($addpd, $files);
+            $PURCHASES->AddPurchase($addpd, $files);
             $SESSION->redirect('?m=pdlist');
             break;
         case 'modify':
-            $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
+            $pdinfo = $PURCHASES->GetPurchaseInfo($id);
             $SMARTY->assign('pdinfo', $pdinfo);
             if (isset($addpd)) {
                 $addpd['id'] = $id;
@@ -122,6 +122,7 @@ if (!empty($_GET['action'])) {
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
+$SMARTY->assign('categorylist', $PURCHASES->GetPurchaseCategoryList());
 
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);

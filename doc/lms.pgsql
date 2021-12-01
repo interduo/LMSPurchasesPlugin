@@ -16,6 +16,38 @@ CREATE TABLE pdtypes (
 );
 
 /* --------------------------------------------------------
+Structure of table "pdcategories"
+-------------------------------------------------------- */
+
+DROP SEQUENCE IF EXISTS pdcategories_id_seq;
+CREATE SEQUENCE pdcategories_id_seq;
+
+DROP TABLE IF EXISTS pdcategories CASCADE;
+CREATE TABLE pdcategories (
+    id integer DEFAULT nextval('pdcategories_id_seq'::text) NOT NULL,
+    name varchar(50) NOT NULL,
+    description varchar(254) DEFAULT NULL,
+    PRIMARY KEY (id)
+);
+
+/* --------------------------------------------------------
+Structure of table "pddoccat"
+-------------------------------------------------------- */
+
+DROP SEQUENCE IF EXISTS pddoccat_id_seq;
+CREATE SEQUENCE pddoccat_id_seq;
+
+DROP TABLE IF EXISTS pddoccat CASCADE;
+CREATE TABLE pddoccat (
+    id integer DEFAULT nextval('pddoccat_id_seq'::text) NOT NULL,
+    pdid integer NOT NULL
+        CONSTRAINT pddoccat_pdid_fkey REFERENCES pds (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    categoryid integer DEFAULT NULL
+        CONSTRAINT pddoccat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    PRIMARY KEY (id)
+);
+
+/* --------------------------------------------------------
 Structure of table "pds"
 -------------------------------------------------------- */
 
@@ -59,15 +91,6 @@ CREATE TABLE pdprojects (
     PRIMARY KEY (id)
 );
 
-INSERT INTO pdtypes (id, name, description) VALUES (1, 'faktura VAT', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (2, 'faktura VAT-marża', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (3, 'korekta', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (4, 'rachunek', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (5, 'decyzja płatnicza', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (6, 'opłata za rachunek bankowy', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (7, 'proforma', NULL);
-INSERT INTO pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
-
 /* --------------------------------------------------------
 Structure of table "pdattachments"
 -------------------------------------------------------- */
@@ -83,6 +106,15 @@ CREATE TABLE pdattachments (
     contenttype varchar(255) DEFAULT '' NOT NULL,
     PRIMARY KEY (id)
 );
+
+INSERT INTO pdtypes (id, name, description) VALUES (1, 'faktura VAT', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (2, 'faktura VAT-marża', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (3, 'korekta', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (4, 'rachunek', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (5, 'decyzja płatnicza', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (6, 'opłata za rachunek bankowy', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (7, 'proforma', NULL);
+INSERT INTO pdtypes (id, name, description) VALUES (8, 'nota księgowa', NULL);
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;

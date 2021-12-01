@@ -10,7 +10,7 @@ class PURCHASES
         $this->db = LMSDB::getInstance();
     }
 
-    public function GetPurchaseDocumentList($params = array())
+    public function GetPurchaseList($params = array())
     {
         if (!empty($params)) {
             extract($params);
@@ -173,12 +173,13 @@ class PURCHASES
         );
         foreach ($result as $idx => $val) {
             $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
-            $result[$idx]['files'] = $this->GetPurchaseDocumentFiles($idx);
+            $result[$idx]['categories'] = $this->GetAssignedCategories($idx);
+            $result[$idx]['files'] = $this->GetPurchaseFiles($idx);
         }
         return $result;
     }
 
-    public function GetPurchaseDocumentFiles($pdid)
+    public function GetPurchaseFiles($pdid)
     {
         $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd');
 
@@ -222,7 +223,39 @@ class PURCHASES
         return null;
     }
 
-    public function GetPurchaseDocumentInfo($id)
+    public function SetAssignedCategories($params)
+    {
+        if (!empty($params['pdid'])) {
+            $this->db->Execute(
+                'DELETE FROM pddoccat WHERE pdid = ?',
+                array($params['pdid'])
+            );
+
+            if (!empty($params['categories'])) {
+                foreach ($params['categories'] as $p) {
+                    $this->db->Execute(
+                        'INSERT INTO pddoccat (pdid, categoryid) VALUES (?, ?)',
+                        array($params['pdid'], $p)
+                    );
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function GetAssignedCategories($pdid)
+    {
+        return $this->db->GetAll(
+            'SELECT pdc.id, name
+                FROM pddoccat AS pdc
+                    LEFT JOIN pdcategories pc ON (pc.id = pdc.categoryid)
+                WHERE pdid = ?',
+            array($pdid)
+        );
+    }
+
+    public function GetPurchaseInfo($id)
     {
         $result = $this->db->GetRow(
             'SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
@@ -238,10 +271,14 @@ class PURCHASES
             $result['projects'] = $this->GetAssignedProjects($id);
         }
 
+        if ($result) {
+            $result['categories'] = $this->GetAssignedCategories($id);
+        }
+
         return $result;
     }
 
-    private function SavePDAttachments($pdid, $files, $cleanup = false)
+    private function AddPurchaseFiles($pdid, $files, $cleanup = false)
     {
         $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
         $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
@@ -294,9 +331,10 @@ class PURCHASES
         }
     }
 
-    public function AddPurchaseDocument($args, $files = null)
+    public function AddPurchase($args, $files = null)
     {
         $invprojects = empty($args['invprojects']) ? null : $args['invprojects'];
+        $categories = empty($args['categories']) ? null : $args['categories'];
 
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
@@ -323,8 +361,14 @@ class PURCHASES
             $params['invprojects'] = $invprojects;
             $this->SetAssignedProjects($params);
         }
+
+        if (!empty($categories)) {
+            $params['categories'] = $categories;
+            $this->SetAssignedCategories($params);
+        }
+
         if (!empty($files)) {
-            $this->SavePDAttachments($params['pdid'], $files);
+            $this->AddPurchaseFiles($params['pdid'], $files);
         }
 
         return $result;
@@ -346,6 +390,8 @@ class PURCHASES
         $params['pdid'] = $args['id'];
         $params['invprojects'] = !empty($args['invprojects']) ? $args['invprojects'] : null;
         $this->SetAssignedProjects($params);
+        $params['categories'] = !empty($args['categories']) ? $args['categories'] : null;
+        $this->SetAssignedCategories($params);
         ///
 
         $args = array(
@@ -438,12 +484,12 @@ class PURCHASES
         return $result;
     }
 
-    public function DeletePurchaseType($id)
+    public function DeletePurchaseDocumentType($id)
     {
         return $this->db->Execute('DELETE FROM pdtypes WHERE id = ?', array($id));
     }
 
-    public function UpdatePurchaseType($args)
+    public function UpdatePurchaseDocumentType($args)
     {
         $args = array(
             'name' => $args['name'],
@@ -453,6 +499,81 @@ class PURCHASES
 
         $result = $this->db->Execute(
             'UPDATE pdtypes SET name = ?, description = ? WHERE id = ?',
+            $args
+        );
+
+        return $result;
+    }
+
+    public function GetPurchaseCategoryList($params = array())
+    {
+        if (!empty($params)) {
+            extract($params);
+        }
+
+        switch ($orderby) {
+            case 'name':
+                $orderby = ' ORDER BY pdcategories.name';
+                break;
+            case 'description':
+                $orderby = ' ORDER BY pdcategories.description';
+                break;
+            case 'id':
+            default:
+                $orderby = ' ORDER BY pdcategories.id';
+                break;
+        }
+
+        return $this->db->GetAllByKey(
+            'SELECT pdcategories.id, pdcategories.name, pdcategories.description
+                FROM pdcategories '
+            . $orderby,
+            'id'
+        );
+    }
+
+    public function GetPurchaseCategoryInfo($id)
+    {
+        $result = $this->db->GetAll(
+            'SELECT pdcategories.id, pdcategories.name, pdcategories.description
+            FROM pdcategories
+            WHERE pdcategories.id = ?',
+            array($id)
+        );
+
+        return $result;
+    }
+
+    public function AddPurchaseCategory($args)
+    {
+        $args = array(
+            'name' => $args['name'],
+            'description' => empty($args['description']) ? null : $args['description']
+        );
+
+        $result = $this->db->Execute(
+            'INSERT INTO pdcategories (name, description) VALUES (?, ?)',
+            $args
+        );
+
+        return $result;
+    }
+
+    public function DeletePurchaseCategory($id)
+    {
+        return $this->db->Execute('DELETE FROM pdcategories WHERE id = ?', array($id));
+    }
+
+    public function UpdatePurchaseCategory($args)
+    {
+        $args = array(
+            'name' => $args['name'],
+            'description' => empty($args['description']) ? null : $args['description'],
+            'id' => $args['id'],
+        );
+
+        $result = $this->db->Execute(
+            'UPDATE pdcategories SET name = ?, description = ? WHERE id = ?',
             $args
         );
 

@@ -29,38 +29,37 @@ $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 $action = $_GET['action'];
 $id = $_GET['id'];
 
-$addpdt = $_POST['addpdt'];
-$layout['pagetitle'] = trans('Purchase document types');
+$addpdc = $_POST['addpdc'];
+$layout['pagetitle'] = trans('Purchase categories');
 
 $params['orderby'] = $_GET['orderby'];
 
-$pdtlist = $PURCHASES->GetPurchaseDocumentTypesList($params);
+$pdclist = $PURCHASES->GetPurchaseCategoryList($params);
 
 switch ($action) {
     case 'add':
-            $PURCHASES->AddPurchaseType($addpdt);
-            $SESSION->redirect('?m=pdtlist');
+            $PURCHASES->AddPurchaseCategory($addpdc);
+            $SESSION->redirect('?m=pdcategorylist');
         break;
     case 'modify':
-        $pdtinfo = $PURCHASES->GetPurchaseTypeInfo($id);
-        $SMARTY->assign('pdtinfo', $pdtinfo);
-        if (isset($pdtinfo)) {
-            $addpdt['id'] = $id;
-            $PURCHASES->UpdatePurchaseDocumentType($addpdt);
-            $SESSION->redirect('?m=pdtlist');
+        $pdcinfo = $PURCHASES->GetPurchaseCategoryInfo($id);
+        $SMARTY->assign('pdcinfo', $pdcinfo);
+        if (isset($pdcinfo)) {
+            $addpdc['id'] = $id;
+            $PURCHASES->UpdatePurchaseCategory($addpdc);
+            $SESSION->redirect('?m=pdcategorylist');
         }
         break;
     case 'delete':
         if (!empty($id)) {
-            $PURCHASES->DeletePurchaseDocumentType($id);
-            $SESSION->redirect('?m=pdtlist');
+            $PURCHASES->DeletePurchaseCategory($id);
+            $SESSION->redirect('?m=pdcategorylist');
         }
         break;
     default:
         break;
 }
-
 $SMARTY->assign('action', $action);
-$SMARTY->assign('pdtlist', $pdtlist);
+$SMARTY->assign('pdclist', $pdclist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
-$SMARTY->display('pdtlist.html');
+$SMARTY->display('pdcategorylist.html');

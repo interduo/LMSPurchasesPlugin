@@ -47,6 +47,9 @@
                 {icon name="invproject" label="Inv. Project"}
             </td>
             <td>
+                {icon name="categories" label="Categories"}
+            </td>
+            <td>
                 {icon name="user" label="User"}
             </td>
             <td class="text-right" class="lms-ui-box-buttons">
@@ -91,9 +94,14 @@
                 </a>
             </td>
             <td data-template-invprojects="{foreach $pd.projects as $p}{$p.id};{/foreach}">
-            {foreach $pd.projects as $p}
-                <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
-            {/foreach}
+                {foreach $pd.projects as $p}
+                    <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
+                {/foreach}
+            </td>
+            <td data-template-categories="{foreach $pd.categories as $c}{$c.id};{/foreach}">
+                {foreach $pd.categories as $c}
+                    <a href="?m=pdcategorylist&action=modify&id={$c.id}">{$c.name|trunescape:25:"&hellip;":true}</a><br>
+                {/foreach}
             </td>
             <td data-template-user="{$pd.userid}">
                 <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
