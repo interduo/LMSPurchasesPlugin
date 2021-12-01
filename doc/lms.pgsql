@@ -55,6 +55,7 @@ CREATE TABLE pdprojects (
     id integer DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
     pdid integer NOT NULL,
     projectid integer NOT NULL,
+        CONSTRAINT pdprojects_projectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (id)
 );
 
@@ -77,9 +78,10 @@ DROP TABLE IF EXISTS pdattachments CASCADE;
 CREATE TABLE pdattachments (
     id integer DEFAULT nextval('pdattachments_id_seq'::text) NOT NULL,
     pdid integer NOT NULL
-        REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT pdattachement_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     filename varchar(255) DEFAULT '' NOT NULL,
-    contenttype varchar(255) DEFAULT '' NOT NULL
+    contenttype varchar(255) DEFAULT '' NOT NULL,
+    PRIMARY KEY (id)
 );
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
