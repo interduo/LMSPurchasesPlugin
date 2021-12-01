@@ -171,14 +171,15 @@ class PURCHASES
             . $orderby,
             'id'
         );
-        foreach ($result as $idx=>$val) {
+        foreach ($result as $idx => $val) {
             $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
             $result[$idx]['files'] = $this->GetPurchaseDocumentFiles($idx);
         }
         return $result;
     }
 
-    public function GetPurchaseDocumentFiles($pdid) {
+    public function GetPurchaseDocumentFiles($pdid)
+    {
         $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd');
 
         return $this->db->GetAll(
@@ -189,7 +190,8 @@ class PURCHASES
         );
     }
 
-    public function GetAssignedProjects($pdid) {
+    public function GetAssignedProjects($pdid)
+    {
         return $this->db->GetAll(
             'SELECT inv.id AS id, inv.name AS name
                 FROM pdprojects AS pdp
@@ -199,7 +201,8 @@ class PURCHASES
         );
     }
 
-    public function SetAssignedProjects($params) {
+    public function SetAssignedProjects($params)
+    {
         if (!empty($params['pdid'])) {
             $this->db->Execute(
                 'DELETE FROM pdprojects WHERE pdid = ?',
@@ -221,7 +224,8 @@ class PURCHASES
 
     public function GetPurchaseDocumentInfo($id)
     {
-        $result = $this->db->GetRow('SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
+        $result = $this->db->GetRow(
+            'SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
             pds.sdate, pds.deadline, pds.paydate, pds.description,
             pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
@@ -297,8 +301,8 @@ class PURCHASES
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
-            'netvalue' => str_replace(",",".",$args['netvalue']),
-            'grossvalue' => str_replace(",",".",$args['grossvalue']),
+            'netvalue' => str_replace(",", ".", $args['netvalue']),
+            'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
@@ -309,7 +313,8 @@ class PURCHASES
 
         $result = $this->db->Execute(
             'INSERT INTO pds (typeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, supplierid, userid) 
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)', $args
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
+            $args
         );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
@@ -346,8 +351,8 @@ class PURCHASES
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
-            'netvalue' => str_replace(",",".",$args['netvalue']),
-            'grossvalue' => str_replace(",",".",$args['grossvalue']),
+            'netvalue' => str_replace(",", ".", $args['netvalue']),
+            'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
@@ -358,8 +363,9 @@ class PURCHASES
 
         $result = $this->db->Execute(
             'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, grossvalue = ?, sdate = ?, deadline = ?,
-                    paydate = ? , description = ?, supplierid = ? WHERE id = ?', $args
-            );
+                    paydate = ? , description = ?, supplierid = ? WHERE id = ?',
+            $args
+        );
 
         return $result;
     }
@@ -406,7 +412,8 @@ class PURCHASES
     }
     public function GetPurchaseTypeInfo($id)
     {
-        $result = $this->db->GetAll('SELECT pdtypes.id, pdtypes.name, pdtypes.description
+        $result = $this->db->GetAll(
+            'SELECT pdtypes.id, pdtypes.name, pdtypes.description
             FROM pdtypes
             WHERE pdtypes.id = ?',
             array($id)
@@ -423,7 +430,7 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pdtypes (name, description) VALUES (?, ?)', 
+            'INSERT INTO pdtypes (name, description) VALUES (?, ?)',
             $args
         );
 
@@ -444,7 +451,8 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'UPDATE pdtypes SET name = ?, description = ? WHERE id = ?', $args
+            'UPDATE pdtypes SET name = ?, description = ? WHERE id = ?',
+            $args
         );
 
         return $result;
@@ -558,7 +566,8 @@ class PURCHASES
                    FROM cash
                    WHERE value<0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
                    GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
-        ');
+        '
+        );
         return $income;
     }
 
@@ -570,7 +579,8 @@ class PURCHASES
                    FROM cash
                    WHERE importid IS NOT NULL AND value>0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
                    GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
-        ');
+        '
+        );
         return $income;
     }
 }

@@ -12,17 +12,17 @@ if (isset($_POST['addpd'])) {
 
         $attachments = null;
 
-        if (!empty($files)) {
-            foreach ($files as &$file) {
-                $attachments[] = array(
-                    'content_type' => $file['type'],
-                    'filename' => $file['name'],
-                    'data' => file_get_contents($tmppath . DIRECTORY_SEPARATOR . $file['name']),
-                );
-                $file['name'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
-            }
-            unset($file);
+    if (!empty($files)) {
+        foreach ($files as &$file) {
+            $attachments[] = array(
+                'content_type' => $file['type'],
+                'filename' => $file['name'],
+                'data' => file_get_contents($tmppath . DIRECTORY_SEPARATOR . $file['name']),
+            );
+            $file['name'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
         }
+        unset($file);
+    }
 }
 
 $layout['pagetitle'] = trans('Purchase document list');
