@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS pdprojects CASCADE;
 CREATE TABLE pdprojects (
     id integer DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
     pdid integer NOT NULL,
-    projectid integer NOT NULL,
+    projectid integer NOT NULL
         CONSTRAINT pdprojects_projectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (id)
 );
@@ -78,15 +78,15 @@ DROP TABLE IF EXISTS pdattachments CASCADE;
 CREATE TABLE pdattachments (
     id integer DEFAULT nextval('pdattachments_id_seq'::text) NOT NULL,
     pdid integer NOT NULL
-        CONSTRAINT pdattachement_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT pdattachments_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     filename varchar(255) DEFAULT '' NOT NULL,
     contenttype varchar(255) DEFAULT '' NOT NULL,
     PRIMARY KEY (id)
 );
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype) DO UPDATE SET keyvalue = '2021112700';
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var) DO NOTHING;
-INSERT INTO uiconfig ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0) ON CONFLICT (section, var) DO NOTHING;
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype) DO UPDATE dbinfo SET keyvalue = '2021112700' WHERE keytype='dbversion_LMSPurchasesPlugin';
 
 COMMIT;
