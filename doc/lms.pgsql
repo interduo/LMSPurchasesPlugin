@@ -87,6 +87,6 @@ CREATE TABLE pdattachments (
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype) DO UPDATE dbinfo SET keyvalue = '2021112700' WHERE keytype='dbversion_LMSPurchasesPlugin';
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype, keyvalue) DO UPDATE SET keyvalue='2021112700';
 
 COMMIT;
