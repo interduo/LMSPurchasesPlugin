@@ -41,14 +41,27 @@ if (isset($_GET['payments']) && empty($_GET['payments'])) {
     }
 }
 
+// invoices filter
+if (isset($_GET['invoices']) && empty($_GET['invoices'])) {
+    unset($params['invoices']);
+} else {
+    if (isset($_GET['invoices']) && $_GET['invoices'] == 'all') {
+        $params['invoices'] = array();
+    } elseif (isset($_GET['invoices'])) {
+        $params['invoices'] = intval($_GET['invoices']);
+    }
+}
+
 if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkConfig('privileges.hide_sysinfo')) {
     $SI = new Sysinfo;
     $SMARTY->assign('pdstats', $PURCHASES->PDStats());
 }
 
 $SMARTY->assign('IncomePerMonth', $PURCHASES->IncomePerMonth(date("Y")));
-$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonth(date("Y")));
+//$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonth(date("Y")));
+$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonthType(date("Y"),$params['invoices']));
 $SMARTY->assign('date', $date);
+$SMARTY->assign('params', $params);
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
 $SMARTY->assign('dashboard_sortable_order', json_encode($SESSION->get_persistent_setting('dashboard-sortable-order')));
