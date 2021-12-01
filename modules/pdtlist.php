@@ -46,13 +46,13 @@ switch ($action) {
         $SMARTY->assign('pdtinfo', $pdtinfo);
         if (isset($pdtinfo)) {
             $addpdt['id'] = $id;
-            $PURCHASES->UpdatePurchaseTypeDocument($addpdt);
+            $PURCHASES->UpdatePurchaseType($addpdt);
             $SESSION->redirect('?m=pdtlist');
         }
         break;
     case 'delete':
         if (!empty($id)) {
-            $PURCHASES->DeletePurchaseTypeDocument($id);
+            $PURCHASES->DeletePurchaseType($id);
             $SESSION->redirect('?m=pdtlist');
         }
         break;

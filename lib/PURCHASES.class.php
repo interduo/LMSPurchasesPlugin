@@ -410,6 +410,7 @@ class PURCHASES
             'id'
         );
     }
+
     public function GetPurchaseTypeInfo($id)
     {
         $result = $this->db->GetAll(
@@ -437,12 +438,12 @@ class PURCHASES
         return $result;
     }
 
-    public function DeletePurchaseTypeDocument($id)
+    public function DeletePurchaseType($id)
     {
         return $this->db->Execute('DELETE FROM pdtypes WHERE id = ?', array($id));
     }
 
-    public function UpdatePurchaseTypeDocument($args)
+    public function UpdatePurchaseType($args)
     {
         $args = array(
             'name' => $args['name'],
