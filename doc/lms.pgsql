@@ -31,23 +31,6 @@ CREATE TABLE pdcategories (
 );
 
 /* --------------------------------------------------------
-Structure of table "pddoccat"
--------------------------------------------------------- */
-
-DROP SEQUENCE IF EXISTS pddoccat_id_seq;
-CREATE SEQUENCE pddoccat_id_seq;
-
-DROP TABLE IF EXISTS pddoccat CASCADE;
-CREATE TABLE pddoccat (
-    id integer DEFAULT nextval('pddoccat_id_seq'::text) NOT NULL,
-    pdid integer NOT NULL
-        CONSTRAINT pddoccat_pdid_fkey REFERENCES pds (id) ON DELETE SET NULL ON UPDATE CASCADE,
-    categoryid integer DEFAULT NULL
-        CONSTRAINT pddoccat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
-    PRIMARY KEY (id)
-);
-
-/* --------------------------------------------------------
 Structure of table "pds"
 -------------------------------------------------------- */
 
@@ -73,6 +56,23 @@ CREATE TABLE pds (
         CONSTRAINT pds_userid_fkey REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY (id),
     CONSTRAINT pds_supplierid_ukey UNIQUE (fullnumber, supplierid)
+);
+
+/* --------------------------------------------------------
+Structure of table "pddoccat"
+-------------------------------------------------------- */
+
+DROP SEQUENCE IF EXISTS pddoccat_id_seq;
+CREATE SEQUENCE pddoccat_id_seq;
+
+DROP TABLE IF EXISTS pddoccat CASCADE;
+CREATE TABLE pddoccat (
+    id integer DEFAULT nextval('pddoccat_id_seq'::text) NOT NULL,
+    pdid integer NOT NULL
+        CONSTRAINT pddoccat_pdid_fkey REFERENCES pds (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    categoryid integer DEFAULT NULL
+        CONSTRAINT pddoccat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    PRIMARY KEY (id)
 );
 
 /* --------------------------------------------------------
