@@ -1,4 +1,4 @@
-{$default_taxid = ConfigHelper::getConfig('pd.default_taxid', 1)}
+{$default_taxid = ConfigHelper::getConfig('pd.default_taxid', 3)}
 
 <style>
     #addpdmodal {
@@ -200,6 +200,9 @@
         $( "#addpd-form" )[0].reset();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
         $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
+        $('#dialog-taxid option').removeAttr('selected');
+        $("#dialog-taxid option[value='" + {$default_taxid} + "']").attr("selected", "true");
+        $("#dialog-taxid").val( {$default_taxid} );
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
