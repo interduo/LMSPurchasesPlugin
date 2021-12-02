@@ -12,7 +12,7 @@ Instalacja wtyczki:
 4. Nadaj uprawnienia użytkownikowi do wtyczki
 
 **TODO: (dla wersji 1.0)**
-- kategorie dla dokumentów finansowych,
+- porządek w kodzie z trzymaniem walut i netto/brutto,
 
 **TODO:**
 - podgląd dla wrzuconych dokumentów obok formularza, 
