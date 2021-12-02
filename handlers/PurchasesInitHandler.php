@@ -43,33 +43,53 @@ class PurchasesInitHandler
      */
     public function menuInit(array $hook_data = array())
     {
-        $hook_data['finances']['submenu'][] = array(
-            'name' => trans('Dashboard'),
-            'link' => '?m=pddashboard',
-            'tip' => trans('Purchase documents dashboard'),
-            'prio' => 180,
+        $menu_pd = array(
+            'pdmod' => array(
+                'name' => trans('Purchases'),
+                'css' => 'lms-ui-icon-stats',
+                'link' => '?m=pddashboard',
+                'tip' => trans('Purchase Documents'),
+                'accesskey' => 'p',
+                'submenu' => array(
+                    array(
+                        'name' => trans('Dashboard'),
+                        'link' => '?m=pddashboard',
+                        'tip' => trans('Purchase documents dashboard'),
+                        'prio' => 180,
+                    ),
+                    array(
+                        'name' => trans('Purchase document list'),
+                        'link' => '?m=pdlist',
+                        'tip' => trans('Purchase document list'),
+                        'prio' => 181,
+                    ),
+                    array(
+                        'name' => trans('Purchase document types'),
+                        'link' => '?m=pdtlist',
+                        'tip' => trans('Purchase document types'),
+                        'prio' => 182,
+                    ),
+                    array(
+                        'name' => trans('Purchase categories'),
+                        'link' => '?m=pdcategorylist',
+                        'tip' => trans('Purchase categories'),
+                        'prio' => 183,
+                    ),
+                ),
+            ),
         );
-        $hook_data['finances']['submenu'][] = array(
-            'name' => trans('Purchase document list'),
-            'link' => '?m=pdlist',
-            'tip' => trans('Purchase document list'),
-            'prio' => 181,
-        );
-        $hook_data['finances']['submenu'][] = array(
-            'name' => trans('Purchase document types'),
-            'link' => '?m=pdtlist',
-            'tip' => trans('Purchase document types'),
-            'prio' => 182,
-        );
-        $hook_data['finances']['submenu'][] = array(
-            'name' => trans('Purchase categories'),
-            'link' => '?m=pdcategorylist',
-            'tip' => trans('Purchase categories'),
-            'prio' => 183,
-        );
-        return $hook_data;
-    }
+        $menu_keys = array_keys($hook_data);
+        $i = array_search('documentation', $menu_keys);
 
+        $hook_data = array_merge(
+            array_slice($hook_data, 0, $i, true),
+            $menu_pd,
+            array_slice($hook_data, $i, null, true)
+        );
+
+        return $hook_data;
+
+}
 
     /**
      * Modifies access table
