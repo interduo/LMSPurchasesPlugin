@@ -20,8 +20,8 @@ Instalacja wtyczki:
 - obsługa walut,
 - konta dostawców pobierane z białej listy podatników,
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
-
-Zmienne konfiguracyjne:
+**
+Zmienne konfiguracyjne:**
 pd.storage_dir - lokalizacja skanów faktur dla nowouploadowanych plików,
 pd.default_filter_period - domyślna wartość filtra okres,
 
