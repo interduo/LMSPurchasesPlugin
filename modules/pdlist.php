@@ -123,6 +123,7 @@ $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
 $SMARTY->assign('categorylist', $PURCHASES->GetPurchaseCategoryList());
+$SMARTY->assign('taxrates', $LMS->GetTaxes());
 
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);

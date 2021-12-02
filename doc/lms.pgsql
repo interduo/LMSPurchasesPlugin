@@ -42,6 +42,8 @@ CREATE TABLE pds (
     id integer DEFAULT nextval('pds_id_seq'::text) NOT NULL,
     fullnumber varchar(50) NOT NULL,
     netvalue numeric(9,2) NOT NULL,
+    taxid integer NOT NULL
+        CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE CASCADE ON UPDATE CASCADE,
     grossvalue numeric(9,2) NOT NULL,
     cdate integer NOT NULL,
     sdate integer NOT NULL,

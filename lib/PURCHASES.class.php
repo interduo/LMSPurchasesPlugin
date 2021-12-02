@@ -153,12 +153,13 @@ class PURCHASES
         }
 
         $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, 
+            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, pds.taxid, 
                     pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate, pds.description, 
-                    pds.supplierid, pds.userid, u.name AS username,'
+                    pds.supplierid, pds.userid, u.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
                     LEFT JOIN customers cv ON (pds.supplierid = cv.id)
+                    LEFT JOIN taxes tx ON (pds.taxid = tx.id)
                     LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
                     LEFT JOIN vusers u ON (pds.userid = u.id)
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
@@ -258,20 +259,18 @@ class PURCHASES
     public function GetPurchaseInfo($id)
     {
         $result = $this->db->GetRow(
-            'SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.grossvalue, pds.cdate, 
-            pds.sdate, pds.deadline, pds.paydate, pds.description,
+            'SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.taxid, pds.grossvalue, pds.cdate, 
+            pds.sdate, pds.deadline, pds.paydate, pds.description, tx.value AS tax_value, tx.label AS tax_label
             pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
+                LEFT JOIN taxes tx ON (pds.taxid = tx.id)
             WHERE pds.id = ?',
             array($id)
         );
 
         if ($result) {
             $result['projects'] = $this->GetAssignedProjects($id);
-        }
-
-        if ($result) {
             $result['categories'] = $this->GetAssignedCategories($id);
         }
 
@@ -340,6 +339,7 @@ class PURCHASES
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
             'netvalue' => str_replace(",", ".", $args['netvalue']),
+            'taxid' => $args['taxid'],
             'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
@@ -350,8 +350,8 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, netvalue, grossvalue, cdate, sdate, deadline, paydate, description, supplierid, userid) 
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO pds (typeid, fullnumber, netvalue, taxid, grossvalue, cdate, sdate, deadline, paydate, description, supplierid, userid) 
+                    VALUES (?, ?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
             $args
         );
 
@@ -398,6 +398,7 @@ class PURCHASES
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
             'netvalue' => str_replace(",", ".", $args['netvalue']),
+            'taxid' => $args['taxid'],
             'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
@@ -408,7 +409,7 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, grossvalue = ?, sdate = ?, deadline = ?,
+            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, taxid = ?, grossvalue = ?, sdate = ?, deadline = ?,
                     paydate = ? , description = ?, supplierid = ? WHERE id = ?',
             $args
         );

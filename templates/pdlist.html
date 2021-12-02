@@ -26,6 +26,9 @@
                 {icon name="value" label="Net value"}
             </td>
             <td>
+                {icon name="value" label="Tax rate"}
+            </td>
+            <td>
                 {icon name="value" label="Gross value"}
             </td>
             <td>
@@ -62,7 +65,7 @@
         <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight"
             data-template-id="{$pd.id}" data-target-url="?m=pdview&id={$pd.id}">
             <td>
-                {$pd.id}
+                {$pd.id|escape}
             </td>
             <td data-template-typeid="{$pd.typeid}">
                 {$pd.typename|escape}
@@ -72,6 +75,9 @@
             </td>
             <td data-template-netvalue="{$pd.netvalue}" data-order="{$pd.netvalue}">
                 {$pd.netvalue|escape} PLN
+            </td>
+            <td data-template-taxid="{$pd.taxid}" data-order="{$pd.tax_value}">
+                {$pd.tax_value|escape} %
             </td>
             <td data-template-grossvalue="{$pd.grossvalue}" data-order="{$pd.grossvalue}">
                 {$pd.grossvalue|escape} PLN

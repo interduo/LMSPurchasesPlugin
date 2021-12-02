@@ -1,3 +1,5 @@
+{$default_taxid = ConfigHelper::getConfig('pd.default_taxid', 1)}
+
 <style>
     #addpdmodal {
         overflow: visible;
@@ -52,6 +54,20 @@
                     </td>
                     <td>
                        <input type="text" id="dialog-netvalue" name="addpd[netvalue]" value="{$pdinfo.netvalue}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="value" label="Tax rate"}
+                    </td>
+                    <td>
+                       <select id="dialog-taxid" name="addpd[taxid]" required>
+                           {foreach $taxrates as $t}
+                               <option value="{$t.id}" {if $pdinfo.taxid==$t.id} selected{/if}>
+                                {$t.label} ({$t.value|string_format:"%d"}%)
+                               </option>
+                           {/foreach}
+                       </select>
                     </td>
                 </tr>
                 <tr>
@@ -205,6 +221,7 @@
             updateAdvancedSelects("#dialog-typeid");
             $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
             $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
+            $("#dialog-taxid").val($(row).find("[data-template-taxid]").attr('data-template-taxid'));
             $("#dialog-grossvalue").val($(row).find("[data-template-grossvalue]").attr('data-template-grossvalue'));
             $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
             $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
