@@ -41,10 +41,6 @@ DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
     id integer DEFAULT nextval('pds_id_seq'::text) NOT NULL,
     fullnumber varchar(50) NOT NULL,
-    netvalue numeric(9,2) NOT NULL,
-    taxid integer NOT NULL
-        CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    grossvalue numeric(9,2) NOT NULL,
     cdate integer NOT NULL,
     sdate integer NOT NULL,
     deadline integer DEFAULT NULL,
@@ -61,6 +57,25 @@ CREATE TABLE pds (
 );
 
 /* --------------------------------------------------------
+  Structure of table "pdcontents"
+-------------------------------------------------------- */
+DROP TABLE IF EXISTS pdcontents CASCADE;
+DROP SEQUENCE IF EXISTS pdcontents_id_seq;
+CREATE SEQUENCE pdcontents_id_seq;
+CREATE TABLE pdcontents (
+    id integer DEFAULT nextval('pdcontents_id_seq'::text) NOT NULL,
+    pdid integer NOT NULL
+        CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    netvalue numeric(9,2) NOT NULL,
+    taxid integer NOT NULL
+        CONSTRAINT pdcs_taxid_fkey REFERENCES taxes (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    grossvalue numeric(9,2) NOT NULL,
+    description text DEFAULT '' NOT NULL,
+    PRIMARY KEY (id),
+);
+CREATE INDEX pdcontents_pdid_idx ON pdcontents (pdid);
+
+/* --------------------------------------------------------
 Structure of table "pddoccat"
 -------------------------------------------------------- */
 
@@ -70,8 +85,8 @@ CREATE SEQUENCE pddoccat_id_seq;
 DROP TABLE IF EXISTS pddoccat CASCADE;
 CREATE TABLE pddoccat (
     id integer DEFAULT nextval('pddoccat_id_seq'::text) NOT NULL,
-    pdid integer NOT NULL
-        CONSTRAINT pddoccat_pdid_fkey REFERENCES pds (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    pdcid integer NOT NULL
+        CONSTRAINT pddoccat_pdcid_fkey REFERENCES pdcontents (id) ON DELETE SET NULL ON UPDATE CASCADE,
     categoryid integer DEFAULT NULL
         CONSTRAINT pddoccat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
     PRIMARY KEY (id)
@@ -87,7 +102,7 @@ CREATE SEQUENCE pdprojects_id_seq;
 DROP TABLE IF EXISTS pdprojects CASCADE;
 CREATE TABLE pdprojects (
     id integer DEFAULT nextval('pdprojects_id_seq'::text) NOT NULL,
-    pdid integer NOT NULL,
+    pdcid integer NOT NULL,
     projectid integer NOT NULL
         CONSTRAINT pdprojects_projectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (id)
