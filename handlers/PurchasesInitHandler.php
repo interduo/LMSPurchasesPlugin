@@ -88,8 +88,7 @@ class PurchasesInitHandler
         );
 
         return $hook_data;
-
-}
+    }
 
     /**
      * Modifies access table
