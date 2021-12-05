@@ -1,7 +1,10 @@
 <?php
 
-check_file_uploads();
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
+
+if ($_POST['ajax'] == 1) {
+    check_file_uploads();
+}
 
 if (isset($_POST['addpd'])) {
     $addpd = $_POST['addpd'];
@@ -10,7 +13,7 @@ if (isset($_POST['addpd'])) {
     extract($result);
     $SMARTY->assign('fileupload', $fileupload);
 
-        $attachments = null;
+    $attachments = null;
 
     if (!empty($files)) {
         foreach ($files as &$file) {
