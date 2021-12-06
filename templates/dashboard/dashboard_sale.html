@@ -26,7 +26,7 @@
 <FORM method="GET" action="?m=pddashboard" name="filter" form="filter">
     <input type="hidden" name="m" value="pddashboard">
     <input type="submit" class="hiddenbtn">
-    <select name="invoice" size="1" {tip text="Select tariff type" trigger="type"}  onChange="document.filter.submit();" class="lms-ui-advanced-select">
+    <select name="invoices" size="1" {tip text="Select tariff type" trigger="type"}  onChange="document.filter.submit();" class="lms-ui-advanced-select">
         <option value="all"{if $params.invoices == all} selected{/if}>{t}all{/t}</option>
     {foreach item=item from=$_SERVICETYPES key=key}
         <option value="{$key}"{if $params.invoices == $key} selected{/if}>{$item}</option>
