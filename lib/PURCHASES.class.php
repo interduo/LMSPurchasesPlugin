@@ -687,8 +687,50 @@ class PURCHASES
         $income = $this->db->GetAll(
             'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
                    FROM cash
-                   WHERE value<0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
-                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
+                   WHERE value<0
+                     AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time))
+                   ORDER BY month
+        '
+        );
+        return $income;
+    }
+
+    public function SalePerMonthType($only_year,$servicetype = 'all')
+    {
+            switch ($servicetype) {
+                case '-1':
+                $inv = ' AND servicetype=-1 ';
+                break;
+                case '1':
+                $inv = ' AND servicetype=1 ';
+                break;
+                case '2':
+                $inv = ' AND servicetype=2 ';
+                break;
+                case '3':
+                $inv = ' AND servicetype=3 ';
+                break;
+                case '4':
+                $inv = ' AND servicetype=4 ';
+                break;
+                case '5':
+                $inv = ' AND servicetype=5 ';
+                break;
+                case '6':
+                $inv = ' AND servicetype=6 ';
+            case 'all':
+            default:
+                break;
+        }
+        $income = $this->db->GetAll(
+            'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
+                   FROM cash
+                   WHERE value<0
+                     AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                     ' . $inv . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time))
+                   ORDER BY month
         '
         );
         return $income;
@@ -700,8 +742,11 @@ class PURCHASES
         $income = $this->db->GetAll(
             'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value) AS suma
                    FROM cash
-                   WHERE importid IS NOT NULL AND value>0 AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
-                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time)) ORDER BY month
+                   WHERE importid IS NOT NULL
+                     AND value>0
+                     AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
+                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time))
+                   ORDER BY month
         '
         );
         return $income;
