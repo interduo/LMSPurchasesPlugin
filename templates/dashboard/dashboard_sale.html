@@ -24,6 +24,7 @@
                                     <th>{t}invoices{/t}
 
 <FORM method="GET" action="?m=pddashboard" name="filter" form="filter">
+    <input type="hidden" name="m" value="pddashboard">
     <input type="submit" class="hiddenbtn">
     <select name="invoice" size="1" {tip text="Select tariff type" trigger="type"}  onChange="document.filter.submit();" class="lms-ui-advanced-select">
         <option value="all"{if $params.invoices == all} selected{/if}>{t}all{/t}</option>
