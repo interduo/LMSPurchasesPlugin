@@ -21,6 +21,7 @@
               name="addpd" id="addpd-form">
         <table>
             <tbody>
+		    <tr><td colspan="2"><h2>Dokument</h2></td></tr>
                 {if $action == 'modify'}
                     <tr>
                         <td>
@@ -49,6 +50,68 @@
                         <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{$pdinfo.fullnumber}" required>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        {icon name="timetable" label="Document date"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate|date_format:'%Y/%m/%d'}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
+                            required>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="money" label="Pay date"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="deadline" label="Deadline"}
+                    </td>
+                    <td>
+			    <input type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required> {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
+                    </td>
+                </tr>
+		<tr>
+                    <td class="nobr">
+                        {icon name="paytype" label="Payment type"}
+                    </td>
+                    <td>
+                        {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$pdinfo.paytype required="true"}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {icon name="customer" label="Supplier"}
+                    </td>
+                    <td>
+                        <select id="dialog-supplierid" name="addpd[supplierid]" onChange="updateAdvancedSelects( '#dialog-supplierid' )"
+                            class="lms-ui-advanced-select" required>
+                            <option value="">{trans("Select supplier")}</option>
+                            {foreach $supplierslist as $s}
+                            <option value="{$s.id}" {if $s.id == $pdinfo.supplierid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
+                            {/foreach}
+                        </select>
+                    </td>
+                </tr>
+                <tr id="filecontainer">
+                    <td class="nobr">
+                        {icon name="attachment" label="Attachments"}
+                    </td>
+                    <td>
+                        {fileupload id="files" fileupload=$fileupload form="addpd-form"}
+                    </td>
+                </tr>
+		<tr><td colspan="2"><h2>Wydatek</h2></td></tr>
                 <tr>
                     <td>
                         {icon name="value" label="Net value"}
@@ -80,64 +143,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        {icon name="timetable" label="Document date"}
-                    </td>
-                    <td>
-                        <input
-                            type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate|date_format:'%Y/%m/%d'}"
-                            placeholder="{trans('yyyy/mm/dd')}"
-                            {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
-                            required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="money" label="Pay date"}
-                    </td>
-                    <td>
-                        <input
-                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
-                            placeholder="{trans('yyyy/mm/dd')}"
-                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
-                    </td>
-                </tr>
-                <tr>
                     <td class="nobr">
                         {icon name="description" label="Description"}
                     </td>
                     <td>
                         <input type="text" id="dialog-description" name="addpd[description]" value="{$pdinfo.description|escape}">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="nobr">
-                        {icon name="deadline" label="Deadline"}
-                    </td>
-                    <td>
-                        {deadline_selection name="addpd[deadline]" cdate_selector="#dialog-sdate" value=$pdinfo.deadline}
-                    </td>
-                </tr>
-		<tr>
-                    <td class="nobr">
-                        {icon name="paytype" label="Payment type"}
-                    </td>
-                    <td>
-                        {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$pdinfo.paytype required="true"}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="customer" label="Supplier"}
-                    </td>
-                    <td>
-                        <select id="dialog-supplierid" name="addpd[supplierid]" onChange="updateAdvancedSelects( '#dialog-supplierid' )"
-                            class="lms-ui-advanced-select" required>
-                            <option value="">{trans("Select supplier")}</option>
-                            {foreach $supplierslist as $s}
-                            <option value="{$s.id}" {if $s.id == $pdinfo.supplierid} selected{/if}>{$s.lastname|trunescape:"25"}</option>
-                            {/foreach}
-                        </select>
                     </td>
                 </tr>
                 <tr>
@@ -166,14 +176,6 @@
                                 </option>
                             {/foreach}
                         </select>
-                    </td>
-                </tr>
-                <tr id="filecontainer">
-                    <td class="nobr">
-                        {icon name="attachment" label="Attachments"}
-                    </td>
-                    <td>
-                        {fileupload id="files" fileupload=$fileupload form="addpd-form"}
                     </td>
                 </tr>
                 <tr>
