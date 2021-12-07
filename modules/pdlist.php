@@ -90,6 +90,7 @@ $pdlist = $PURCHASES->GetPurchaseList($params);
 if (!empty($_GET['action'])) {
     $id = $_GET['id'];
     $action = $_GET['action'];
+    if ($_POST) {
     switch ($action) {
         case 'add':
             $PURCHASES->AddPurchase($addpd, $files);
@@ -118,6 +119,7 @@ if (!empty($_GET['action'])) {
             break;
         default:
             break;
+    }
     }
     $SMARTY->assign('action', $action);
 }

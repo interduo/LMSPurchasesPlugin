@@ -114,11 +114,15 @@
                         {icon name="deadline" label="Deadline"}
                     </td>
                     <td>
-                        <input
-                            type="text" id="dialog-deadline" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:'%Y/%m/%d'}"
-                            placeholder="{trans('yyyy/mm/dd')}"
-                            {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}
-                            required>
+                        {deadline_selection name="addpd[deadline]" cdate_selector="#dialog-sdate" value=$pdinfo.deadline}
+                    </td>
+                </tr>
+		<tr>
+                    <td class="nobr">
+                        {icon name="paytype" label="Payment type"}
+                    </td>
+                    <td>
+                        {paytypes elemname="addpd[paytype]" selected=$pdinfo.paytype}
                     </td>
                 </tr>
                 <tr>
@@ -184,7 +188,7 @@
 
 <script>
     $( "#addpdmodal" ).dialog( {
-        autoOpen: {if $action}true{else}false{/if},
+        autoOpen: {if $action == 'add' || $action == 'modify'}true{else}false{/if},
         resizable: false,
         width: 'auto',
         modal: true,

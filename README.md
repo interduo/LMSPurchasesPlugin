@@ -25,6 +25,7 @@ Instalacja wtyczki:
 pd.storage_dir - lokalizacja skanów faktur dla nowouploadowanych plików,
 pd.default_filter_period - domyślna wartość filtra okres,
 pd.default_taxid - ID domyślnej stawki podatkowej,
+pd.default_paytype - ID domyślnego typu płatności (patrz: $PAYTYPES w lms/lib/definitions.php),
 
 Jarosław Kłopotek <jkl@interduo.pl>,
 Grzegorz Cichowski <gc@ptlanet.pl>

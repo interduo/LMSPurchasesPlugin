@@ -49,6 +49,7 @@ CREATE TABLE pds (
     sdate integer NOT NULL,
     deadline integer DEFAULT NULL,
     paydate integer DEFAULT NULL,
+    paytype smallint NOT NULL,
     description varchar(254) DEFAULT NULL,
     supplierid integer NOT NULL
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,

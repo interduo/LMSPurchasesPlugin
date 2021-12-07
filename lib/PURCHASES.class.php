@@ -2,11 +2,10 @@
 
 class PURCHASES
 {
-    private $db;            // database object
+    private $db;
 
     public function __construct()
     {
-        // class variables setting
         $this->db = LMSDB::getInstance();
     }
 
@@ -154,7 +153,7 @@ class PURCHASES
 
         $result = $this->db->GetAllByKey(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, pds.taxid, 
-                    pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paydate, pds.description, 
+                    pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, pds.description,
                     pds.supplierid, pds.userid, u.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
@@ -260,7 +259,7 @@ class PURCHASES
     {
         $result = $this->db->GetRow(
             'SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.taxid, pds.grossvalue, pds.cdate, 
-            pds.sdate, pds.deadline, pds.paydate, pds.description, tx.value AS tax_value, tx.label AS tax_label
+            pds.sdate, pds.deadline, pds.paytype, pds.paydate, pds.description, tx.value AS tax_value, tx.label AS tax_label
             pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
@@ -343,6 +342,7 @@ class PURCHASES
             'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
+            'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'description' => empty($args['description']) ? null : $args['description'],
             'supplierid' => $args['supplierid'],
@@ -350,8 +350,8 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, netvalue, taxid, grossvalue, cdate, sdate, deadline, paydate, description, supplierid, userid) 
-                    VALUES (?, ?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO pds (typeid, fullnumber, netvalue, taxid, grossvalue, cdate, sdate, deadline, paytype, paydate, description, supplierid, userid)
+                    VALUES (?, ?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?)',
             $args
         );
 
@@ -402,6 +402,7 @@ class PURCHASES
             'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
+            'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'description' => empty($args['description']) ? null : $args['description'],
             'supplierid' => $args['supplierid'],
@@ -409,7 +410,7 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, taxid = ?, grossvalue = ?, sdate = ?, deadline = ?,
+            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, taxid = ?, grossvalue = ?, sdate = ?, deadline = ?, paytype = ?,
                     paydate = ? , description = ?, supplierid = ? WHERE id = ?',
             $args
         );
