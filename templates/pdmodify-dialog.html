@@ -1,4 +1,5 @@
 {$default_taxid = ConfigHelper::getConfig('pd.default_taxid', 1)}
+{$default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2)}
 
 <style>
     #addpdmodal {
@@ -122,7 +123,7 @@
                         {icon name="paytype" label="Payment type"}
                     </td>
                     <td>
-                        {paytypes elemname="addpd[paytype]" selected=$pdinfo.paytype}
+                        {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$pdinfo.paytype required="true"}
                     </td>
                 </tr>
                 <tr>
@@ -207,6 +208,9 @@
         $('#dialog-taxid option').removeAttr('selected');
         $("#dialog-taxid option[value='" + {$default_taxid} + "']").attr("selected", "true");
         $("#dialog-taxid").val( {$default_taxid} );
+        $('#dialog-paytype option').removeAttr('selected');
+        $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
+        $("#dialog-paytype").val( {$default_paytype} );
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
@@ -232,6 +236,10 @@
             $("#dialog-grossvalue").val($(row).find("[data-template-grossvalue]").attr('data-template-grossvalue'));
             $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
             $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
+            var assigned_paytype = $(row).find("[data-template-paytype]").attr('data-template-paytype');
+            $("#dialog-paytype option").removeAttr('selected');
+            $("#dialog-paytype").val( assigned_paytype );
+            $("#dialog-paytype option[value='" + assigned_paytype + "']").attr("selected", "true");
             $("#dialog-paydate").val($(row).find("[data-template-paydate]").attr('data-template-paydate'));
             $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
             var selectedsupplier = $(row).find("[data-template-supplierid]").attr('data-template-supplierid');
@@ -241,15 +249,15 @@
             $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
             updateAdvancedSelects("#dialog-supplierid");
 
-            var assignedprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
-            var match = assignedprojects.split(";");
+            var assigned_invprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
+            var match = assigned_invprojects.split(";");
             $('#dialog-invprojects option:selected').removeAttr('selected');
             match.forEach(function(item) {
                 $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
             });
             updateAdvancedSelects("#dialog-invprojects");
-            var assignedcategories = $(row).find("[data-template-categories]").attr('data-template-categories');
-            var match = assignedcategories.split(";");
+            var assigned_categories = $(row).find("[data-template-categories]").attr('data-template-categories');
+            var match = assigned_categories.split(";");
             $('#dialog-categories option:selected').removeAttr('selected');
             match.forEach(function(item) {
                 $("#dialog-categories option[value='" + item + "']").attr("selected", "true");

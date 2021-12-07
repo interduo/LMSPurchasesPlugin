@@ -41,6 +41,9 @@
                 {icon name="money" label="Pay date"}
             </td>
             <td>
+                {icon name="paytype" label="Payment type"}
+            </td>
+            <td>
                 {icon name="description" label="Description"}
             </td>
             <td>
@@ -90,6 +93,9 @@
             </td>
             <td data-template-paydate="{$pd.paydate|date_format:'%Y/%m/%d'}">
                 {$pd.paydate|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td data-template-paytype="{$pd.paytype}">
+		{trans("{$_PAYTYPES[{$pd.paytype}]}")}
             </td>
             <td data-template-description="{$pd.description}" {tip text=$pd.description}>
                 {$pd.description|trunescape:40}
