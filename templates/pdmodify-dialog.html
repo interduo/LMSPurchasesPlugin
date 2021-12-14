@@ -78,10 +78,10 @@
                         {icon name="deadline" label="Deadline"}
                     </td>
                     <td>
-			    <input type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required> {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
+                        <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required> {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
                     </td>
                 </tr>
-		<tr>
+                <tr>
                     <td class="nobr">
                         {icon name="paytype" label="Payment type"}
                     </td>
@@ -117,7 +117,7 @@
                         {icon name="value" label="Net value"}
                     </td>
                     <td>
-                       <input type="text" id="dialog-netvalue" name="addpd[netvalue]" value="{$pdinfo.netvalue}" required>
+                       <input type="text" id="dialog-netvalue" name="addpd[netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" required>
                     </td>
                 </tr>
                 <tr>
@@ -135,19 +135,11 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        {icon name="value" label="Gross value"}
-                    </td>
-                    <td>
-                       <input type="text" id="dialog-grossvalue" name="addpd[grossvalue]" value="{$pdinfo.grossvalue}" required>
-                    </td>
-                </tr>
-                <tr>
                     <td class="nobr">
                         {icon name="description" label="Description"}
                     </td>
                     <td>
-                        <input type="text" id="dialog-description" name="addpd[description]" value="{$pdinfo.description|escape}">
+                        <input type="text" id="dialog-description" name="addpd[description]" value="{$pdinfo.description|escape}" size=35>
                     </td>
                 </tr>
                 <tr>
@@ -206,7 +198,7 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#addpd-form" )[0].reset();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-grossvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
         $('#dialog-taxid option').removeAttr('selected');
         $("#dialog-taxid option[value='" + {$default_taxid} + "']").attr("selected", "true");
         $("#dialog-taxid").val( {$default_taxid} );
@@ -232,12 +224,11 @@
             var row = $('[data-template-id=' + template_id + ']');
             $("#dialog-typeid").val($(row).find("[data-template-typeid]").attr('data-template-typeid'));
             updateAdvancedSelects("#dialog-typeid");
+            $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
             $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
             $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
             $("#dialog-taxid").val($(row).find("[data-template-taxid]").attr('data-template-taxid'));
-            $("#dialog-grossvalue").val($(row).find("[data-template-grossvalue]").attr('data-template-grossvalue'));
             $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
-            $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
             var assigned_paytype = $(row).find("[data-template-paytype]").attr('data-template-paytype');
             $("#dialog-paytype option").removeAttr('selected');
             $("#dialog-paytype").val( assigned_paytype );

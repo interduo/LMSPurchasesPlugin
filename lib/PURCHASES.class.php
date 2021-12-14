@@ -152,8 +152,8 @@ class PURCHASES
         }
 
         $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.netvalue, pds.taxid, 
-                    pds.grossvalue, pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, pds.description,
+            'SELECT pds.id, pds.typeid, pds.netvalue, pt.name AS typename, pds.fullnumber, pds.taxid, 
+                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, pds.description,
                     pds.supplierid, pds.userid, u.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
                 FROM pds
@@ -175,6 +175,11 @@ class PURCHASES
             $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
             $result[$idx]['categories'] = $this->GetAssignedCategories($idx);
             $result[$idx]['files'] = $this->GetPurchaseFiles($idx);
+            if (!empty($result[$idx]['tax_value'])) {
+                $result[$idx]['grossvalue'] = round($result[$idx]['netvalue']+($result[$idx]['netvalue']*$result[$idx]['tax_value']/100), 2);
+            } else {
+                $result[$idx]['grossvalue'] = round($result[$idx]['netvalue'], 2);
+            }
         }
         return $result;
     }
@@ -339,7 +344,6 @@ class PURCHASES
             'fullnumber' => $args['fullnumber'],
             'netvalue' => str_replace(",", ".", $args['netvalue']),
             'taxid' => $args['taxid'],
-            'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
@@ -350,8 +354,8 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, netvalue, taxid, grossvalue, cdate, sdate, deadline, paytype, paydate, description, supplierid, userid)
-                    VALUES (?, ?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO pds (typeid, fullnumber, netvalue, taxid, cdate, sdate, deadline, paytype, paydate, description, supplierid, userid)
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?)',
             $args
         );
 
@@ -399,7 +403,6 @@ class PURCHASES
             'fullnumber' => $args['fullnumber'],
             'netvalue' => str_replace(",", ".", $args['netvalue']),
             'taxid' => $args['taxid'],
-            'grossvalue' => str_replace(",", ".", $args['grossvalue']),
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
@@ -410,7 +413,7 @@ class PURCHASES
         );
 
         $result = $this->db->Execute(
-            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, taxid = ?, grossvalue = ?, sdate = ?, deadline = ?, paytype = ?,
+            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, taxid = ?, sdate = ?, deadline = ?, paytype = ?,
                     paydate = ? , description = ?, supplierid = ? WHERE id = ?',
             $args
         );

@@ -76,8 +76,8 @@
             <td data-template-fullnumber="{$pd.fullnumber}">
                 {$pd.fullnumber|escape}
             </td>
-            <td data-template-netvalue="{$pd.netvalue}" data-order="{$pd.netvalue}">
-                {$pd.netvalue|escape} PLN
+            <td data-template-netvalue="{$pd.netvalue|rtrim:'0'|rtrim:'.'}" data-order="{$pd.netvalue}">
+                {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
             <td data-template-taxid="{$pd.taxid}" data-order="{$pd.tax_value}">
                 {$pd.tax_value|escape} %
@@ -95,7 +95,7 @@
                 {$pd.paydate|escape|date_format:"%Y/%m/%d"}
             </td>
             <td data-template-paytype="{$pd.paytype}">
-		{trans("{$_PAYTYPES[{$pd.paytype}]}")}
+                {trans("{$_PAYTYPES[{$pd.paytype}]}")}
             </td>
             <td data-template-description="{$pd.description}" {tip text=$pd.description}>
                 {$pd.description|trunescape:40}
