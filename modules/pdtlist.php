@@ -27,7 +27,7 @@
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
 $action = $_GET['action'];
-$id = $_GET['id'];
+$id = intval($_GET['id']);
 
 $addpdt = $_POST['addpdt'];
 $layout['pagetitle'] = trans('Purchase document types');

@@ -152,16 +152,17 @@ class PURCHASES
         }
 
         $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, pds.netvalue, pt.name AS typename, pds.fullnumber, pds.taxid, 
-                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, pds.description,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, 
+                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate,
                     pds.supplierid, pds.userid, u.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
-                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
+                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,
                 FROM pds
                     LEFT JOIN customers cv ON (pds.supplierid = cv.id)
                     LEFT JOIN taxes tx ON (pds.taxid = tx.id)
                     LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
                     LEFT JOIN vusers u ON (pds.userid = u.id)
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
+                    LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
                 WHERE 1=1'
             . $supplierfilter
             . $paymentsfilter
@@ -175,11 +176,6 @@ class PURCHASES
             $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
             $result[$idx]['categories'] = $this->GetAssignedCategories($idx);
             $result[$idx]['files'] = $this->GetPurchaseFiles($idx);
-            if (!empty($result[$idx]['tax_value'])) {
-                $result[$idx]['grossvalue'] = round($result[$idx]['netvalue']+($result[$idx]['netvalue']*$result[$idx]['tax_value']/100), 2);
-            } else {
-                $result[$idx]['grossvalue'] = round($result[$idx]['netvalue'], 2);
-            }
         }
         return $result;
     }
@@ -232,14 +228,14 @@ class PURCHASES
     {
         if (!empty($params['pdid'])) {
             $this->db->Execute(
-                'DELETE FROM pddoccat WHERE pdid = ?',
+                'DELETE FROM pdcontentcat WHERE pdid = ?',
                 array($params['pdid'])
             );
 
             if (!empty($params['categories'])) {
                 foreach ($params['categories'] as $p) {
                     $this->db->Execute(
-                        'INSERT INTO pddoccat (pdid, categoryid) VALUES (?, ?)',
+                        'INSERT INTO pdcontentcat (pdid, categoryid) VALUES (?, ?)',
                         array($params['pdid'], $p)
                     );
                 }
@@ -253,7 +249,7 @@ class PURCHASES
     {
         return $this->db->GetAll(
             'SELECT pdc.id, name
-                FROM pddoccat AS pdc
+                FROM pdcontentcat AS pdc
                     LEFT JOIN pdcategories pc ON (pc.id = pdc.categoryid)
                 WHERE pdid = ?',
             array($pdid)
@@ -455,7 +451,7 @@ class PURCHASES
         }
 
         return $this->db->GetAllByKey(
-            'SELECT pdtypes.id, pdtypes.name, pdtypes.description
+            'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag
                 FROM pdtypes '
             . $orderby,
             'id'
@@ -465,7 +461,7 @@ class PURCHASES
     public function GetPurchaseTypeInfo($id)
     {
         $result = $this->db->GetAll(
-            'SELECT pdtypes.id, pdtypes.name, pdtypes.description
+            'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag
             FROM pdtypes
             WHERE pdtypes.id = ?',
             array($id)
@@ -478,13 +474,20 @@ class PURCHASES
     {
         $args = array(
             'name' => $args['name'],
-            'description' => empty($args['description']) ? null : $args['description']
+            'description' => empty($args['description']) ? null : $args['description'],
+            'defaultflag' => empty($args['defaultflag']) ? 'false' : 'true'
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pdtypes (name, description) VALUES (?, ?)',
+            'INSERT INTO pdtypes (name, description, defaultflag) VALUES (?, ?, ?)',
             $args
         );
+
+        $lastinserted = $this->db->GetLastInsertID('pdtypes');
+
+        if (!empty($args['defaultflag'])) {
+            $result = $this->db->Execute('UPDATE pdtypes SET defaultflag = false WHERE id != ?', $lastinserted);
+        }
 
         return $result;
     }
@@ -499,11 +502,16 @@ class PURCHASES
         $args = array(
             'name' => $args['name'],
             'description' => empty($args['description']) ? null : $args['description'],
+            'defaultflag' => empty($args['defaultflag']) ? 'false' : 'true',
             'id' => $args['id'],
         );
 
+        if (!empty($args['defaultflag'])) {
+            $result = $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
+        }
+
         $result = $this->db->Execute(
-            'UPDATE pdtypes SET name = ?, description = ? WHERE id = ?',
+            'UPDATE pdtypes SET name = ?, description = ?, defaultflag = ? WHERE id = ?',
             $args
         );
 

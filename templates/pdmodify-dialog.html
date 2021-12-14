@@ -35,10 +35,10 @@
                     </td>
                     <td>
                         <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select">
-                            <option value="">{trans("undefined")}</option>
                             {foreach $typeslist as $pd}
-                            <option value="{$pd.id}" {if $pdinfo.typeid == $pd.id} selected{/if}>{$pd.name|trunescape:"25"}</option>
+                            <option value="{$pd.id}" {if $pdinfo.typeid == $pd.id || $pd.defaultflag == 't'} selected{/if}>{$pd.name|trunescape:"25"}</option>
                             {/foreach}
+                            <option value="">{trans("undefined")}</option>
                         </select>
                     </td>
                 </tr>
@@ -111,7 +111,11 @@
                         {fileupload id="files" fileupload=$fileupload form="addpd-form"}
                     </td>
                 </tr>
-		<tr><td colspan="2"><h2>Wydatek</h2></td></tr>
+                <tr>
+                    <td colspan="2">
+                        <h2>{trans("Expence")}</h2>
+                    </td>
+                </tr>
                 <tr>
                     <td>
                         {icon name="value" label="Net value"}
