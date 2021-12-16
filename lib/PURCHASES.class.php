@@ -19,6 +19,9 @@ class PURCHASES
             case 'supplierid':
                 $orderby = ' ORDER BY pds.supplierid';
                 break;
+            case 'cdate':
+                $orderby = ' ORDER BY pds.cdate';
+                break;
             case 'sdate':
                 $orderby = ' ORDER BY pds.sdate';
                 break;
@@ -27,9 +30,6 @@ class PURCHASES
                 break;
             case 'netvalue':
                 $orderby = ' ORDER BY pds.netvalue';
-                break;
-            case 'grossvalue':
-                $orderby = ' ORDER BY pds.grossvalue';
                 break;
             case 'description':
                 $orderby = ' ORDER BY pds.description';
@@ -150,33 +150,37 @@ class PURCHASES
         if (!empty($valueto)) {
             $valuetofilter = ' AND grossvalue <= ' . $valueto;
         }
+        if (empty($expences)) {
+            $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, (SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)) AS grossvalue';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
+        } else {
+            $split = ' pdc.netvalue, (pdc.netvalue*tx.value/100)+pdc.netvalue AS grossvalue';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netvalue';
+        }
 
-        $result = $this->db->GetAllByKey(
+        $result = $this->db->GetAll(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, 
-                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate,
-                    pds.supplierid, pds.userid, u.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
-                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,
-                FROM pds
-                    LEFT JOIN customers cv ON (pds.supplierid = cv.id)
-                    LEFT JOIN taxes tx ON (pds.taxid = tx.id)
-                    LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
-                    LEFT JOIN vusers u ON (pds.userid = u.id)
-                    LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
+                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netvalue),
+                    pds.supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
+                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,'
+                    . $split
+                    . ' FROM pds
                     LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
+                    LEFT JOIN customers cv ON (pds.supplierid = cv.id)
+                    LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
+                    LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
+                    LEFT JOIN vusers vu ON (pds.userid = vu.id)
+                    LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $supplierfilter
             . $paymentsfilter
             . $periodfilter
             . $valuefromfilter
             . $valuetofilter
-            . $orderby,
-            'id'
+            . $groupby
+            . $orderby
         );
-        foreach ($result as $idx => $val) {
-            $result[$idx]['projects'] = $this->GetAssignedProjects($idx);
-            $result[$idx]['categories'] = $this->GetAssignedCategories($idx);
-            $result[$idx]['files'] = $this->GetPurchaseFiles($idx);
-        }
+
         return $result;
     }
 
@@ -192,86 +196,26 @@ class PURCHASES
         );
     }
 
-    public function GetAssignedProjects($pdid)
-    {
-        return $this->db->GetAll(
-            'SELECT inv.id AS id, inv.name AS name
-                FROM pdprojects AS pdp
-                    LEFT JOIN invprojects inv ON (pdp.projectid = inv.id)
-                WHERE pdid = ?',
-            array($pdid)
-        );
-    }
-
-    public function SetAssignedProjects($params)
-    {
-        if (!empty($params['pdid'])) {
-            $this->db->Execute(
-                'DELETE FROM pdprojects WHERE pdid = ?',
-                array($params['pdid'])
-            );
-
-            if (!empty($params['invprojects'])) {
-                foreach ($params['invprojects'] as $p) {
-                    $this->db->Execute(
-                        'INSERT INTO pdprojects (pdid, projectid) VALUES (?, ?)',
-                        array($params['pdid'], $p)
-                    );
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public function SetAssignedCategories($params)
-    {
-        if (!empty($params['pdid'])) {
-            $this->db->Execute(
-                'DELETE FROM pdcontentcat WHERE pdid = ?',
-                array($params['pdid'])
-            );
-
-            if (!empty($params['categories'])) {
-                foreach ($params['categories'] as $p) {
-                    $this->db->Execute(
-                        'INSERT INTO pdcontentcat (pdid, categoryid) VALUES (?, ?)',
-                        array($params['pdid'], $p)
-                    );
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public function GetAssignedCategories($pdid)
-    {
-        return $this->db->GetAll(
-            'SELECT pdc.id, name
-                FROM pdcontentcat AS pdc
-                    LEFT JOIN pdcategories pc ON (pc.id = pdc.categoryid)
-                WHERE pdid = ?',
-            array($pdid)
-        );
-    }
-
     public function GetPurchaseInfo($id)
     {
         $result = $this->db->GetRow(
-            'SELECT pds.id, pds.typeid, pds.fullnumber, pds.netvalue, pds.taxid, pds.grossvalue, pds.cdate, 
-            pds.sdate, pds.deadline, pds.paytype, pds.paydate, pds.description, tx.value AS tax_value, tx.label AS tax_label
+            'SELECT pds.id, pds.typeid, pds.fullnumber, pc.netvalue, pc.taxid, pds.cdate, 
+            pds.sdate, pds.deadline, pds.paytype, pds.paydate, pc.description, tx.value AS tax_value, tx.label AS tax_label,
             pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
                 LEFT JOIN taxes tx ON (pds.taxid = tx.id)
+                LEFT JOIN pdcontents pc (pds.id = pc.pdid)
             WHERE pds.id = ?',
             array($id)
         );
 
         if ($result) {
-            $result['projects'] = $this->GetAssignedProjects($id);
-            $result['categories'] = $this->GetAssignedCategories($id);
+            if (!empty($result['tax_value'])) {
+                $result['grossvalue'] = round($result['netvalue']+($result['netvalue']*$result['tax_value']/100), 2);
+            } else {
+                $result['grossvalue'] = round($result['netvalue'], 2);
+            }
         }
 
         return $result;
@@ -332,39 +276,49 @@ class PURCHASES
 
     public function AddPurchase($args, $files = null)
     {
-        $invprojects = empty($args['invprojects']) ? null : $args['invprojects'];
-        $categories = empty($args['categories']) ? null : $args['categories'];
-
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
-            'netvalue' => str_replace(",", ".", $args['netvalue']),
-            'taxid' => $args['taxid'],
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
-            'description' => empty($args['description']) ? null : $args['description'],
             'supplierid' => $args['supplierid'],
             'userid' => Auth::GetCurrentUser(),
+            'pdid' => $this->db->GetLastInsertID('pds'),
+            'netvalue' => str_replace(",", ".", $args['netvalue']),
+            'taxid' => $args['taxid'],
+            'description' => empty($args['description']) ? null : $args['description'],
+            'invprojects' => empty($args['invprojects']) ? null : $args['invprojects'],
+            'categories' => empty($args['categories']) ? null : $args['categories'],
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, netvalue, taxid, cdate, sdate, deadline, paytype, paydate, description, supplierid, userid)
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?)',
-            $args
+            'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, userid)
+                    VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
+                array($args['typeid'], $args['fullnumber'], $args['sdate'], $args['deadline'], $args['paytype'],
+                    $args['paydate'], $args['supplierid'], $args['userid'])
+            );
+
+        $args['pdid'] = $this->db->GetLastInsertID('pds');
+        $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
+            array($args['pdid'], $args['netvalue'], $args['taxid'], $args['description'])
         );
 
-        $params['pdid'] = $this->db->GetLastInsertID('pds');
+        $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
 
-        if (!empty($invprojects)) {
-            $params['invprojects'] = $invprojects;
-            $this->SetAssignedProjects($params);
+        if (!empty($args['invprojects'])) {
+            foreach ($args['invprojects'] as $p) {
+                $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES(?, ?)',
+                    array($args['contentid'], $p));
+                }
         }
 
-        if (!empty($categories)) {
-            $params['categories'] = $categories;
-            $this->SetAssignedCategories($params);
+        if (!empty($args['categories'])) {
+            foreach ($args['categories'] as $c) {
+                $this->db->Execute('INSERT INTO pdcategories (contentid, categoryid) VALUES(?, ?)',
+                    array($args['contentid'], $c));
+                }
         }
 
         if (!empty($files)) {
@@ -386,13 +340,9 @@ class PURCHASES
 
     public function UpdatePurchaseDocument($args)
     {
-        ///porównać to co jest aktualnie w projekcie i to co wybieramy i warunkowo odpalić ten kod -
         $params['pdid'] = $args['id'];
         $params['invprojects'] = !empty($args['invprojects']) ? $args['invprojects'] : null;
-        $this->SetAssignedProjects($params);
         $params['categories'] = !empty($args['categories']) ? $args['categories'] : null;
-        $this->SetAssignedCategories($params);
-        ///
 
         $args = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],

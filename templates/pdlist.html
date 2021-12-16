@@ -20,7 +20,7 @@
                 {icon name="type" label="Type"}
             </td>
             <td>
-                {icon name="summary" label="Purchase document number"}
+                {icon name="summary" label="Document number"}
             </td>
             <td>
                 {icon name="value" label="Net value"}
@@ -82,8 +82,8 @@
             <td data-template-taxid="{$pd.taxid}" data-order="{$pd.tax_value}">
                 {$pd.tax_value|escape} %
             </td>
-            <td data-template-grossvalue="{$pd.grossvalue}" data-order="{$pd.grossvalue}">
-                {$pd.grossvalue|escape} PLN
+            <td data-template-grossvalue="{$pd.sum_grossvalue}" data-order="{$pd.grossvalue}">
+                {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
             <td data-template-sdate="{$pd.sdate|date_format:'%Y/%m/%d'}">
                 {$pd.sdate|escape|date_format:"%Y/%m/%d"}

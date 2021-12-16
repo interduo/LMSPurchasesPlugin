@@ -44,6 +44,13 @@
                     <option value="6" {if !empty($params.period) && $params.period=='6'} selected{/if}>{trans("current year")}</option>
                 </select>
             </td>
+            <td>
+                {icon name='type'}
+                <select name="expences" onchange="document.filter.submit();">
+                    <option value="0">{trans("documents")}</option>
+                    <option value="1"{if $params.expences=='1'} selected{/if}>{trans("expences")}</option>
+                </select>
+            </td>
         </tr>
     </table>
 </form>
