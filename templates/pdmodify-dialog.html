@@ -116,7 +116,7 @@
 
         <h2>{trans("Expence")}</h2>
 
-        <table id="expencestable">
+        <table id="expencestable1">
             <tbody>
                 <tr id="expencesrow">
                     <td>
@@ -155,7 +155,7 @@
         </table>
         {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
         {button label="Cancel" icon="cancel" id="close"}
-        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencesrow')"}
+        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable1')"}
         </form>
 </div>
 
@@ -242,9 +242,9 @@
     };
 
     function clone_element_increment_id( elem ) {
-        var cloned = document.getElementById( elem ).cloneNode(true);
+        var cloned = document.getElementById( elem ).lastElementChild.lastElementChild.cloneNode(true);
         cloned.classList.add("cloned");
-        document.getElementById( elem ).after(cloned);
+        document.getElementById( elem ).lastElementChild.lastElementChild.after(cloned);
     };
 
 </script>
