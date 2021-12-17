@@ -8,7 +8,7 @@ if (!empty($_POST['ajax'])) {
 
 if (isset($_POST['addpd'])) {
     $addpd = $_POST['addpd'];
-
+print_r($addpd); die();
     $result = handle_file_uploads('files', $error);
     extract($result);
     $SMARTY->assign('fileupload', $fileupload);

@@ -118,19 +118,11 @@
 
         <table id="expencestable">
             <tbody>
-                <tr>
+                <tr id="expencesrow">
                     <td>
-                        {icon name="value" label="Net value"}
-                    </td>
-                    <td>
+                        {icon name="value" tip="Net value"}
                         <input type="text" id="dialog-netvalue" name="addpd[netvalue][1]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="Net value" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="value" label="Tax rate"}
-                    </td>
-                    <td>
+                        {icon name="value" tip="Tax rate"}
                         <select id="dialog-taxid" name="addpd[taxid][1]" required>
                             {foreach $taxrates as $t}
                                 <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
@@ -138,33 +130,15 @@
                                </option>
                            {/foreach}
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="description" label="Description"}
-                    </td>
-                    <td>
+                        {icon name="description" tip="Description"}
                         <input type="text" id="dialog-description" name="addpd[description][1]" value="{$pdinfo.description|escape}" size="40">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="invproject" label="Inv. Project"}
-                    </td>
-                    <td>
+                        {icon name="invproject" tip="Inv. Project"}
                         <select id="dialog-invprojects" name="addpd[invprojects][1][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
                                 <option value="{$p.id}" {foreach $pdinfo.invprojects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="categories" label="Categories"}
-                    </td>
-                    <td>
+                        {icon name="categories" tip="Categories"}
                         <select id="dialog-categories" name="addpd[categories][1][]" class="lms-ui-advanced-select" multiple>
                             {foreach $categorylist as $p}
                                 <option value="{$p.id}"
@@ -179,9 +153,9 @@
                 </tr>
             </tbody>
         </table>
-        {button icon="add" tip="Add row" id="addrow" onClick='add_row(expencestable)'}
-        {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
+        {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
         {button label="Cancel" icon="cancel" id="close"}
+        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencesrow')"}
         </form>
 </div>
 
@@ -266,9 +240,9 @@
         $( "#filecontainer").addClass('hidden');
     };
 
-    function add_row(table) {
-        var table = document.getElementById("expencestable").cloneNode(true);
-        document.getElementById("expencestable").after(table);
+    function clone_element_increment_id( elem ) {
+        var cloned = document.getElementById( elem ).cloneNode(true);
+        document.getElementById( elem ).after(cloned);
     };
 
 </script>
