@@ -193,6 +193,7 @@
         updateAdvancedSelects("#dialog-categories");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
+        $( ".cloned" ).remove();
     };
 
     function open_modify_dialog (template_id) {
@@ -242,6 +243,7 @@
 
     function clone_element_increment_id( elem ) {
         var cloned = document.getElementById( elem ).cloneNode(true);
+        cloned.classList.add("cloned");
         document.getElementById( elem ).after(cloned);
     };
 
