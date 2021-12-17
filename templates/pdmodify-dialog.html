@@ -155,11 +155,12 @@
         </table>
         {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
         {button label="Cancel" icon="cancel" id="close"}
-        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable')"}
+        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id()"}
         </form>
 </div>
 
 <script>
+    let lastCostCounter = 1;
     $( "#addpdmodal" ).dialog( {
         autoOpen: {if $action == 'add' || $action == 'modify'}true{else}false{/if},
         resizable: false,
@@ -241,17 +242,39 @@
         $( "#filecontainer").addClass('hidden');
     };
 
-    function increaseStringValue(myString){
-      return myString.replace(/\d+/ig, function(a){ return a+1;});
+    function increaseStringValue(){
+      return myString.replace(/\d+/ig, costCounter);
     }
 
-    function clone_element_increment_id( elem ) {
-        var cloned = document.getElementById( elem ).lastElementChild.lastElementChild.cloneNode(true);
+    function changeAttributeInAllEl (anchor, type, attrName) {
+        const nodeList = anchor.getElementsByTagName(type);
+
+        for (let i = 0; i < nodeList.length; i++) {
+            nodeList[i].setAttribute(attrName, increaseStringValue())
+        }
+    }
+
+    function changeIdAndName (anchor, type) {
+        changeAttributeInAllEl(anchor, type, 'name');
+        changeAttributeInAllEl(anchor, type, 'id');
+    }
+
+    function clone_element_increment_id() {
+        const lastCost = document.getElementById(`expencesrow${lastCostCounter}`);
+
+        var cloned = lastCost.cloneNode(true);
+        lastCostCounter ++;
         cloned.classList.add("cloned");
-        var lastid = cloned.getAttribute('id');
-        cloned.setAttribute('id', increaseStringValue(lastid));
+
+        cloned.setAttribute('id', increaseStringValue());
         ///zwiększ id i name wszystkich elementów w klonie (input, select, radio)
-        document.getElementById( elem ).lastElementChild.lastElementChild.after(cloned);
+
+        changeIdAndName(cloned, 'input');
+        changeIdAndName(cloned, 'select');
+        changeIdAndName(cloned, 'radio');
+
+
+        lastCost.after(cloned);
     };
 
 </script>
