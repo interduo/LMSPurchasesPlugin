@@ -116,9 +116,9 @@
 
         <h2>{trans("Expence")}</h2>
 
-        <table id="expencestable1">
+        <table id="expencestable">
             <tbody>
-                <tr id="expencesrow">
+                <tr id="expencesrow1">
                     <td>
                         {icon name="value" tip="Net value"}
                         <input type="text" id="dialog-netvalue" name="addpd[netvalue][1]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="Net value" required>
@@ -131,7 +131,7 @@
                            {/foreach}
                         </select>
                         {icon name="description" tip="Description"}
-                        <input type="text" id="dialog-description" name="addpd[description][1]" value="{$pdinfo.description|escape}" size="40">
+                        <input type="text" id="dialog-description" name="addpd[description][1]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
                         {icon name="invproject" tip="Inv. Project"}
                         <select id="dialog-invprojects" name="addpd[invprojects][1][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
@@ -155,7 +155,7 @@
         </table>
         {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
         {button label="Cancel" icon="cancel" id="close"}
-        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable1')"}
+        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable')"}
         </form>
 </div>
 
@@ -241,9 +241,16 @@
         $( "#filecontainer").addClass('hidden');
     };
 
+    function increaseStringValue(myString){
+      return myString.replace(/\d+/ig, function(a){ return a+1;});
+    }
+
     function clone_element_increment_id( elem ) {
         var cloned = document.getElementById( elem ).lastElementChild.lastElementChild.cloneNode(true);
         cloned.classList.add("cloned");
+        var lastid = cloned.getAttribute('id');
+        cloned.setAttribute('id', increaseStringValue(lastid));
+        ///zwiększ id i name wszystkich elementów w klonie (input, select, radio)
         document.getElementById( elem ).lastElementChild.lastElementChild.after(cloned);
     };
 
