@@ -118,10 +118,10 @@
 
         <table id="expencestable">
             <tbody>
-                <tr id="expencesrow1">
+                <tr class="expencesrow">
                     <td>
                         {icon name="value" tip="Net value"}
-                        <input type="text" id="dialog-netvalue" name="addpd[netvalue][1]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="Net value" required>
+                        <input type="text" id="dialog-netvalue" name="addpd[netvalue][1]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
                         {icon name="value" tip="Tax rate"}
                         <select id="dialog-taxid" name="addpd[taxid][1]" required>
                             {foreach $taxrates as $t}
@@ -160,6 +160,8 @@
 </div>
 
 <script>
+    let lastCostCounter = 1;
+
     $( "#addpdmodal" ).dialog( {
         autoOpen: {if $action == 'add' || $action == 'modify'}true{else}false{/if},
         resizable: false,
@@ -240,18 +242,27 @@
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
     };
-
-    function increaseStringValue(myString){
-      return myString.replace(/\d+/ig, function(a){ return a+1;});
+///działa dobrze
+    function increaseStringValue(str){
+      return str.replace(/\d+/ig,
+        function(a){ return a*1+1;});
     }
 
-    function clone_element_increment_id( elem ) {
-        var cloned = document.getElementById( elem ).lastElementChild.lastElementChild.cloneNode(true);
-        cloned.classList.add("cloned");
-        var lastid = cloned.getAttribute('id');
-        cloned.setAttribute('id', increaseStringValue(lastid));
-        ///zwiększ id i name wszystkich elementów w klonie (input, select, radio)
-        document.getElementById( elem ).lastElementChild.lastElementChild.after(cloned);
+///nie działa
+    function increaseIdNameInAllEl(elem) {
+        var elementList = elem.getElementsByTagName("name", "id");
+        for (let i = 0; i < elementList.length; i++) {
+            elementList[i].setAttribute("id", increaseStringValue(elementy[i].getAttribute('id')));
+            elementList[i].setAttribute("name", increaseStringValue(elementy[i].getAttribute('name')));
+        }
+    }
+
+///działa
+    function clone_element_increment_id(elem) {
+        var kopia = document.getElementById(elem).lastElementChild.lastElementChild.cloneNode(true);
+        kopia.classList.add("cloned");
+        increaseIdNameInAllEl(kopia);
+        document.getElementById(elem).lastElementChild.lastElementChild.after(kopia);
     };
 
 </script>
