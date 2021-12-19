@@ -252,7 +252,7 @@
     }
 
     function increaseIdNameInAllEl(elem) {
-        var elementList = elem.querySelectorAll("select", "input");
+        var elementList = elem.querySelectorAll("select, input");
         for (let i = 0; i < elementList.length; i++) {
             elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
             elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
