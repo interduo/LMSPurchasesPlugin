@@ -242,18 +242,17 @@
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
     };
-///działa dobrze
+
     function increaseStringValue(str){
       if (!str) {
-          return;
+          return str;
       }
-      return str.replace(/\d+/ig,
+      return str.replaceAll(/\d+/ig,
         function(a){ return a*1+1;});
     }
 
-///nie działa
     function increaseIdNameInAllEl(elem) {
-        var elementList = elem.querySelectorAll('input', 'radio', 'select');
+        var elementList = elem.querySelectorAll("select", "input");
         for (let i = 0; i < elementList.length; i++) {
             elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
             elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
