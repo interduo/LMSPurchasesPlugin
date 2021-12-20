@@ -60,6 +60,7 @@
                             placeholder="{trans('yyyy/mm/dd')}"
                             {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
                             required>
+                        {day_selection elem='[name="addpd[sdate]"]' from_selector="#dialog-sdate" days="0,-1,-2,-3"}
                     </td>
                 </tr>
                 <tr>
@@ -78,7 +79,8 @@
                         {icon name="deadline" label="Deadline"}
                     </td>
                     <td>
-                        <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required> {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
+                        <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required>
+                        {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
                     </td>
                 </tr>
                 <tr>
@@ -121,9 +123,9 @@
                 <tr class="expencesrow">
                     <td>
                         {icon name="value" tip="Net value"}
-                        <input type="text" id="dialog-netvalue1" name="addpd[netvalue][1]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
+                        <input type="text" id="dialog-netvalue1" name="addpd[expense][1][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
                         {icon name="value" tip="Tax rate"}
-                        <select id="dialog-taxid1" name="addpd[taxid][1]" required>
+                        <select id="dialog-taxid1" name="addpd[expense][1][taxid]" required>
                             {foreach $taxrates as $t}
                                 <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
                                     {$t.label} ({$t.value|string_format:"%d"}%)
@@ -131,15 +133,15 @@
                            {/foreach}
                         </select>
                         {icon name="description" tip="Description"}
-                        <input type="text" id="dialog-description1" name="addpd[description][1]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
+                        <input type="text" id="dialog-description1" name="addpd[expense][1][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
                         {icon name="invproject" tip="Inv. Project"}
-                        <select id="dialog-invprojects1" name="addpd[invprojects][1][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-invprojects1" name="addpd[expense][1][invprojects][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
                                 <option value="{$p.id}" {foreach $pdinfo.invprojects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                         {icon name="categories" tip="Categories"}
-                        <select id="dialog-categories1" name="addpd[categories][1][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-categories1" name="addpd[expense][1][categories][]" class="lms-ui-advanced-select" multiple>
                             {foreach $categorylist as $p}
                                 <option value="{$p.id}"
                                     {foreach $pdinfo.categories as $a}
@@ -179,20 +181,20 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#addpd-form" )[0].reset();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
-        $('#dialog-taxid option').removeAttr('selected');
-        $("#dialog-taxid option[value='" + {$default_taxid} + "']").attr("selected", "true");
-        $("#dialog-taxid").val( {$default_taxid} );
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue1", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description1", "#dialog-supplierid", "#dialog-invprojects1" ).val('');
+        $('#dialog-taxid1 option').removeAttr('selected');
+        $("#dialog-taxid1 option[value='" + {$default_taxid} + "']").attr("selected", "true");
+        $("#dialog-taxid1").val( {$default_taxid} );
         $('#dialog-paytype option').removeAttr('selected');
         $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
         $("#dialog-paytype").val( {$default_paytype} );
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
-        $('#dialog-invprojects option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-invprojects");
-        $('#dialog-categories option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-categories");
+        $('#dialog-invprojects1 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-invprojects1");
+        $('#dialog-categories1 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-categories1");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
         $( ".cloned" ).remove();
@@ -208,21 +210,25 @@
             updateAdvancedSelects("#dialog-typeid");
             $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
             $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
-            $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
-            $("#dialog-taxid").val($(row).find("[data-template-taxid]").attr('data-template-taxid'));
+
             $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
             var assigned_paytype = $(row).find("[data-template-paytype]").attr('data-template-paytype');
             $("#dialog-paytype option").removeAttr('selected');
             $("#dialog-paytype").val( assigned_paytype );
             $("#dialog-paytype option[value='" + assigned_paytype + "']").attr("selected", "true");
             $("#dialog-paydate").val($(row).find("[data-template-paydate]").attr('data-template-paydate'));
-            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+
             var selectedsupplier = $(row).find("[data-template-supplierid]").attr('data-template-supplierid');
             $('#dialog-supplierid option').removeAttr('selected');
             $("#dialog-supplierid option[value='" + selectedsupplier + "']").attr("selected", "true");
             $("#dialog-supplierid").val( selectedsupplier );
             $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
             updateAdvancedSelects("#dialog-supplierid");
+
+            ////EXPENCES
+            $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
+            $("#dialog-taxid").val($(row).find("[data-template-taxid]").attr('data-template-taxid'));
+            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
 
             var assigned_invprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
             var match = assigned_invprojects.split(";");
@@ -238,6 +244,7 @@
                 $("#dialog-categories option[value='" + item + "']").attr("selected", "true");
             });
             updateAdvancedSelects("#dialog-categories");
+            ///EXPENCES
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
@@ -245,23 +252,25 @@
 
     function increaseStringValue(str){
       if (!str) {
-          return str;
+          return;
       }
       return str.replaceAll(/\d+/ig,
-        function(a){ return a*1+1;});
+        function(a){ return +a+1;});
     }
 
     function increaseIdNameInAllEl(elem) {
         var elementList = elem.querySelectorAll("select, input");
         for (let i = 0; i < elementList.length; i++) {
-            elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
-            elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
+          elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
+          elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
         }
     }
 
     function clone_element_increment_id(elem) {
         var kopia = document.getElementById(elem).lastElementChild.lastElementChild.cloneNode(true);
         kopia.classList.add("cloned");
+        kopia.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
+        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(e => e.style = null);
         increaseIdNameInAllEl(kopia);
         document.getElementById(elem).lastElementChild.lastElementChild.after(kopia);
     };

@@ -276,7 +276,7 @@ class PURCHASES
 
     public function AddPurchase($args, $files = null)
     {
-        $args = array(
+        $params = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
@@ -285,40 +285,42 @@ class PURCHASES
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'supplierid' => $args['supplierid'],
             'userid' => Auth::GetCurrentUser(),
-            'pdid' => $this->db->GetLastInsertID('pds'),
-            'netvalue' => str_replace(",", ".", $args['netvalue']),
-            'taxid' => $args['taxid'],
-            'description' => empty($args['description']) ? null : $args['description'],
-            'invprojects' => empty($args['invprojects']) ? null : $args['invprojects'],
-            'categories' => empty($args['categories']) ? null : $args['categories'],
         );
 
         $result = $this->db->Execute(
             'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, userid)
                     VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
-                array($args['typeid'], $args['fullnumber'], $args['sdate'], $args['deadline'], $args['paytype'],
-                    $args['paydate'], $args['supplierid'], $args['userid'])
+                array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
+                    $params['paydate'], $params['supplierid'], $params['userid'])
             );
 
-        $args['pdid'] = $this->db->GetLastInsertID('pds');
-        $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
-            array($args['pdid'], $args['netvalue'], $args['taxid'], $args['description'])
-        );
+        $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
+        foreach ($args['expense'] as $idx=>$e) {
+            $params['expense'][$idx] = array(
+                'netvalue' => str_replace(",", ".", $args['netvalue']),
+                'taxid' => $args['taxid'],
+                'description' => empty($args['description']) ? null : $args['description'],
+                'invprojects' => empty($args['invprojects']) ? null : $args['invprojects'],
+                'categories' => empty($args['categories']) ? null : $args['categories'],
+            );
 
-        if (!empty($args['invprojects'])) {
-            foreach ($args['invprojects'] as $p) {
-                $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES(?, ?)',
-                    array($args['contentid'], $p));
+            $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
+                array($params['pdid'], $e['netvalue'], $e['taxid'], $e['description'])
+            );
+            $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
+            if (!empty($e['invprojects'])) {
+                foreach ($e['invprojects'] as $p) {
+                    $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES(?, ?)',
+                        array($e['contentid'], $p));
                 }
-        }
-
-        if (!empty($args['categories'])) {
-            foreach ($args['categories'] as $c) {
-                $this->db->Execute('INSERT INTO pdcategories (contentid, categoryid) VALUES(?, ?)',
-                    array($args['contentid'], $c));
+            }
+            if (!empty($e['categories'])) {
+                foreach ($e['categories'] as $c) {
+                    $this->db->Execute('INSERT INTO pdcategories (contentid, categoryid) VALUES(?, ?)',
+                        array($e['contentid'], $c));
                 }
+            }
         }
 
         if (!empty($files)) {
