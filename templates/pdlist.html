@@ -76,7 +76,7 @@
             <td data-template-fullnumber="{$pd.fullnumber}">
                 {$pd.fullnumber|escape}
             </td>
-            <td data-template-netvalue="{$pd.netvalue|rtrim:'0'|rtrim:'.'}" data-order="{$pd.netvalue}">
+            <td data-order="{$pd.netvalue}">
                 {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
             <td data-template-taxid="{$pd.taxid}" data-order="{$pd.tax_value}">
@@ -119,7 +119,6 @@
                 <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
             </td>
             <td class="buttons">
-                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {if $pd.files}
                     {foreach $pd.files as $file}
                         {button type='link' icon='fileupload' tip=$file.filename href=$file.fullpath}
@@ -128,6 +127,7 @@
                 {if !$pd.paydate}
                     {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
                 {/if}
+                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
                 {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
             </td>
         </tr>

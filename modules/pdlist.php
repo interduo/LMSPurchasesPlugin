@@ -6,6 +6,13 @@ if (!empty($_POST['ajax'])) {
     check_file_uploads();
 }
 
+$docid = intval($_GET['pdid']);
+
+if (!empty($docid)) {
+    print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($docid)));
+    die();
+}
+
 if (isset($_POST['addpd'])) {
     $addpd = $_POST['addpd'];
 
@@ -104,7 +111,7 @@ if (!empty($_GET['action'])) {
             $SESSION->redirect('?m=pdlist');
             break;
         case 'modify':
-            $pdinfo = $PURCHASES->GetPurchaseInfo($id);
+            $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
             $SMARTY->assign('pdinfo', $pdinfo);
             if (isset($addpd)) {
                 $addpd['id'] = $id;

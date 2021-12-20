@@ -196,27 +196,31 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseInfo($id)
+    public function GetPurchaseDocumentExpences($pdid) {
+
+        $result = $this->db->GetAll('SELECT pdc.id, pdc.netvalue, pdc.taxid, tx.value AS tax_value, pdc.description
+            FROM pdcontents pdc
+            LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
+            WHERE pdid = ?',
+            array($pdid)
+        );
+
+        return $result;
+    }
+
+    public function GetPurchaseDocumentInfo($id)
     {
         $result = $this->db->GetRow(
-            'SELECT pds.id, pds.typeid, pds.fullnumber, pc.netvalue, pc.taxid, pds.cdate, 
-            pds.sdate, pds.deadline, pds.paytype, pds.paydate, pc.description, tx.value AS tax_value, tx.label AS tax_label,
+            'SELECT pds.id, pds.typeid, pds.fullnumber,  pds.cdate, 
+            pds.sdate, pds.deadline, pds.paytype, pds.paydate,
             pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
-                LEFT JOIN taxes tx ON (pds.taxid = tx.id)
-                LEFT JOIN pdcontents pc (pds.id = pc.pdid)
             WHERE pds.id = ?',
             array($id)
         );
 
-        if ($result) {
-            if (!empty($result['tax_value'])) {
-                $result['grossvalue'] = round($result['netvalue']+($result['netvalue']*$result['tax_value']/100), 2);
-            } else {
-                $result['grossvalue'] = round($result['netvalue'], 2);
-            }
-        }
+        $result['expences'] = $this->GetPurchaseDocumentExpences($id);
 
         return $result;
     }

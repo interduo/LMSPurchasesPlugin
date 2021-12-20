@@ -205,6 +205,10 @@
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
 
+        loadpdinfo = get_ajax_pdinfo(template_id);
+        var loadedMap = getMap(loadpdinfo);
+        console.log(loadedMap);
+
         if (template_id) {
             var row = $('[data-template-id=' + template_id + ']');
             $("#dialog-typeid").val($(row).find("[data-template-typeid]").attr('data-template-typeid'));
@@ -238,6 +242,7 @@
                 $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
             });
             updateAdvancedSelects("#dialog-invprojects");
+
             var assigned_categories = $(row).find("[data-template-categories]").attr('data-template-categories');
             var match = assigned_categories.split(";");
             $('#dialog-categories option:selected').removeAttr('selected');
@@ -249,6 +254,18 @@
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
+    };
+
+    function get_ajax_pdinfo(id){
+        if (id) {
+            $.ajax({
+                url: '?m=pdlist&pdid=' + id,
+                type: 'GET',
+                dataType: "json",
+                data: "",
+                success: function(response){ JSON.parse(response) },
+            })
+        };
     };
 
     function increaseStringValue(str){
