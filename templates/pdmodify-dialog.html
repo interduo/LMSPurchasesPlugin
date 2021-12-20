@@ -158,7 +158,7 @@
         {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
         {button label="Cancel" icon="cancel" id="close"}
         {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable')"}
-        {button icon="remove" tip="Delete last row" id="deleterow" onClick="delete_last_row('expencestable')"}
+        {button icon="remove" tip="Delete last row" id="deleterow" onClick="delete_last_cloned_row('expencestable')"}
         </form>
 </div>
 
@@ -276,7 +276,7 @@
         document.getElementById(elem).lastElementChild.lastElementChild.after(kopia);
     };
 
-    function delete_last_row (elem) {
+    function delete_last_cloned_row (elem) {
         var lastrow = document.getElementById(elem).lastElementChild.lastElementChild;
         var rowscount = document.getElementById(elem).rows.length;
         if (rowscount > 1) {
