@@ -158,7 +158,7 @@ class PURCHASES
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netvalue';
         }
 
-        $result = $this->db->GetAll(
+        $result = $this->db->GetAllByKey(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, 
                     pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netvalue),
                     pds.supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
@@ -179,9 +179,67 @@ class PURCHASES
             . $valuetofilter
             . $groupby
             . $orderby
-        );
+        ,'id');
+
+        if (empty($expences)) {
+            foreach ($result as $idx => $r) {
+                $result[$idx]['categories'] = $this->GetCategoriesUsingDocumentId($idx);
+                $result[$idx]['invprojects'] = $this->GetInvProjectsUsingDocumentId($idx);
+            }
+        } else {
+            foreach ($result as $idx => $r) {
+                $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($idx);
+                $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($idx);
+            }
+        };
 
         return $result;
+    }
+
+    public function GetCategoriesUsingDocumentId($id) {
+        return $this->db->GetAllByKey('SELECT categoryid, pdc.name
+                FROM pdcontentcat pcc
+                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+                    LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
+                    LEFT JOIN pds pd ON (pd.id = pc.pdid)
+                WHERE pd.id = ?',
+            'id',
+                array($id)
+        );
+    }
+
+    public function GetCategoriesUsingExpenceId($id) {
+        return $this->db->GetAllByKey(
+            'SELECT categoryid 
+                    FROM pdcontentcat pcc
+                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+                    WHERE contentid = ?',
+            'id',
+            array($id)
+        );
+    }
+///niedoroba
+    public function GetInvProjectsUsingDocumentId($id) {
+        return $this->db->GetAllByKey('SELECT categoryid, pdc.name
+                FROM pdcontentcat pcc
+                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+                    LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
+                    LEFT JOIN pds pd ON (pd.id = pc.pdid)
+                WHERE pd.id = ?',
+            'id',
+            array($id)
+        );
+    }
+///niedoroba
+    public function GetInvProjectsUsingExpenceId($id) {
+        return $this->db->GetAllByKey(
+            'SELECT categoryid 
+                    FROM pdcontentcat pcc
+                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+                    WHERE contentid = ?',
+            'id',
+            array($id)
+        );
     }
 
     public function GetPurchaseFiles($pdid)
@@ -319,13 +377,13 @@ class PURCHASES
             if (!empty($e['invprojects'])) {
                 foreach ($e['invprojects'] as $p) {
                     $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES(?, ?)',
-                        array($e['contentid'], $p));
+                        array($args['contentid'], $p));
                 }
             }
             if (!empty($e['categories'])) {
                 foreach ($e['categories'] as $c) {
-                    $this->db->Execute('INSERT INTO pdcategories (contentid, categoryid) VALUES(?, ?)',
-                        array($e['contentid'], $c));
+                    $this->db->Execute('INSERT INTO pdcontentcat (contentid, categoryid) VALUES(?, ?)',
+                        array($args['contentid'], $c));
                 }
             }
         }

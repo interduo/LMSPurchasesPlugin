@@ -123,9 +123,9 @@
                 <tr class="expencesrow">
                     <td>
                         {icon name="value" tip="Net value"}
-                        <input type="text" id="dialog-netvalue1" name="addpd[expense][1][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
+                        <input type="text" id="dialog-netvalue0" name="addpd[expense][0][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
                         {icon name="value" tip="Tax rate"}
-                        <select id="dialog-taxid1" name="addpd[expense][1][taxid]" required>
+                        <select id="dialog-taxid0" name="addpd[expense][0][taxid]" required>
                             {foreach $taxrates as $t}
                                 <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
                                     {$t.label} ({$t.value|string_format:"%d"}%)
@@ -133,15 +133,15 @@
                            {/foreach}
                         </select>
                         {icon name="description" tip="Description"}
-                        <input type="text" id="dialog-description1" name="addpd[expense][1][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
+                        <input type="text" id="dialog-description0" name="addpd[expense][0][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
                         {icon name="invproject" tip="Inv. Project"}
-                        <select id="dialog-invprojects1" name="addpd[expense][1][invprojects][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-invprojects1" name="addpd[expense][0][invprojects][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
                                 <option value="{$p.id}" {foreach $pdinfo.invprojects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                         {icon name="categories" tip="Categories"}
-                        <select id="dialog-categories1" name="addpd[expense][1][categories][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-categories1" name="addpd[expense][0][categories][]" class="lms-ui-advanced-select" multiple>
                             {foreach $categorylist as $p}
                                 <option value="{$p.id}"
                                     {foreach $pdinfo.categories as $a}
@@ -182,10 +182,10 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#addpd-form" )[0].reset();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue1", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description1", "#dialog-supplierid", "#dialog-invprojects1" ).val('');
-        $('#dialog-taxid1 option').removeAttr('selected');
-        $("#dialog-taxid1 option[value='" + {$default_taxid} + "']").attr("selected", "true");
-        $("#dialog-taxid1").val( {$default_taxid} );
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue0", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description0", "#dialog-supplierid", "#dialog-invprojects1" ).val('');
+        $('#dialog-taxid0 option').removeAttr('selected');
+        $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
+        $("#dialog-taxid0").val( {$default_taxid} );
         $('#dialog-paytype option').removeAttr('selected');
         $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
         $("#dialog-paytype").val( {$default_paytype} );
@@ -236,8 +236,16 @@
             $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
             updateAdvancedSelects("#dialog-supplierid");
 
+            $( ".cloned" ).remove();
+            for (let index = 0, len = pd.expences.length; index < len; index++) {
+                if (index > 0) {
+                    clone_element_increment_id('expencestable');
+                };
+                $("#dialog-netvalue0").val(pd.expences[index].netvalue);
+                $("#dialog-taxid0").val(pd.expences[index].taxid);
+                $("#dialog-description0").val(pd.expences[index].description0);
+            }
         }
-            ///expences */
 
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
