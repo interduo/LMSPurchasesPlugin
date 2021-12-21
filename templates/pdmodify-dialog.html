@@ -202,67 +202,43 @@
     };
 
     function get_ajax_pdinfo(id){
-        return response = $.get({
+        var response = $.get({
             url: '?m=pdlist',
             type: 'GET',
             dataType: "json",
+            async: false,
             data: "pdid=" + id,
-            complete:
-                function(response) {
-                    return response;
-                }
         });
+        return response.responseJSON;
     };
 
     function open_modify_dialog (template_id) {
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
 
-        var pd = get_ajax_pdinfo(template_id);
-
         if (template_id) {
-            var row = $('[data-template-id=' + template_id + ']');
-            $("#dialog-typeid").val($(row).find("[data-template-typeid]").attr('data-template-typeid'));
+            var pd = get_ajax_pdinfo(template_id);
+            $("#dialog-typeid").val(pd.typeid).attr('data-template-typeid');
             updateAdvancedSelects("#dialog-typeid");
-            $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
-            $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
 
-            $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
-            var assigned_paytype = $(row).find("[data-template-paytype]").attr('data-template-paytype');
+            $("#dialog-deadline").val(pd.deadline_formatted);
+            $("#dialog-fullnumber").val(pd.fullnumber);
+            $("#dialog-sdate").val(pd.sdate_formatted);
+            $("#dialog-paydate").val(pd.paydate_formatted);
+
             $("#dialog-paytype option").removeAttr('selected');
-            $("#dialog-paytype").val( assigned_paytype );
-            $("#dialog-paytype option[value='" + assigned_paytype + "']").attr("selected", "true");
-            $("#dialog-paydate").val($(row).find("[data-template-paydate]").attr('data-template-paydate'));
+            $("#dialog-paytype").val( pd.paytype );
+            $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
 
-            var selectedsupplier = $(row).find("[data-template-supplierid]").attr('data-template-supplierid');
             $('#dialog-supplierid option').removeAttr('selected');
-            $("#dialog-supplierid option[value='" + selectedsupplier + "']").attr("selected", "true");
-            $("#dialog-supplierid").val( selectedsupplier );
+            $("#dialog-supplierid option[value='" + pd.supplierid + "']").attr("selected", "true");
+            $("#dialog-supplierid").val( pd.supplierid );
             $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
             updateAdvancedSelects("#dialog-supplierid");
 
-            ////EXPENCES
-            $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
-            $("#dialog-taxid").val($(row).find("[data-template-taxid]").attr('data-template-taxid'));
-            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
-
-            var assigned_invprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
-            var match = assigned_invprojects.split(";");
-            $('#dialog-invprojects option:selected').removeAttr('selected');
-            match.forEach(function(item) {
-                $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
-            });
-            updateAdvancedSelects("#dialog-invprojects");
-
-            var assigned_categories = $(row).find("[data-template-categories]").attr('data-template-categories');
-            var match = assigned_categories.split(";");
-            $('#dialog-categories option:selected').removeAttr('selected');
-            match.forEach(function(item) {
-                $("#dialog-categories option[value='" + item + "']").attr("selected", "true");
-            });
-            updateAdvancedSelects("#dialog-categories");
-            ///EXPENCES
         }
+            ///expences */
+
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
     };

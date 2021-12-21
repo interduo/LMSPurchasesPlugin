@@ -211,9 +211,12 @@ class PURCHASES
     public function GetPurchaseDocumentInfo($id)
     {
         $result = $this->db->GetRow(
-            'SELECT pds.id, pds.typeid, pds.fullnumber,  pds.cdate, 
-            pds.sdate, pds.deadline, pds.paytype, pds.paydate,
-            pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
+            'SELECT pds.id, pds.typeid, pds.fullnumber, 
+            pds.cdate, to_char(TO_TIMESTAMP(pds.cdate), \'YYYY/MM/DD\') AS cdate_formatted, 
+            pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
+            pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
+            pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
+            pds.paytype, pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
             WHERE pds.id = ?',

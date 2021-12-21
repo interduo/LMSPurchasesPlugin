@@ -65,57 +65,56 @@
     </thead>
     <tbody>
         {foreach $pdlist as $pd}
-        <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight"
-            data-template-id="{$pd.id}" data-target-url="?m=pdview&id={$pd.id}">
+        <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight" data-target-url="?m=pdview&id={$pd.id}">
             <td>
                 {$pd.id|escape}
             </td>
-            <td data-template-typeid="{$pd.typeid}">
+            <td>
                 {$pd.typename|escape}
             </td>
-            <td data-template-fullnumber="{$pd.fullnumber}">
+            <td>
                 {$pd.fullnumber|escape}
             </td>
             <td data-order="{$pd.netvalue}">
                 {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
-            <td data-template-taxid="{$pd.taxid}" data-order="{$pd.tax_value}">
+            <td data-order="{$pd.tax_value}">
                 {$pd.tax_value|escape} %
             </td>
-            <td data-template-grossvalue="{$pd.sum_grossvalue}" data-order="{$pd.grossvalue}">
+            <td data-order="{$pd.grossvalue}">
                 {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
-            <td data-template-sdate="{$pd.sdate|date_format:'%Y/%m/%d'}">
+            <td>
                 {$pd.sdate|escape|date_format:"%Y/%m/%d"}
             </td>
-            <td data-template-deadline="{$pd.deadline|date_format:'%Y/%m/%d'}">
+            <td>
                 {$pd.deadline|escape|date_format:"%Y/%m/%d"}
             </td>
-            <td data-template-paydate="{$pd.paydate|date_format:'%Y/%m/%d'}">
+            <td>
                 {$pd.paydate|escape|date_format:"%Y/%m/%d"}
             </td>
-            <td data-template-paytype="{$pd.paytype}">
+            <td>
                 {trans("{$_PAYTYPES[{$pd.paytype}]}")}
             </td>
-            <td data-template-description="{$pd.description}" {tip text=$pd.description}>
+            <td {tip text=$pd.description}>
                 {$pd.description|trunescape:40}
             </td>
-            <td data-template-supplierid="{$pd.supplierid}" {tip text=$pd.suppliername}>
+            <td {tip text=$pd.suppliername}>
                 <a href="?m=customerinfo&id={$pd.supplierid}">
                     {$pd.suppliername|trunescape:25:"&hellip;":true}
                 </a>
             </td>
-            <td data-template-invprojects="{foreach $pd.projects as $p}{$p.id};{/foreach}">
+            <td>
                 {foreach $pd.projects as $p}
                     <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
                 {/foreach}
             </td>
-            <td data-template-categories="{foreach $pd.categories as $c}{$c.id};{/foreach}">
+            <td>
                 {foreach $pd.categories as $c}
                     <a href="?m=pdcategorylist&action=modify&id={$c.id}">{$c.name|trunescape:25:"&hellip;":true}</a><br>
                 {/foreach}
             </td>
-            <td data-template-user="{$pd.userid}">
+            <td>
                 <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
             </td>
             <td class="buttons">
