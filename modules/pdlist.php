@@ -6,10 +6,10 @@ if (!empty($_POST['ajax'])) {
     check_file_uploads();
 }
 
-$docid = intval($_GET['pdid']);
+$pdid = intval($_GET['pdid']);
 
-if (!empty($docid)) {
-    print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($docid)));
+if (!empty($pdid)) {
+    print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($pdid)));
     die();
 }
 

@@ -201,13 +201,24 @@
         $( ".cloned" ).remove();
     };
 
+    function get_ajax_pdinfo(id){
+        return response = $.get({
+            url: '?m=pdlist',
+            type: 'GET',
+            dataType: "json",
+            data: "pdid=" + id,
+            complete:
+                function(response) {
+                    return response;
+                }
+        });
+    };
+
     function open_modify_dialog (template_id) {
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
 
-        loadpdinfo = get_ajax_pdinfo(template_id);
-        var loadedMap = getMap(loadpdinfo);
-        console.log(loadedMap);
+        var pd = get_ajax_pdinfo(template_id);
 
         if (template_id) {
             var row = $('[data-template-id=' + template_id + ']');
@@ -254,18 +265,6 @@
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
-    };
-
-    function get_ajax_pdinfo(id){
-        if (id) {
-            $.ajax({
-                url: '?m=pdlist&pdid=' + id,
-                type: 'GET',
-                dataType: "json",
-                data: "",
-                success: function(response){ JSON.parse(response) },
-            })
-        };
     };
 
     function increaseStringValue(str){
