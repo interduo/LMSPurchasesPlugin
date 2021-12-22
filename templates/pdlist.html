@@ -22,9 +22,11 @@
             <td>
                 {icon name="value" label="Net value"}
             </td>
+            {if $params.expences == 1}
             <td>
                 {icon name="value" label="Tax rate"}
             </td>
+            {/if}
             <td>
                 {icon name="value" label="Gross value"}
             </td>
@@ -72,9 +74,11 @@
             <td data-order="{$pd.netvalue}">
                 {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
+            {if $params.expences == 1}
             <td data-order="{$pd.tax_value}">
                 {$pd.tax_value|escape} %
             </td>
+            {/if}
             <td data-order="{$pd.grossvalue}">
                 {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>

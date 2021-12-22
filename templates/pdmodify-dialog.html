@@ -181,6 +181,7 @@
     function open_add_dialog() {
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#addpd-form" )[0].reset();
+        $( ".cloned" ).remove();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
         $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue0", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description0", "#dialog-supplierid", "#dialog-invprojects1" ).val('');
         $('#dialog-taxid0 option').removeAttr('selected');
@@ -198,7 +199,6 @@
         updateAdvancedSelects("#dialog-categories1");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
-        $( ".cloned" ).remove();
     };
 
     function get_ajax_pdinfo(id){
@@ -241,9 +241,11 @@
                 if (index > 0) {
                     clone_element_increment_id('expencestable');
                 };
-                $("#dialog-netvalue0").val(pd.expences[index].netvalue);
-                $("#dialog-taxid0").val(pd.expences[index].taxid);
-                $("#dialog-description0").val(pd.expences[index].description0);
+
+                $("#dialog-netvalue" + index).val(pd.expences[index].netvalue);
+                $("#dialog-taxid" + index).val(pd.expences[index].taxid);
+                $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
+                $("#dialog-description" + index).val(pd.expences[index].description);
             }
         }
 

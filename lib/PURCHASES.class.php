@@ -183,8 +183,8 @@ class PURCHASES
 
         if (empty($expences)) {
             foreach ($result as $idx => $r) {
-                $expencecategory = $this->GetCategoriesUsingDocumentId($idx);
-                $expenceinvprojects = $this->GetInvProjectsUsingDocumentId($idx);
+                $expencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
+                $expenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
                 (!empty($expencecategory) ? $result[$idx]['categories'] = $expencecategory : '' );
                 (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '' );
             }
@@ -199,48 +199,44 @@ class PURCHASES
     }
 
     public function GetCategoriesUsingDocumentId($id) {
-        return $this->db->GetAllByKey('SELECT categoryid, pdc.name
+        return $this->db->GetAll('SELECT pcc.categoryid, pdc.name
                 FROM pdcontentcat pcc
                     LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
                 WHERE pd.id = ?',
-            'id',
                 array($id)
         );
     }
 
-    public function GetCategoriesUsingExpenceId($id) {
-        return $this->db->GetAllByKey(
+    public function GetCategoriesUsingExpenceId($expenceid) {
+        return $this->db->GetAll(
             'SELECT categoryid, pdc.name 
                     FROM pdcontentcat pcc
-                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+                        LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     WHERE contentid = ?',
-            'id',
-            array($id)
+                    array($expenceid)
         );
     }
 
-    public function GetInvProjectsUsingDocumentId($id) {
-        return $this->db->GetAllByKey('SELECT invprojectid, inv.name
+    public function GetInvProjectsUsingDocumentId($pdid) {
+        return $this->db->GetAll('SELECT invprojectid, inv.name
                 FROM pdprojects pdp
                     LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     LEFT JOIN pdcontents pc ON (pc.id = pdp.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
                 WHERE pd.id = ?',
-            'id',
-            array($id)
+            array($pdid)
         );
     }
 
     public function GetInvProjectsUsingExpenceId($id) {
-        return $this->db->GetAllByKey(
+        return $this->db->GetAll(
             'SELECT pdp.invprojectid, inv.name 
                     FROM pdprojects pdp
                         LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     WHERE contentid = ?',
-            'id',
-            array($id)
+                    array($id)
         );
     }
 
