@@ -154,12 +154,12 @@ class PURCHASES
             $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, (SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
         } else {
-            $split = ' pdc.netvalue, (pdc.netvalue*tx.value/100)+pdc.netvalue AS grossvalue';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netvalue';
+            $split = ' pdc.netvalue, (pdc.netvalue*tx.value/100)+pdc.netvalue AS grossvalue, pdc.description, pdc.id AS expenceid';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netvalue, pdc.id, pdc.description';
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, 
+            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber,
                     pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netvalue) AS expencescount,
                     pds.supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,'
@@ -183,15 +183,17 @@ class PURCHASES
 
         if (empty($expences)) {
             foreach ($result as $idx => $r) {
-                $expencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
-                $expenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
-                (!empty($expencecategory) ? $result[$idx]['categories'] = $expencecategory : '' );
-                (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '' );
+                $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
+                (!empty($docexpencecategory) ? $result[$idx]['categories'] = $docexpencecategory : '' );
+                $docexpenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
+                (!empty($docexpenceinvprojects) ? $result[$idx]['invprojects'] = $docexpenceinvprojects : '' );
             }
         } else {
             foreach ($result as $idx => $r) {
-                $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($idx);
-                $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($idx);
+                $expencecategories = $this->GetCategoriesUsingExpenceId($r['expenceid']);
+                (!empty($expencecategories) ? $result[$idx]['categories'] = $expencecategories : '');
+                $expenceinvprojects = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
+                (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '');
             }
         }
 

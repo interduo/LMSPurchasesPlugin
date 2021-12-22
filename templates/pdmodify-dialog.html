@@ -246,6 +246,13 @@
                 $("#dialog-taxid" + index).val(pd.expences[index].taxid);
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
                 $("#dialog-description" + index).val(pd.expences[index].description);
+                $('#dialog-invprojects option:selected').removeAttr('selected');
+                console.log(pd.expences[index]);
+                /* match.forEach(function(item) {
+                    $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
+                });
+                */
+                updateAdvancedSelects("#dialog-invprojects");
             }
         }
 

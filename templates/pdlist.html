@@ -42,9 +42,11 @@
             <td>
                 {icon name="paytype" label="Payment type"}
             </td>
+            {if $params.expences == 1}
             <td>
                 {icon name="description" label="Description"}
             </td>
+            {/if}
             <td>
                 {icon name="customer" label="Supplier"}
             </td>
@@ -94,9 +96,11 @@
             <td>
                 {trans("{$_PAYTYPES[{$pd.paytype}]}")}
             </td>
+            {if $params.expences == 1}
             <td {tip text=$pd.description}>
                 {$pd.description|trunescape:40}
             </td>
+            {/if}
             <td {tip text=$pd.suppliername}>
                 <a href="?m=customerinfo&id={$pd.supplierid}">
                     {$pd.suppliername|trunescape:25:"&hellip;":true}
