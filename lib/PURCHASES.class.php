@@ -158,18 +158,18 @@ class PURCHASES
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netvalue';
         }
 
-        $result = $this->db->GetAllByKey(
+        $result = $this->db->GetAll(
             'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, 
-                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netvalue),
+                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netvalue) AS expencescount,
                     pds.supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,'
                     . $split
                     . ' FROM pds
                     LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
-                    LEFT JOIN customers cv ON (pds.supplierid = cv.id)
-                    LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
-                    LEFT JOIN pdtypes pt ON (pds.typeid = pt.id)
-                    LEFT JOIN vusers vu ON (pds.userid = vu.id)
+                    LEFT JOIN customers cv ON (cv.id = pds.supplierid)
+                    LEFT JOIN taxes tx ON (tx.id = pdc.taxid)
+                    LEFT JOIN pdtypes pt ON (pt.id = pds.typeid)
+                    LEFT JOIN vusers vu ON (vu.id = pds.userid)
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $supplierfilter
@@ -179,19 +179,21 @@ class PURCHASES
             . $valuetofilter
             . $groupby
             . $orderby
-        ,'id');
+        );
 
         if (empty($expences)) {
             foreach ($result as $idx => $r) {
-                $result[$idx]['categories'] = $this->GetCategoriesUsingDocumentId($idx);
-                $result[$idx]['invprojects'] = $this->GetInvProjectsUsingDocumentId($idx);
+                $expencecategory = $this->GetCategoriesUsingDocumentId($idx);
+                $expenceinvprojects = $this->GetInvProjectsUsingDocumentId($idx);
+                (!empty($expencecategory) ? $result[$idx]['categories'] = $expencecategory : '' );
+                (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '' );
             }
         } else {
             foreach ($result as $idx => $r) {
                 $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($idx);
                 $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($idx);
             }
-        };
+        }
 
         return $result;
     }
@@ -361,13 +363,13 @@ class PURCHASES
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        foreach ($args['expense'] as $idx=>$e) {
-            $params['expense'][$idx] = array(
-                'netvalue' => str_replace(",", ".", $args['netvalue']),
-                'taxid' => $args['taxid'],
-                'description' => empty($args['description']) ? null : $args['description'],
-                'invprojects' => empty($args['invprojects']) ? null : $args['invprojects'],
-                'categories' => empty($args['categories']) ? null : $args['categories'],
+        foreach ($args['expenses'] as $idx=>$e) {
+            $args['expenses'][$idx] = array(
+                'netvalue' => str_replace(",", ".", $e['netvalue']),
+                'taxid' => $e['taxid'],
+                'description' => empty($args['description']) ? null : $e['description'],
+                'invprojects' => empty($args['invprojects']) ? null : $e['invprojects'],
+                'categories' => empty($args['categories']) ? null : $e['categories'],
             );
 
             $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
@@ -376,13 +378,13 @@ class PURCHASES
             $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
             if (!empty($e['invprojects'])) {
                 foreach ($e['invprojects'] as $p) {
-                    $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES(?, ?)',
+                    $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES (?, ?)',
                         array($args['contentid'], $p));
                 }
             }
             if (!empty($e['categories'])) {
                 foreach ($e['categories'] as $c) {
-                    $this->db->Execute('INSERT INTO pdcontentcat (contentid, categoryid) VALUES(?, ?)',
+                    $this->db->Execute('INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
                         array($args['contentid'], $c));
                 }
             }
@@ -407,33 +409,59 @@ class PURCHASES
 
     public function UpdatePurchaseDocument($args)
     {
-        $params['pdid'] = $args['id'];
-        $params['invprojects'] = !empty($args['invprojects']) ? $args['invprojects'] : null;
-        $params['categories'] = !empty($args['categories']) ? $args['categories'] : null;
-
-        $args = array(
+        $params = array(
+            'id' => $args['id'],
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'fullnumber' => $args['fullnumber'],
-            'netvalue' => str_replace(",", ".", $args['netvalue']),
-            'taxid' => $args['taxid'],
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
-            'description' => empty($args['description']) ? null : $args['description'],
             'supplierid' => $args['supplierid'],
-            'id' => $args['id'],
         );
 
         $result = $this->db->Execute(
-            'UPDATE pds SET typeid = ?, fullnumber = ?, netvalue = ?, taxid = ?, sdate = ?, deadline = ?, paytype = ?,
-                    paydate = ? , description = ?, supplierid = ? WHERE id = ?',
-            $args
+            'UPDATE pds SET typeid = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
+                    paydate = ?, supplierid = ? WHERE id = ?',
+                array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'],
+                    $params['paytype'], $params['paydate'], $params['supplierid'], $params['id'])
         );
+
+        $this->db->Execute(
+            'DELETE FROM pdcontents WHERE pdid = ?',
+            array($params['id'])
+        );
+
+        foreach ($args['expenses'] as $e) {
+            $expence = array(
+                'netvalue' => str_replace(",", ".", $e['netvalue']),
+                'taxid' => $e['taxid'],
+                'description' => empty($e['description']) ? null : $e['description'],
+                'invprojects' => !empty($e['invprojects']) ? $e['invprojects'] : null,
+                'categories' => !empty($e['categories']) ? $e['categories'] : null,
+            );
+            $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
+                array($params['id'], $expence['netvalue'], $expence['taxid'], $expence['description'])
+            );
+            $contentid = $this->db->GetLastInsertID('pdcontents');
+
+            if (!empty($expence['invprojects'])) {
+                foreach ($expence['invprojects'] as $p) {
+                    $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES (?, ?)',
+                        array($contentid, $p));
+                }
+            }
+            print_r($expence);
+            if (!empty($expence['categories'])) {
+                foreach ($expence['categories'] as $c) {
+                    $this->db->Execute('INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
+                        array($contentid, $c));
+                }
+            }
+        }
 
         return $result;
     }
-
     public function GetSuppliers()
     {
         return $this->db->GetAllByKey(

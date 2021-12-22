@@ -64,17 +64,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        {icon name="money" label="Pay date"}
-                    </td>
-                    <td>
-                        <input
-                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
-                            placeholder="{trans('yyyy/mm/dd')}"
-                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
-                    </td>
-                </tr>
-                <tr>
                     <td class="nobr">
                         {icon name="deadline" label="Deadline"}
                     </td>
@@ -105,6 +94,17 @@
                         </select>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        {icon name="money" label="Pay date"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
+                    </td>
+                </tr>
                 <tr id="filecontainer">
                     <td class="nobr">
                         {icon name="attachment" label="Attachments"}
@@ -123,9 +123,9 @@
                 <tr class="expencesrow">
                     <td>
                         {icon name="value" tip="Net value"}
-                        <input type="text" id="dialog-netvalue0" name="addpd[expense][0][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
+                        <input type="text" id="dialog-netvalue0" name="addpd[expenses][0][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
                         {icon name="value" tip="Tax rate"}
-                        <select id="dialog-taxid0" name="addpd[expense][0][taxid]" required>
+                        <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" required>
                             {foreach $taxrates as $t}
                                 <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
                                     {$t.label} ({$t.value|string_format:"%d"}%)
@@ -133,15 +133,15 @@
                            {/foreach}
                         </select>
                         {icon name="description" tip="Description"}
-                        <input type="text" id="dialog-description0" name="addpd[expense][0][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
+                        <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
                         {icon name="invproject" tip="Inv. Project"}
-                        <select id="dialog-invprojects1" name="addpd[expense][0][invprojects][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-invprojects1" name="addpd[expenses][0][invprojects][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
                                 <option value="{$p.id}" {foreach $pdinfo.invprojects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                         {icon name="categories" tip="Categories"}
-                        <select id="dialog-categories1" name="addpd[expense][0][categories][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-categories1" name="addpd[expenses][0][categories][]" class="lms-ui-advanced-select" multiple>
                             {foreach $categorylist as $p}
                                 <option value="{$p.id}"
                                     {foreach $pdinfo.categories as $a}
