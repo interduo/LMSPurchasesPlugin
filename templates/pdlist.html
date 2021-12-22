@@ -14,6 +14,13 @@
     <thead>
         <tr class="bold">
             <td>
+                {if $params.expences == 1}
+                    {icon name="id" label="Expence ID"}
+                {else}
+                    {icon name="document" label="Document ID"}
+                {/if}
+            </td>
+            <td>
                 {icon name="type" label="Type"}
             </td>
             <td>
@@ -68,6 +75,13 @@
         {foreach $pdlist as $pd}
         <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight" data-target-url="?m=pdview&id={$pd.id}">
             <td>
+                {if $params.expences == 1}
+                    {$pd.expenceid}
+                {else}
+                    {$pd.id}
+                {/if}
+            </td>
+            <td>
                 {$pd.typename|escape}
             </td>
             <td>
@@ -77,9 +91,9 @@
                 {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
             </td>
             {if $params.expences == 1}
-            <td data-order="{$pd.tax_value}">
-                {$pd.tax_value|escape} %
-            </td>
+                <td data-order="{$pd.tax_value}">
+                    {$pd.tax_value|escape} %
+                </td>
             {/if}
             <td data-order="{$pd.grossvalue}">
                 {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape} PLN

@@ -256,13 +256,17 @@ class PURCHASES
 
     public function GetPurchaseDocumentExpences($pdid) {
 
-        $result = $this->db->GetAll('SELECT pdc.id, pdc.netvalue, pdc.taxid, tx.value AS tax_value, pdc.description
+        $result = $this->db->GetAll('SELECT pdid, pdc.id AS expenceid, pdc.netvalue, pdc.taxid, tx.value AS tax_value, pdc.description
             FROM pdcontents pdc
-            LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
+                LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
             WHERE pdid = ?',
             array($pdid)
         );
 
+        foreach ($result as $idx=>$r) {
+            $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($r['expenceid']);
+            $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
+        }
         return $result;
     }
 

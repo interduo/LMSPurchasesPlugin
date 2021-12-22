@@ -247,7 +247,8 @@
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
                 $("#dialog-description" + index).val(pd.expences[index].description);
                 $('#dialog-invprojects option:selected').removeAttr('selected');
-                console.log(pd.expences[index]);
+                console.log(pd.expences[index].invprojects)
+
                 /* match.forEach(function(item) {
                     $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
                 });
