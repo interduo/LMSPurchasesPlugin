@@ -61,7 +61,6 @@
         </tr>
     </thead>
     <tbody>
-    {debug}
         {foreach $pdlist as $pd}
         <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight" data-target-url="?m=pdview&id={$pd.id}">
             <td>
@@ -100,7 +99,7 @@
                 </a>
             </td>
             <td>
-                {foreach $pd.projects as $p}
+                {foreach $pd.invprojects as $p}
                     <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
                 {/foreach}
             </td>

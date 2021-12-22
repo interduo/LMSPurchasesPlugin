@@ -210,7 +210,7 @@ class PURCHASES
 
     public function GetCategoriesUsingExpenceId($id) {
         return $this->db->GetAllByKey(
-            'SELECT categoryid 
+            'SELECT categoryid, pdc.name 
                     FROM pdcontentcat pcc
                     LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     WHERE contentid = ?',
@@ -218,24 +218,24 @@ class PURCHASES
             array($id)
         );
     }
-///niedoroba
+
     public function GetInvProjectsUsingDocumentId($id) {
-        return $this->db->GetAllByKey('SELECT categoryid, pdc.name
-                FROM pdcontentcat pcc
-                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
-                    LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
+        return $this->db->GetAllByKey('SELECT invprojectid, inv.name
+                FROM pdprojects pdp
+                    LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
+                    LEFT JOIN pdcontents pc ON (pc.id = pdp.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
                 WHERE pd.id = ?',
             'id',
             array($id)
         );
     }
-///niedoroba
+
     public function GetInvProjectsUsingExpenceId($id) {
         return $this->db->GetAllByKey(
-            'SELECT categoryid 
-                    FROM pdcontentcat pcc
-                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+            'SELECT pdp.invprojectid, inv.name 
+                    FROM pdprojects pdp
+                        LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     WHERE contentid = ?',
             'id',
             array($id)
