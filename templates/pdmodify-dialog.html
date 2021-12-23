@@ -305,6 +305,7 @@
         kopia.classList.add("cloned");
         kopia.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
         kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(e => e.style = null);
+        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(e => initAdvancedSelects(e));
         increaseIdNameInAllEl(kopia);
         document.getElementById(elem).lastElementChild.lastElementChild.after(kopia);
     };
