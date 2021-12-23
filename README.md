@@ -14,14 +14,12 @@ Instalacja wtyczki:
 4. Nadaj uprawnienia użytkownikowi do wtyczki
 
 **TODO: (dla wersji 1.0)**
-- porządek w kodzie z trzymaniem walut i netto/brutto,
+- podgląd dla wrzuconych dokumentów obok formularza,
 - testy i porządny review kodu przez kogoś mądrzejszego,
 - konta dostawców pobierane z białej listy podatników,
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 
 **TODO:**
-- podgląd dla wrzuconych dokumentów obok formularza, 
-- rozbijanie dokumentów na "wydatki",
 - obsługa walut,
 
 **Zmienne konfiguracyjne:**
