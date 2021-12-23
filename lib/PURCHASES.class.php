@@ -200,29 +200,34 @@ class PURCHASES
         return $result;
     }
 
-    public function GetCategoriesUsingDocumentId($id) {
-        return $this->db->GetAll('SELECT DISTINCT pcc.categoryid, pdc.name
+    public function GetCategoriesUsingDocumentId($id)
+    {
+        return $this->db->GetAll(
+            'SELECT DISTINCT pcc.categoryid, pdc.name
                 FROM pdcontentcat pcc
                     LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
                 WHERE pd.id = ?',
-                array($id)
+            array($id)
         );
     }
 
-    public function GetCategoriesUsingExpenceId($expenceid) {
+    public function GetCategoriesUsingExpenceId($expenceid)
+    {
         return $this->db->GetAll(
             'SELECT categoryid, pdc.name 
                     FROM pdcontentcat pcc
                         LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     WHERE contentid = ?',
-                    array($expenceid)
+            array($expenceid)
         );
     }
 
-    public function GetInvProjectsUsingDocumentId($pdid) {
-        return $this->db->GetAll('SELECT DISTINCT invprojectid, inv.name
+    public function GetInvProjectsUsingDocumentId($pdid)
+    {
+        return $this->db->GetAll(
+            'SELECT DISTINCT invprojectid, inv.name
                 FROM pdinvprojects pdp
                     LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     LEFT JOIN pdcontents pc ON (pc.id = pdp.contentid)
@@ -232,13 +237,14 @@ class PURCHASES
         );
     }
 
-    public function GetInvProjectsUsingExpenceId($id) {
+    public function GetInvProjectsUsingExpenceId($id)
+    {
         return $this->db->GetAll(
             'SELECT pdp.invprojectid, inv.name 
                     FROM pdinvprojects pdp
                         LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     WHERE contentid = ?',
-                    array($id)
+            array($id)
         );
     }
 
@@ -254,16 +260,18 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseDocumentExpences($pdid) {
+    public function GetPurchaseDocumentExpences($pdid)
+    {
 
-        $result = $this->db->GetAll('SELECT pdid, pdc.id AS expenceid, pdc.netvalue, pdc.taxid, tx.value AS tax_value, pdc.description
+        $result = $this->db->GetAll(
+            'SELECT pdid, pdc.id AS expenceid, pdc.netvalue, pdc.taxid, tx.value AS tax_value, pdc.description
             FROM pdcontents pdc
                 LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
             WHERE pdid = ?',
             array($pdid)
         );
 
-        foreach ($result as $idx=>$r) {
+        foreach ($result as $idx => $r) {
             $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($r['expenceid']);
             $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
         }
@@ -361,13 +369,13 @@ class PURCHASES
         $result = $this->db->Execute(
             'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, userid)
                     VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
-                array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
+            array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
                     $params['paydate'], $params['supplierid'], $params['userid'])
-            );
+        );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        foreach ($args['expenses'] as $idx=>$e) {
+        foreach ($args['expenses'] as $idx => $e) {
             $args['expenses'][$idx] = array(
                 'netvalue' => str_replace(",", ".", $e['netvalue']),
                 'taxid' => $e['taxid'],
@@ -376,20 +384,25 @@ class PURCHASES
                 'categories' => empty($args['categories']) ? null : $e['categories'],
             );
 
-            $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
+            $this->db->Execute(
+                'INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
                 array($params['pdid'], $e['netvalue'], $e['taxid'], $e['description'])
             );
             $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
             if (!empty($e['invprojects'])) {
                 foreach ($e['invprojects'] as $p) {
-                    $this->db->Execute('INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
-                        array($args['contentid'], $p));
+                    $this->db->Execute(
+                        'INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
+                        array($args['contentid'], $p)
+                    );
                 }
             }
             if (!empty($e['categories'])) {
                 foreach ($e['categories'] as $c) {
-                    $this->db->Execute('INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
-                        array($args['contentid'], $c));
+                    $this->db->Execute(
+                        'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
+                        array($args['contentid'], $c)
+                    );
                 }
             }
         }
@@ -427,7 +440,7 @@ class PURCHASES
         $result = $this->db->Execute(
             'UPDATE pds SET typeid = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
                     paydate = ?, supplierid = ? WHERE id = ?',
-                array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'],
+            array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'],
                     $params['paytype'], $params['paydate'], $params['supplierid'], $params['id'])
         );
 
@@ -444,22 +457,27 @@ class PURCHASES
                 'invprojects' => !empty($e['invprojects']) ? $e['invprojects'] : null,
                 'categories' => !empty($e['categories']) ? $e['categories'] : null,
             );
-            $this->db->Execute('INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
+            $this->db->Execute(
+                'INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
                 array($params['id'], $expence['netvalue'], $expence['taxid'], $expence['description'])
             );
             $contentid = $this->db->GetLastInsertID('pdcontents');
 
             if (!empty($expence['invprojects'])) {
                 foreach ($expence['invprojects'] as $p) {
-                    $this->db->Execute('INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
-                        array($contentid, $p));
+                    $this->db->Execute(
+                        'INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
+                        array($contentid, $p)
+                    );
                 }
             }
             print_r($expence);
             if (!empty($expence['categories'])) {
                 foreach ($expence['categories'] as $c) {
-                    $this->db->Execute('INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
-                        array($contentid, $c));
+                    $this->db->Execute(
+                        'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
+                        array($contentid, $c)
+                    );
                 }
             }
         }
@@ -757,28 +775,28 @@ class PURCHASES
         return $income;
     }
 
-    public function SalePerMonthType($only_year,$servicetype = 'all')
+    public function SalePerMonthType($only_year, $servicetype = 'all')
     {
-            switch ($servicetype) {
-                case '-1':
+        switch ($servicetype) {
+            case '-1':
                 $inv = ' AND servicetype=-1 ';
                 break;
-                case '1':
+            case '1':
                 $inv = ' AND servicetype=1 ';
                 break;
-                case '2':
+            case '2':
                 $inv = ' AND servicetype=2 ';
                 break;
-                case '3':
+            case '3':
                 $inv = ' AND servicetype=3 ';
                 break;
-                case '4':
+            case '4':
                 $inv = ' AND servicetype=4 ';
                 break;
-                case '5':
+            case '5':
                 $inv = ' AND servicetype=5 ';
                 break;
-                case '6':
+            case '6':
                 $inv = ' AND servicetype=6 ';
             case 'all':
             default:
