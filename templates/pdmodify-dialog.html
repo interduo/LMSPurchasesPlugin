@@ -1,4 +1,4 @@
-{$default_taxid = ConfigHelper::getConfig('pd.default_taxid', 1)}
+{$default_taxid = ConfigHelper::getConfig('pd.default_taxid')}
 {$default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2)}
 
 <style>
@@ -19,9 +19,9 @@
 <div id="addpdmodal" class="lms-ui-modal-dialog">
     <form method="POST" action="?m=pdlist&action={if $action == 'modify'}modify&id={$pdinfo.id}{else}add{/if}"
               name="addpd" id="addpd-form">
+        <h2>{trans("Purchase Document")}</h2>
         <table>
             <tbody>
-		    <tr><td colspan="2"><h2>Dokument</h2></td></tr>
                 {if $action == 'modify'}
                     <tr>
                         <td>
@@ -35,19 +35,19 @@
                     </td>
                     <td>
                         <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select">
-                            <option value="">{trans("undefined")}</option>
                             {foreach $typeslist as $pd}
-                            <option value="{$pd.id}" {if $pdinfo.typeid == $pd.id} selected{/if}>{$pd.name|trunescape:"25"}</option>
+                            <option value="{$pd.id}" {if $pdinfo.typeid == $pd.id || $pd.defaultflag == 't'} selected{/if}>{$pd.name|trunescape:"25"}</option>
                             {/foreach}
+                            <option value="">{trans("undefined")}</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        {icon name="summary" label="Purchase document number"}
+                        {icon name="summary" label="Document number"}
                     </td>
                     <td>
-                        <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{$pdinfo.fullnumber}" required>
+                        <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{$pdinfo.fullnumber}" placeholder="{trans("Document number")}" required>
                     </td>
                 </tr>
                 <tr>
@@ -60,17 +60,7 @@
                             placeholder="{trans('yyyy/mm/dd')}"
                             {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
                             required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="money" label="Pay date"}
-                    </td>
-                    <td>
-                        <input
-                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
-                            placeholder="{trans('yyyy/mm/dd')}"
-                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
+                        {day_selection elem='[name="addpd[sdate]"]' from_selector="#dialog-sdate" days="0,-1,-2,-3"}
                     </td>
                 </tr>
                 <tr>
@@ -78,7 +68,8 @@
                         {icon name="deadline" label="Deadline"}
                     </td>
                     <td>
-                        <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required> {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
+                        <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required>
+                        {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
                     </td>
                 </tr>
                 <tr>
@@ -103,6 +94,17 @@
                         </select>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        {icon name="money" label="Pay date"}
+                    </td>
+                    <td>
+                        <input
+                            type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
+                            placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
+                    </td>
+                </tr>
                 <tr id="filecontainer">
                     <td class="nobr">
                         {icon name="attachment" label="Attachments"}
@@ -111,81 +113,58 @@
                         {fileupload id="files" fileupload=$fileupload form="addpd-form"}
                     </td>
                 </tr>
-		<tr><td colspan="2"><h2>Wydatek</h2></td></tr>
-                <tr>
+            </tbody>
+        </table>
+
+        <h2>{trans("Expence")}</h2>
+
+        <table id="expencestable">
+            <tbody>
+                <tr class="expencesrow">
                     <td>
-                        {icon name="value" label="Net value"}
-                    </td>
-                    <td>
-                       <input type="text" id="dialog-netvalue" name="addpd[netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" required>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="value" label="Tax rate"}
-                    </td>
-                    <td>
-                       <select id="dialog-taxid" name="addpd[taxid]" required>
-                           {foreach $taxrates as $t}
-                               <option value="{$t.id}" {if $pdinfo.taxid==$t.id} selected{/if}>
-                                {$t.label} ({$t.value|string_format:"%d"}%)
+                        {icon name="value" tip="Net value"}
+                        <input type="text" id="dialog-netvalue0" name="addpd[expenses][0][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
+                        {icon name="value" tip="Tax rate"}
+                        <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" required>
+                            {foreach $taxrates as $t}
+                                <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
+                                    {$t.label} ({$t.value|string_format:"%d"}%)
                                </option>
                            {/foreach}
-                       </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="nobr">
-                        {icon name="description" label="Description"}
-                    </td>
-                    <td>
-                        <input type="text" id="dialog-description" name="addpd[description]" value="{$pdinfo.description|escape}" size=35>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {icon name="invproject" label="Inv. Project"}
-                    </td>
-                    <td>
-                        <select id="dialog-invprojects" name="addpd[invprojects][]" class="lms-ui-advanced-select" multiple>
+                        </select>
+                        {icon name="description" tip="Description"}
+                        <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
+                        {icon name="invproject" tip="Inv. Project"}
+                        <select id="dialog-invprojects0" name="addpd[expenses][0][invprojects][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
-                                <option value="{$p.id}" {foreach $pdinfo.projects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
+                                <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
-                    </td>
-                <tr>
-                    <td>
-                        {icon name="categories" label="Categories"}
-                    </td>
-                    <td>
-                        <select id="dialog-categories" name="addpd[categories][]" class="lms-ui-advanced-select" multiple>
+                        {icon name="categories" tip="Categories"}
+                        <select id="dialog-categories0" name="addpd[expenses][0][categories][]" class="lms-ui-advanced-select" multiple>
                             {foreach $categorylist as $p}
-                                <option value="{$p.id}"
-                                    {foreach $pdinfo.categories as $a}
-                                        {if $a.id == $p.id} selected{/if}
-                                    {/foreach}>
-                                    {$p.name|trunescape:"25"}
-                                </option>
+                                <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" class="button-bar text-center">
-                        {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
-                        {button label="Cancel" icon="cancel" id="close"}
                     </td>
                 </tr>
             </tbody>
         </table>
+        {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
+        {button label="Cancel" icon="cancel" id="close"}
+        {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable')"}
+        {button icon="remove" tip="Delete last row" id="deleterow" onClick="delete_last_cloned_row('expencestable')"}
         </form>
 </div>
 
 <script>
+    let lastCostCounter = 1;
+
     $( "#addpdmodal" ).dialog( {
         autoOpen: {if $action == 'add' || $action == 'modify'}true{else}false{/if},
         resizable: false,
         width: 'auto',
+        height: 'auto',
         modal: true,
         title: "{if $action == 'modify'}{trans("Modify purchase document")} {$pdinfo.id}{else}{trans("Add purchase document")}{/if}"
     });
@@ -197,23 +176,35 @@
     function open_add_dialog() {
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=add');
         $( "#addpd-form" )[0].reset();
+        $( ".cloned" ).remove();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description", "#dialog-supplierid", "#dialog-invprojects" ).val('');
-        $('#dialog-taxid option').removeAttr('selected');
-        $("#dialog-taxid option[value='" + {$default_taxid} + "']").attr("selected", "true");
-        $("#dialog-taxid").val( {$default_taxid} );
+        $( "#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-netvalue0", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-description0", "#dialog-supplierid", "#dialog-invprojects1" ).val('');
+        $('#dialog-taxid0 option').removeAttr('selected');
+        $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
+        $("#dialog-taxid0").val( {$default_taxid} );
         $('#dialog-paytype option').removeAttr('selected');
         $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
         $("#dialog-paytype").val( {$default_paytype} );
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
-        $('#dialog-invprojects option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-invprojects");
-        $('#dialog-categories option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-categories");
+        $('#dialog-invprojects0 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-invprojects0");
+        $('#dialog-categories0 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-categories0");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
+    };
+
+    function get_ajax_pdinfo(id){
+        var response = $.get({
+            url: '?m=pdlist',
+            type: 'GET',
+            dataType: "json",
+            async: false,
+            data: "pdid=" + id,
+        });
+        return response.responseJSON;
     };
 
     function open_modify_dialog (template_id) {
@@ -221,43 +212,109 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
 
         if (template_id) {
-            var row = $('[data-template-id=' + template_id + ']');
-            $("#dialog-typeid").val($(row).find("[data-template-typeid]").attr('data-template-typeid'));
+            var pd = get_ajax_pdinfo(template_id);
+            $("#dialog-typeid").val(pd.typeid).attr('data-template-typeid');
             updateAdvancedSelects("#dialog-typeid");
-            $("#dialog-deadline").val($(row).find("[data-template-deadline]").attr('data-template-deadline'));
-            $("#dialog-fullnumber").val($(row).find("[data-template-fullnumber]").attr('data-template-fullnumber'));
-            $("#dialog-netvalue").val($(row).find("[data-template-netvalue]").attr('data-template-netvalue'));
-            $("#dialog-taxid").val($(row).find("[data-template-taxid]").attr('data-template-taxid'));
-            $("#dialog-sdate").val($(row).find("[data-template-sdate]").attr('data-template-sdate'));
-            var assigned_paytype = $(row).find("[data-template-paytype]").attr('data-template-paytype');
+
+            $("#dialog-deadline").val(pd.deadline_formatted);
+            $("#dialog-fullnumber").val(pd.fullnumber);
+            $("#dialog-sdate").val(pd.sdate_formatted);
+            $("#dialog-paydate").val(pd.paydate_formatted);
+
             $("#dialog-paytype option").removeAttr('selected');
-            $("#dialog-paytype").val( assigned_paytype );
-            $("#dialog-paytype option[value='" + assigned_paytype + "']").attr("selected", "true");
-            $("#dialog-paydate").val($(row).find("[data-template-paydate]").attr('data-template-paydate'));
-            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
-            var selectedsupplier = $(row).find("[data-template-supplierid]").attr('data-template-supplierid');
+            $("#dialog-paytype").val( pd.paytype );
+            $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
+
             $('#dialog-supplierid option').removeAttr('selected');
-            $("#dialog-supplierid option[value='" + selectedsupplier + "']").attr("selected", "true");
-            $("#dialog-supplierid").val( selectedsupplier );
+            $("#dialog-supplierid option[value='" + pd.supplierid + "']").attr("selected", "true");
+            $("#dialog-supplierid").val( pd.supplierid );
             $("#dialog_supplierid_chosen").removeClass("lms-ui-error");
             updateAdvancedSelects("#dialog-supplierid");
 
-            var assigned_invprojects = $(row).find("[data-template-invprojects]").attr('data-template-invprojects');
-            var match = assigned_invprojects.split(";");
-            $('#dialog-invprojects option:selected').removeAttr('selected');
-            match.forEach(function(item) {
-                $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
-            });
-            updateAdvancedSelects("#dialog-invprojects");
-            var assigned_categories = $(row).find("[data-template-categories]").attr('data-template-categories');
-            var match = assigned_categories.split(";");
-            $('#dialog-categories option:selected').removeAttr('selected');
-            match.forEach(function(item) {
-                $("#dialog-categories option[value='" + item + "']").attr("selected", "true");
-            });
-            updateAdvancedSelects("#dialog-categories");
+            $( ".cloned" ).remove();
+
+            for (let index = 0; index < pd.expences_count; index++) {
+                if (index != 0) {
+                    clone_element_increment_id('expencestable');
+                };
+
+                $("#dialog-netvalue" + index).val(pd.expences[index].netvalue);
+                $("#dialog-taxid" + index).val(pd.expences[index].taxid);
+                $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
+                $("#dialog-description" + index).val(pd.expences[index].description);
+
+                var invprojects_itemname = '#dialog-invprojects' + index;
+                $( invprojects_itemname + ' option:selected').removeAttr('selected');
+
+                for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
+                    makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
+                }
+                if (index == 0) {
+                    updateAdvancedSelects( invprojects_itemname );
+                } else {
+                    initAdvancedSelects( invprojects_itemname );
+                }
+
+                var categories_itemname = '#dialog-categories' + index;
+                for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
+                    makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
+                }
+                if (index == 0) {
+                    updateAdvancedSelects( categories_itemname );
+                } else {
+                    initAdvancedSelects( categories_itemname );
+                }
+
+            }
         }
+
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
     };
+
+    function makeMultiselectOptionsSelectedUsingValue(selectid, value) {
+      $( selectid + ' option[value="' + value + '"]').attr('selected','true');
+    }
+
+    function makeMultiselectOptionsSelectedUsingArray(selectid, array) {
+        console.log(selectid);
+        console.log(array);
+        for (let idx = 0, len = array.length; idx < len; idx++) {
+            $( selectid + ' option[value="' + array[idx] + '"]').attr('selected','true');
+        }
+    }
+
+    function increaseStringValue(str){
+      if (!str) {
+          return;
+      }
+      return str.replaceAll(/\d+/ig,
+        function(a){ return +a+1;});
+    }
+
+    function increaseIdNameInAllEl(elem) {
+        var elementList = elem.querySelectorAll("select, input");
+        for (let i = 0; i < elementList.length; i++) {
+          elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
+          elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
+        }
+    }
+
+    function clone_element_increment_id(elem) {
+        var kopia = document.getElementById(elem).lastElementChild.lastElementChild.cloneNode(true);
+        kopia.classList.add("cloned");
+        kopia.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
+        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(e => e.style = null);
+        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(e => initAdvancedSelects(e));
+        increaseIdNameInAllEl(kopia);
+        document.getElementById(elem).lastElementChild.lastElementChild.after(kopia);
+    };
+
+    function delete_last_cloned_row (elem) {
+        var lastrow = document.getElementById(elem).lastElementChild.lastElementChild;
+        var rowscount = document.getElementById(elem).rows.length;
+        if (rowscount > 1) {
+            lastrow.remove();
+        }
+    }
 </script>

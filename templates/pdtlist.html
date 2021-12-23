@@ -16,6 +16,9 @@
             <td>
                 {icon name="description" label="Description"}
             </td>
+            <td>
+                {icon name="checked" label="Default"}
+            </td>
             <td class="text-right" class="lms-ui-box-buttons">
                 {button name="addpdt" id="addpdtbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
             </td>
@@ -32,6 +35,9 @@
             </td>
             <td data-template-description="{$pdt.description}" {tip text=$pdt.description}>
                 {$pdt.description|trunescape:40}
+            </td>
+            <td data-template-defaultflag="{$pdt.defaultflag}">
+                {if $pdt.defaultflag == 't'}{icon name="checked"}{/if}
             </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pdt.id})"}

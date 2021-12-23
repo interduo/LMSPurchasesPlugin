@@ -59,7 +59,7 @@ if (ConfigHelper::checkConfig('privileges.superuser') || !ConfigHelper::checkCon
 
 $SMARTY->assign('IncomePerMonth', $PURCHASES->IncomePerMonth(date("Y")));
 //$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonth(date("Y")));
-$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonthType(date("Y"),$params['invoices']));
+$SMARTY->assign('SalePerMonth', $PURCHASES->SalePerMonthType(date("Y"), $params['invoices']));
 $SMARTY->assign('date', $date);
 $SMARTY->assign('params', $params);
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());

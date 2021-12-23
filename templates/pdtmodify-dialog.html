@@ -39,6 +39,14 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="nobr">
+                        {icon name="checked" label="Default"}
+                    </td>
+                    <td>
+                        <input type="checkbox" id="dialog-defaultflag" name="addpdt[defaultflag]" value="{$pdtinfo.defaultflag|escape}">
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2" class="button-bar text-center">
                         {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
                         {button label="Cancel" icon="cancel" id="close"}
@@ -66,7 +74,7 @@
         $( "#addpdt-form" ).attr('action', '?m=pdtlist&action=add');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
-        $( "#dialog-id", "#dialog-name", "#dialog-description" ).val();
+        $( "#dialog-id", "#dialog-name", "#dialog-description", "#dialog-defaultflag" ).val();
         $( "#addpdtmodal" ).dialog( "option", "title", "{trans("Add purchase document type")}").dialog( "open" );
     };
 
@@ -77,6 +85,7 @@
             var row = $('[data-template-id=' + template_id + ']');
             $("#dialog-name").val($(row).find("[data-template-name]").attr('data-template-name'));
             $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+            $("#dialog-defaultflag").val($(row).find("[data-template-defaultflag]").attr('data-template-defaultflag'));
         }
         $( "#addpdtmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
     };

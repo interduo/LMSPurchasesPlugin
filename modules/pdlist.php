@@ -2,8 +2,15 @@
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
-if ($_POST['ajax'] == 1) {
+if (!empty($_POST['ajax'])) {
     check_file_uploads();
+}
+
+$pdid = intval($_GET['pdid']);
+
+if (!empty($pdid)) {
+    print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($pdid)));
+    die();
 }
 
 if (isset($_POST['addpd'])) {
@@ -85,19 +92,26 @@ if (isset($_GET['valueto'])) {
     }
 }
 
+if (isset($_GET['expences'])) {
+    $params['expences'] = intval($_GET['expences']);
+}
+
 $pdlist = $PURCHASES->GetPurchaseList($params);
 
+if (!isset($pdinfo['taxid'])) {
+    $pdinfo['taxid'] = $default_taxid;
+}
+
 if (!empty($_GET['action'])) {
-    $id = $_GET['id'];
+    $id = intval($_GET['id']);
     $action = $_GET['action'];
-    if ($_POST) {
     switch ($action) {
         case 'add':
             $PURCHASES->AddPurchase($addpd, $files);
             $SESSION->redirect('?m=pdlist');
             break;
         case 'modify':
-            $pdinfo = $PURCHASES->GetPurchaseInfo($id);
+            $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
             $SMARTY->assign('pdinfo', $pdinfo);
             if (isset($addpd)) {
                 $addpd['id'] = $id;
@@ -119,7 +133,6 @@ if (!empty($_GET['action'])) {
             break;
         default:
             break;
-    }
     }
     $SMARTY->assign('action', $action);
 }

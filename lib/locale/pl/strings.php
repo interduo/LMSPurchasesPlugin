@@ -1,10 +1,14 @@
 <?php
 
+$_LANG['Add row'] = 'Dodaj wiersz';
+$_LANG['expences'] = 'wydatki';
+$_LANG['Expence'] = 'Wydatek';
 $_LANG['Purchase Documents'] = 'Dokumenty Kosztowe';
+$_LANG['Purchase Document'] = 'Dokument Kosztowy';
 $_LANG['Mark invoice as paid'] = 'Oznacz fakturę jako zapłaconą';
 $_LANG['Purchase document list'] = 'Lista dokumentów kosztowych';
 $_LANG['Are you sure you want to delete that purchase document?'] = 'Czy jesteś pewien że chcesz skasować ten dokument kosztowy?';
-$_LANG['Purchase document number'] = 'Numer dokumentu kosztowego';
+$_LANG['Document number'] = 'Numer dokumentu';
 $_LANG['Supplier'] = 'Dostawca';
 $_LANG['Suppliers'] = 'Dostawcy';
 $_LANG['Select supplier'] = 'Wybierz dostawcę';
