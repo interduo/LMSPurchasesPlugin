@@ -3,7 +3,9 @@
 Wtyczka: LMSPurchase Plugin (PD)
 Opis: wtyczka służąca do ewidencji dokumentów zakupowych.
 
-**UWAGA: Wsparcie tylko dla PostgreSQL.**
+**UWAGA:**
+- wsparcie tylko dla PostgreSQL,
+- wsparcie dla LMS > 28.x,
 
 Instalacja wtyczki:
 1. git submodule add https://github.com/interduo/LMSPurchasesPlugin/ plugins/LMSPurchasesPlugin
@@ -13,13 +15,14 @@ Instalacja wtyczki:
 
 **TODO: (dla wersji 1.0)**
 - porządek w kodzie z trzymaniem walut i netto/brutto,
+- testy i porządny review kodu przez kogoś mądrzejszego,
+- konta dostawców pobierane z białej listy podatników,
+- export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 
 **TODO:**
 - podgląd dla wrzuconych dokumentów obok formularza, 
 - rozbijanie dokumentów na "wydatki",
 - obsługa walut,
-- konta dostawców pobierane z białej listy podatników,
-- export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 
 **Zmienne konfiguracyjne:**
 pd.storage_dir - lokalizacja skanów faktur dla nowouploadowanych plików,
