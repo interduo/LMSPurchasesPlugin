@@ -249,13 +249,21 @@
                 for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
                     makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
                 }
-                updateAdvancedSelects( invprojects_itemname );
+                if (index == 0) {
+                    updateAdvancedSelects( invprojects_itemname );
+                } else {
+                    initAdvancedSelects( invprojects_itemname );
+                }
 
                 var categories_itemname = '#dialog-categories' + index;
                 for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
                     makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
                 }
-                updateAdvancedSelects( categories_itemname );
+                if (index == 0) {
+                    updateAdvancedSelects( invprojects_itemname );
+                } else {
+                    initAdvancedSelects( invprojects_itemname );
+                }
 
             }
         }
