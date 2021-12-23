@@ -135,20 +135,15 @@
                         {icon name="description" tip="Description"}
                         <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{$pdinfo.description|escape}" size="40" placeholder="{trans('Description')}">
                         {icon name="invproject" tip="Inv. Project"}
-                        <select id="dialog-invprojects1" name="addpd[expenses][0][invprojects][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-invprojects0" name="addpd[expenses][0][invprojects][]" class="lms-ui-advanced-select" multiple>
                             {foreach $projectslist as $p}
-                                <option value="{$p.id}" {foreach $pdinfo.invprojects as $a}{if $a.id == $p.id} selected{/if}{/foreach}>{$p.name|trunescape:"25"}</option>
+                                <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                         {icon name="categories" tip="Categories"}
-                        <select id="dialog-categories1" name="addpd[expenses][0][categories][]" class="lms-ui-advanced-select" multiple>
+                        <select id="dialog-categories0" name="addpd[expenses][0][categories][]" class="lms-ui-advanced-select" multiple>
                             {foreach $categorylist as $p}
-                                <option value="{$p.id}"
-                                    {foreach $pdinfo.categories as $a}
-                                        {if $a.id == $p.id} selected{/if}
-                                    {/foreach}>
-                                    {$p.name|trunescape:"25"}
-                                </option>
+                                <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
                     </td>
@@ -193,10 +188,10 @@
         updateAdvancedSelects("#dialog-typeid");
         $('#dialog-supplierid option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-supplierid");
-        $('#dialog-invprojects1 option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-invprojects1");
-        $('#dialog-categories1 option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-categories1");
+        $('#dialog-invprojects0 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-invprojects0");
+        $('#dialog-categories0 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-categories0");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
     };
@@ -237,8 +232,9 @@
             updateAdvancedSelects("#dialog-supplierid");
 
             $( ".cloned" ).remove();
-            for (let index = 0, len = pd.expences.length; index < len; index++) {
-                if (index > 0) {
+
+            for (let index = 0; index < pd.expences_count; index++) {
+                if (index != 0) {
                     clone_element_increment_id('expencestable');
                 };
 
@@ -246,20 +242,39 @@
                 $("#dialog-taxid" + index).val(pd.expences[index].taxid);
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
                 $("#dialog-description" + index).val(pd.expences[index].description);
-                $('#dialog-invprojects option:selected').removeAttr('selected');
-                console.log(pd.expences[index].invprojects)
 
-                /* match.forEach(function(item) {
-                    $("#dialog-invprojects option[value='" + item + "']").attr("selected", "true");
-                });
-                */
-                updateAdvancedSelects("#dialog-invprojects");
+                var invprojects_itemname = '#dialog-invprojects' + index;
+                $( invprojects_itemname + ' option:selected').removeAttr('selected');
+
+                for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
+                    makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
+                }
+                updateAdvancedSelects( invprojects_itemname );
+
+                var categories_itemname = '#dialog-categories' + index;
+                for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
+                    makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
+                }
+                updateAdvancedSelects( categories_itemname );
+
             }
         }
 
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
         $( "#filecontainer").addClass('hidden');
     };
+
+    function makeMultiselectOptionsSelectedUsingValue(selectid, value) {
+      $( selectid + ' option[value="' + value + '"]').attr('selected','true');
+    }
+
+    function makeMultiselectOptionsSelectedUsingArray(selectid, array) {
+        console.log(selectid);
+        console.log(array);
+        for (let idx = 0, len = array.length; idx < len; idx++) {
+            $( selectid + ' option[value="' + array[idx] + '"]').attr('selected','true');
+        }
+    }
 
     function increaseStringValue(str){
       if (!str) {

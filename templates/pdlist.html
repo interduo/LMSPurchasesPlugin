@@ -122,7 +122,7 @@
             </td>
             <td>
                 {foreach $pd.invprojects as $p}
-                    <a href="?m=invprojectedit&id={$p.id}">{$p.name|trunescape:25:"&hellip;":true}</a><br>
+                    {$p.name|trunescape:25:"&hellip;":true}<br>
                 {/foreach}
             </td>
             <td>

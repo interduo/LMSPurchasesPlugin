@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS pdcontents CASCADE;
 CREATE TABLE pdcontents (
     id serial PRIMARY KEY,
     pdid integer NOT NULL
-        CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE SET NULL ON UPDATE CASCADE,
     netvalue numeric(9,2) NOT NULL,
     taxid integer NOT NULL
         CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -74,15 +74,15 @@ CREATE TABLE pdcontentcat (
 );
 
 /* --------------------------------------------------------
-Structure of table "pdprojects"
+Structure of table "pdinvprojects"
 -------------------------------------------------------- */
 
-DROP TABLE IF EXISTS pdprojects CASCADE;
-CREATE TABLE pdprojects (
+DROP TABLE IF EXISTS pdinvprojects CASCADE;
+CREATE TABLE pdinvprojects (
     id serial PRIMARY KEY,
     contentid integer NOT NULL,
     invprojectid integer NOT NULL
-        CONSTRAINT pdprojects_invprojectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT pdinvprojects_invprojectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /* --------------------------------------------------------

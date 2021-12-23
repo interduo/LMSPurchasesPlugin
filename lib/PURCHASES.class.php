@@ -201,7 +201,7 @@ class PURCHASES
     }
 
     public function GetCategoriesUsingDocumentId($id) {
-        return $this->db->GetAll('SELECT pcc.categoryid, pdc.name
+        return $this->db->GetAll('SELECT DISTINCT pcc.categoryid, pdc.name
                 FROM pdcontentcat pcc
                     LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
@@ -222,8 +222,8 @@ class PURCHASES
     }
 
     public function GetInvProjectsUsingDocumentId($pdid) {
-        return $this->db->GetAll('SELECT invprojectid, inv.name
-                FROM pdprojects pdp
+        return $this->db->GetAll('SELECT DISTINCT invprojectid, inv.name
+                FROM pdinvprojects pdp
                     LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     LEFT JOIN pdcontents pc ON (pc.id = pdp.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
@@ -235,7 +235,7 @@ class PURCHASES
     public function GetInvProjectsUsingExpenceId($id) {
         return $this->db->GetAll(
             'SELECT pdp.invprojectid, inv.name 
-                    FROM pdprojects pdp
+                    FROM pdinvprojects pdp
                         LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     WHERE contentid = ?',
                     array($id)
@@ -278,10 +278,12 @@ class PURCHASES
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
-            pds.paytype, pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername
+            pds.paytype, pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,
+            COUNT(pd.pdid) AS expences_count
             FROM pds
                 LEFT JOIN customers cv ON (pds.supplierid = cv.id)
-            WHERE pds.id = ?',
+                LEFT JOIN pdcontents pd ON (pd.pdid = pds.id)
+            WHERE pds.id = ? GROUP BY pds.id, cv.lastname, cv.name',
             array($id)
         );
 
@@ -380,7 +382,7 @@ class PURCHASES
             $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
             if (!empty($e['invprojects'])) {
                 foreach ($e['invprojects'] as $p) {
-                    $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES (?, ?)',
+                    $this->db->Execute('INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
                         array($args['contentid'], $p));
                 }
             }
@@ -449,7 +451,7 @@ class PURCHASES
 
             if (!empty($expence['invprojects'])) {
                 foreach ($expence['invprojects'] as $p) {
-                    $this->db->Execute('INSERT INTO pdprojects (contentid, invprojectid) VALUES (?, ?)',
+                    $this->db->Execute('INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
                         array($contentid, $p));
                 }
             }
