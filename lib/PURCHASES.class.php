@@ -142,14 +142,15 @@ class PURCHASES
         // VALUE FROM FILTER
         $valuefrom = intval($valuefrom);
         if (!empty($valuefrom)) {
-            $valuefromfilter = ' AND grossvalue >= ' . $valuefrom;
+            $valuefromhavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) >= ' . $valuefrom;
         }
 
         // VALUE TO FILTER
         $valueto = intval($valueto);
         if (!empty($valueto)) {
-            $valuetofilter = ' AND grossvalue <= ' . $valueto;
+            $valuetohavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) <= ' . $valueto;
         }
+
         if (empty($expences)) {
             $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, (SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
@@ -175,9 +176,11 @@ class PURCHASES
             . $supplierfilter
             . $paymentsfilter
             . $periodfilter
-            . $valuefromfilter
-            . $valuetofilter
             . $groupby
+            . ((!empty($valuefromhavingfilter) || !empty($valuetohavingfilter)) ? ' HAVING' : '' )
+            . $valuefromhavingfilter
+            . ((!empty($valuefromhavingfilter) && !empty($valuetohavingfilter)) ? ' AND ' : '')
+            . $valuetohavingfilter
             . $orderby
         );
 
@@ -286,8 +289,9 @@ class PURCHASES
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
-            pds.paytype, pds.supplierid, ' . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,
-            SUM(pd.netvalue) AS doc_netvalue, SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)) AS doc_grossvalue,
+            pds.paytype, pds.supplierid, '
+            . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,
+            SUM(pd.netvalue) AS doc_netvalue, (SUM(pd.netvalue*tx.value/100)+SUM(pd.netvalue)) AS doc_grossvalue,
             COUNT(pd.pdid) AS expences_count
             FROM pds
                 LEFT JOIN customers cv ON (cv.id = pds.supplierid)
