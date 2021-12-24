@@ -142,14 +142,15 @@ class PURCHASES
         // VALUE FROM FILTER
         $valuefrom = intval($valuefrom);
         if (!empty($valuefrom)) {
-            $valuefromfilter = ' AND grossvalue >= ' . $valuefrom;
+            $valuefromhavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) >= ' . $valuefrom;
         }
 
         // VALUE TO FILTER
         $valueto = intval($valueto);
         if (!empty($valueto)) {
-            $valuetofilter = ' AND grossvalue <= ' . $valueto;
+            $valuetohavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) <= ' . $valueto;
         }
+
         if (empty($expences)) {
             $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, (SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
@@ -175,9 +176,11 @@ class PURCHASES
             . $supplierfilter
             . $paymentsfilter
             . $periodfilter
-            . $valuefromfilter
-            . $valuetofilter
             . $groupby
+            . ((!empty($valuefromhavingfilter) || !empty($valuetohavingfilter)) ? ' HAVING' : '' )
+            . $valuefromhavingfilter
+            . ((!empty($valuefromhavingfilter) && !empty($valuetohavingfilter)) ? ' AND ' : '')
+            . $valuetohavingfilter
             . $orderby
         );
 
