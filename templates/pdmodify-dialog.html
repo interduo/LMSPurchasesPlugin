@@ -276,14 +276,6 @@
       $( selectid + ' option[value="' + value + '"]').attr('selected','true');
     }
 
-    function makeMultiselectOptionsSelectedUsingArray(selectid, array) {
-        console.log(selectid);
-        console.log(array);
-        for (let idx = 0, len = array.length; idx < len; idx++) {
-            $( selectid + ' option[value="' + array[idx] + '"]').attr('selected','true');
-        }
-    }
-
     function increaseStringValue(str){
       if (!str) {
           return;
