@@ -120,7 +120,7 @@
 
         <table id="expencestable">
             <tbody>
-                <tr class="expencesrow">
+                <tr class="expencesrow" id="expence0">
                     <td>
                         {icon name="value" tip="Net value"}
                         <input type="text" id="dialog-netvalue0" name="addpd[expenses][0][netvalue]" value="{$pdinfo.netvalue|rtrim:'0'|rtrim:'.'}" placeholder="{trans('Net value')}" required>
@@ -146,6 +146,7 @@
                                 <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
+                        {button icon="remove" id="expence0" tip="Delete this row" onClick="delete_table_row('expencestable', this.id)"}
                     </td>
                 </tr>
             </tbody>
@@ -153,7 +154,6 @@
         {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
         {button label="Cancel" icon="cancel" id="close"}
         {button icon="add" tip="Add row" id="addrow" onClick="clone_element_increment_id('expencestable')"}
-        {button icon="remove" tip="Delete last row" id="deleterow" onClick="delete_last_cloned_row('expencestable')"}
         </form>
 </div>
 
@@ -287,11 +287,12 @@
     }
 
     function increaseIdNameInAllEl(elem) {
-        var elementList = elem.querySelectorAll("select, input");
+        var elementList = elem.querySelectorAll("select, input, tr, button");
         for (let i = 0; i < elementList.length; i++) {
           elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
           elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
         }
+        elem.setAttribute("id", increaseStringValue(elem.getAttribute('id')));
     }
 
     function clone_element_increment_id(elem) {
@@ -304,11 +305,12 @@
         document.getElementById(elem).lastElementChild.lastElementChild.after(kopia);
     };
 
-    function delete_last_cloned_row (elem) {
-        var lastrow = document.getElementById(elem).lastElementChild.lastElementChild;
-        var rowscount = document.getElementById(elem).rows.length;
+    function delete_table_row (tableid, trid) {
+        var rowscount = document.getElementById(tableid).rows.length;
         if (rowscount > 1) {
-            lastrow.remove();
+            document.getElementById(trid).remove();
+        } else {
+            alert("{trans('Could not remove last row.')}");
         }
     }
 </script>
