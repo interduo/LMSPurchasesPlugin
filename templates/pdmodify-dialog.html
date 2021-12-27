@@ -65,19 +65,27 @@
                 </tr>
                 <tr>
                     <td class="nobr">
+                        {icon name="paytype" label="Payment type"}
+                    </td>
+                    <td>
+                        {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$default_paytype required="true" onchange="change_pay_type(this.id)"}
+                    </td>
+                </tr>
+                <tr id="dialog-iban-tr">
+                    <td class="nobr">
+                        {icon name="cash" label="IBAN"}
+                    </td>
+                    <td>
+                        <input type='text' name="addpd[iban]" id="dialog-iban" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
                         {icon name="deadline" label="Deadline"}
                     </td>
                     <td>
                         <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required>
                         {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="nobr">
-                        {icon name="paytype" label="Payment type"}
-                    </td>
-                    <td>
-                        {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$pdinfo.paytype required="true"}
                     </td>
                 </tr>
                 <tr>
@@ -166,7 +174,7 @@
         width: 'auto',
         height: 'auto',
         modal: true,
-        title: "{if $action == 'modify'}{trans("Modify purchase document")} {$pdinfo.id}{else}{trans("Add purchase document")}{/if}"
+        title: "{if $action == 'modify'}{trans("Modify purchase documentdocument.")} {$pdinfo.id}{else}{trans("Add purchase document")}{/if}"
     });
 
     $( "#close" ).click(function() {
@@ -194,6 +202,7 @@
         updateAdvancedSelects("#dialog-categories0");
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
         $( "#filecontainer").removeClass('hidden');
+        change_pay_type('dialog-paytype');
     };
 
     function get_ajax_pdinfo(id){
@@ -224,6 +233,8 @@
             $("#dialog-paytype option").removeAttr('selected');
             $("#dialog-paytype").val( pd.paytype );
             $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
+            $("#dialog-iban").val( pd.iban );
+            change_pay_type('dialog-paytype');
 
             $('#dialog-supplierid option').removeAttr('selected');
             $("#dialog-supplierid option[value='" + pd.supplierid + "']").attr("selected", "true");
@@ -311,6 +322,26 @@
             document.getElementById(trid).remove();
         } else {
             alert($t("Could not remove only row"));
+        }
+    }
+
+    function change_pay_type(elemid) {
+        var elem = document.getElementById(elemid);
+        var paytype = elem.value;
+        var iban = document.getElementById("dialog-iban-tr");
+        var ibaninput = document.getElementById("dialog-iban");
+
+        if (paytype != 2 && paytype != 3) {
+            iban.style.visibility = 'hidden';
+            ibaninput.removeAttribute('required');
+            if (paytype == 1) {
+                var paydate = document.getElementById("dialog-paydate");
+                var sdate = document.getElementById("dialog-sdate").value;
+                paydate.value = sdate;
+            }
+        } else {
+            iban.style.visibility = '';
+            ibaninput.setAttribute('required','');
         }
     }
 </script>

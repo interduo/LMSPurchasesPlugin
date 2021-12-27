@@ -38,6 +38,7 @@ CREATE TABLE pds (
     paytype smallint NOT NULL,
     supplierid integer NOT NULL
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    iban integer DEFAULT NULL,
     typeid integer DEFAULT NULL
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     userid integer DEFAULT NULL
