@@ -146,7 +146,7 @@
                                 <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
                             {/foreach}
                         </select>
-                        {button icon="remove" id="expence0" tip="Delete this row" onClick="delete_table_row('expencestable', this.id)"}
+                        {button icon="remove" id="expence0" onClick="delete_table_row('expencestable', this.id)"}
                     </td>
                 </tr>
             </tbody>
@@ -310,7 +310,7 @@
         if (rowscount > 1) {
             document.getElementById(trid).remove();
         } else {
-            alert("{trans('Could not remove last row.')}");
+            alert($t("Could not remove only row"));
         }
     }
 </script>

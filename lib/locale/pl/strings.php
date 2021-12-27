@@ -80,3 +80,4 @@ $_LANG['Purchase categories'] = 'Kategorie wydatków';
 $_LANG['Modify purchase category'] = 'Modyfikuj kategorię wydatków';
 $_LANG['Add purchase category'] = 'Dodaj kategorię wydatków';
 $_LANG['No attachment for this purchase. Please go back.'] = 'Brak załącznika do tego wydatku. Proszę cofnij.';
+$_LANG['Could not remove only row'] = 'Nie możesz usunąć jedynej linii';
