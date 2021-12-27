@@ -74,15 +74,15 @@ CREATE TABLE pdcontentcat (
 );
 
 /* --------------------------------------------------------
-Structure of table "pdinvprojects"
+Structure of table "pdcontentinvprojects"
 -------------------------------------------------------- */
 
-DROP TABLE IF EXISTS pdinvprojects CASCADE;
-CREATE TABLE pdinvprojects (
+DROP TABLE IF EXISTS pdcontentinvprojects CASCADE;
+CREATE TABLE pdcontentinvprojects (
     id serial PRIMARY KEY,
     contentid integer NOT NULL,
     invprojectid integer NOT NULL
-        CONSTRAINT pdinvprojects_invprojectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT pdcontentinvprojects_invprojectid_fkey REFERENCES invprojects (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /* --------------------------------------------------------

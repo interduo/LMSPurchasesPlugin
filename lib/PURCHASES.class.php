@@ -231,7 +231,7 @@ class PURCHASES
     {
         return $this->db->GetAll(
             'SELECT DISTINCT invprojectid, inv.name
-                FROM pdinvprojects pdp
+                FROM pdcontentinvprojects pdp
                     LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     LEFT JOIN pdcontents pc ON (pc.id = pdp.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
@@ -244,7 +244,7 @@ class PURCHASES
     {
         return $this->db->GetAll(
             'SELECT pdp.invprojectid, inv.name 
-                    FROM pdinvprojects pdp
+                    FROM pdcontentinvprojects pdp
                         LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
                     WHERE contentid = ?',
             array($id)
@@ -297,7 +297,8 @@ class PURCHASES
                 LEFT JOIN customers cv ON (cv.id = pds.supplierid)
                 LEFT JOIN pdcontents pd ON (pd.pdid = pds.id)
                 LEFT JOIN taxes tx ON (tx.id = pd.taxid)
-            WHERE pds.id = ? GROUP BY pds.id, cv.lastname, cv.name',
+            WHERE pds.id = ?
+            GROUP BY pds.id, cv.lastname, cv.name',
             array($id)
         );
 
@@ -398,7 +399,7 @@ class PURCHASES
             if (!empty($e['invprojects'])) {
                 foreach ($e['invprojects'] as $p) {
                     $this->db->Execute(
-                        'INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
+                        'INSERT INTO pdcontentinvprojects (contentid, invprojectid) VALUES (?, ?)',
                         array($args['contentid'], $p)
                     );
                 }
@@ -443,7 +444,7 @@ class PURCHASES
             'supplierid' => $args['supplierid'],
         );
 
-        $result = $this->db->Execute(
+        $this->db->Execute(
             'UPDATE pds SET typeid = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
                     paydate = ?, supplierid = ? WHERE id = ?',
             array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'],
@@ -452,7 +453,7 @@ class PURCHASES
 
         $this->db->Execute(
             'DELETE FROM pdcontents WHERE pdid = ?',
-            array($params['id'])
+            array($args['id'])
         );
 
         foreach ($args['expenses'] as $e) {
@@ -465,21 +466,21 @@ class PURCHASES
             );
             $this->db->Execute(
                 'INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
-                array($params['id'], $expence['netvalue'], $expence['taxid'], $expence['description'])
+                array($args['id'], $expence['netvalue'], $expence['taxid'], $expence['description'])
             );
             $contentid = $this->db->GetLastInsertID('pdcontents');
 
-            if (!empty($expence['invprojects'])) {
-                foreach ($expence['invprojects'] as $p) {
+            if (!empty($e['invprojects'])) {
+                foreach ($e['invprojects'] as $p) {
                     $this->db->Execute(
-                        'INSERT INTO pdinvprojects (contentid, invprojectid) VALUES (?, ?)',
+                        'INSERT INTO pdcontentinvprojects (contentid, invprojectid) VALUES (?, ?)',
                         array($contentid, $p)
                     );
                 }
             }
-            print_r($expence);
-            if (!empty($expence['categories'])) {
-                foreach ($expence['categories'] as $c) {
+
+            if (!empty($e['categories'])) {
+                foreach ($e['categories'] as $c) {
                     $this->db->Execute(
                         'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
                         array($contentid, $c)

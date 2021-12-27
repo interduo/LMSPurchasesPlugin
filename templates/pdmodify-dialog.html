@@ -245,9 +245,10 @@
 
                 var invprojects_itemname = '#dialog-invprojects' + index;
                 $( invprojects_itemname + ' option:selected').removeAttr('selected');
-
-                for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
-                    makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
+                if (pd.expences[index].invprojects) {
+                    for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
+                        makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
+                    }
                 }
                 if (index == 0) {
                     updateAdvancedSelects( invprojects_itemname );
@@ -256,15 +257,16 @@
                 }
 
                 var categories_itemname = '#dialog-categories' + index;
-                for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
-                    makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
+                if (pd.expences[index].categories) {
+                    for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
+                        makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
+                    }
                 }
                 if (index == 0) {
                     updateAdvancedSelects( categories_itemname );
                 } else {
                     initAdvancedSelects( categories_itemname );
                 }
-
             }
         }
 
