@@ -289,7 +289,7 @@ class PURCHASES
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
-            pds.paytype, pds.supplierid, '
+            pds.paytype, pds.supplierid, pds.iban, '
             . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS suppliername,
             SUM(pd.netvalue) AS doc_netvalue, (SUM(pd.netvalue*tx.value/100)+SUM(pd.netvalue)) AS doc_grossvalue,
             COUNT(pd.pdid) AS expences_count
@@ -370,14 +370,15 @@ class PURCHASES
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'supplierid' => $args['supplierid'],
+            'iban' => empty($args['iban']) ? null : $args['iban'],
             'userid' => Auth::GetCurrentUser(),
         );
 
         $result = $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, userid)
-                    VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, iban, userid)
+                    VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?)',
             array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
-                    $params['paydate'], $params['supplierid'], $params['userid'])
+                    $params['paydate'], $params['supplierid'], $params['iban'], $params['userid'])
         );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
@@ -448,13 +449,14 @@ class PURCHASES
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'supplierid' => $args['supplierid'],
+            'iban' => empty($args['iban']) ? null : $args['iban'],
         );
 
         $this->db->Execute(
             'UPDATE pds SET typeid = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
-                    paydate = ?, supplierid = ? WHERE id = ?',
+                    paydate = ?, supplierid = ?, iban = ? WHERE id = ?',
             array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'],
-                    $params['paytype'], $params['paydate'], $params['supplierid'], $params['id'])
+                    $params['paytype'], $params['paydate'], $params['supplierid'], $params['iban'], $params['id'])
         );
 
         $this->db->Execute(
