@@ -18,6 +18,7 @@ Instalacja wtyczki:
 - export nierozliczonych dokumentów kosztowych do pliku CSV jako wsad do listy przelewów do banku,
 - podgląd dla wrzuconych dokumentów obok formularza,
 - testy i porządny review kodu przez kogoś mądrzejszego,
+- backendowe filtrowanie typów i kategorii,
 
 **TODO:**
 - obsługa walut,
