@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS pdcontents CASCADE;
 CREATE TABLE pdcontents (
     id serial PRIMARY KEY,
     pdid integer NOT NULL
-        CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE SET NULL ON UPDATE CASCADE,
+        CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     netvalue numeric(9,2) NOT NULL,
     taxid integer NOT NULL
         CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE SET NULL ON UPDATE CASCADE,
@@ -68,7 +68,7 @@ DROP TABLE IF EXISTS pdcontentcat CASCADE;
 CREATE TABLE pdcontentcat (
     id serial PRIMARY KEY,
     contentid integer NOT NULL
-        CONSTRAINT pdcontentcat_contentid_fkey REFERENCES pdcontents (id) ON DELETE SET NULL ON UPDATE CASCADE,
+        CONSTRAINT pdcontentcat_contentid_fkey REFERENCES pdcontents (id) ON DELETE CASCADE ON UPDATE CASCADE,
     categoryid integer DEFAULT NULL
         CONSTRAINT pdcontentcat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE
 );
