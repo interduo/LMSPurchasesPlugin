@@ -1,0 +1,169 @@
+{extends file="layout.html"}
+{block name=title}{$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<style>
+    input.filters {
+        margin: 3px;
+    }
+    td.lms-ui-buttons {
+        width: 5em;
+    }
+</style>
+<h1>{$pagetitle|escape}</h1>
+
+{include file="pdfilters.html"}
+
+<table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
+    <thead>
+        <tr class="bold">
+            <td>
+                {if !empty($params.expences)}
+                    {icon name="id" label="Expence ID"}
+                {else}
+                    {icon name="document" label="Document ID"}
+                {/if}
+            </td>
+            <td>
+                {icon name="type" label="Document type"}
+            </td>
+            <td>
+                {icon name="summary" label="Document number"}
+            </td>
+            <td>
+                {icon name="value" label="Net value"}
+            </td>
+            {if !empty($params.expences)}
+                <td>
+                    {icon name="value" label="Tax rate"}
+                </td>
+            {/if}
+            <td>
+                {icon name="value" label="Gross value"}
+            </td>
+            <td>
+                {icon name="timetable" label="Document date"}
+            </td>
+            <td>
+                {icon name="deadline" label="Deadline"}
+            </td>
+            <td>
+                {icon name="money" label="Pay date"}
+            </td>
+            <td>
+                {icon name="paytype" label="Payment type"}
+            </td>
+            {if !empty($params.expences)}
+                <td>
+                    {icon name="description" label="Description"}
+                </td>
+            {/if}
+            <td>
+                {icon name="customer" label="Supplier"}
+            </td>
+            <td>
+                {icon name="invproject" label="Inv. Project"}
+            </td>
+            <td>
+                {icon name="categories" label="Categories"}
+            </td>
+            <td>
+                {icon name="user" label="User"}
+            </td>
+            <td class="lms-ui-buttons">
+                &nbsp;
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach $pdlist as $pd}
+        <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight" data-target-url="?m=pdview&id={$pd.id}">
+            <td>
+                {if !empty($params.expences)}
+                    {$pd.expenceid}
+                {else}
+                    {$pd.id}
+                {/if}
+            </td>
+            <td>
+                {$pd.typename|escape}
+            </td>
+            <td>
+                {$pd.fullnumber|escape}
+            </td>
+            <td data-order="{$pd.netvalue}">
+                {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
+            </td>
+            {if !empty($params.expences)}
+                <td data-order="{$pd.tax_value}">
+                    {$pd.tax_value|escape} %
+                </td>
+            {/if}
+            <td data-order="{$pd.grossvalue}">
+                {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape} PLN
+            </td>
+            <td>
+                {$pd.sdate|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td>
+                {$pd.deadline|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td>
+                {$pd.paydate|escape|date_format:"%Y/%m/%d"}
+            </td>
+            <td>
+                {trans("{$_PAYTYPES[{$pd.paytype}]}")}
+            </td>
+            {if !empty($params.expences)}
+            <td {tip text=$pd.description}>
+                {$pd.description|trunescape:40}
+            </td>
+            {/if}
+            <td {tip text=$pd.supplier_name}>
+                <a href="?m=customerinfo&id={$pd.supplierid}">
+                    {$pd.supplier_name|trunescape:25:"&hellip;":true}
+                </a>
+            </td>
+            <td>
+                {foreach $pd.invprojects as $p}
+                    {$p.name|trunescape:25:"&hellip;":true}<br>
+                {/foreach}
+            </td>
+            <td>
+                {foreach $pd.categories as $c}
+                    {$c.name|trunescape:25:"&hellip;":true}<br>
+                {/foreach}
+            </td>
+            <td>
+                <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
+            </td>
+            <td class="buttons">
+                {if isset($pd.files)}
+                    {foreach $pd.files as $file}
+                        {button type='link' icon='fileupload' tip=$file.filename href=$file.fullpath}
+                    {/foreach}
+                {/if}
+                {if !$pd.paydate}
+                    {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
+                {/if}
+                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
+                {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+{include file="pdmodify-dialog.html"}
+
+<script>
+    $(function() {
+        $( '.delete-pd' ).click(function() {
+            confirmDialog( $t("Are you sure you want to delete that purchase document?") , this).done(function() {
+                location.href = $(this).attr('href');
+            });
+            return false;
+        });
+    });
+</script>
+
+{/block}
