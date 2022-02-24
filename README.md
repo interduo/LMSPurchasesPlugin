@@ -8,10 +8,11 @@ Opis: wtyczka służąca do ewidencji dokumentów zakupowych.
 - wsparcie dla LMS > 28.x,
 
 Instalacja wtyczki:
-1. git clone https://github.com/interduo/LMSPurchasesPlugin/ plugins/LMSPurchasesPlugin
-2. composer update --no-dev
-3. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
-4. Nadaj uprawnienia użytkownikowi do wtyczki
+1. Przejdź do głównego katalogu LMS,
+2. git clone https://github.com/interduo/LMSPurchasesPlugin/ plugins/LMSPurchasesPlugin
+3. composer update --no-dev
+4. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
+5. Nadaj uprawnienia użytkownikowi do wtyczki
 
 Aktualizacja wtyczki:
 1. cd plugins/LMSPurchasesPlugin; git fetch origin; git pull origin main;
@@ -21,7 +22,7 @@ Aktualizacja wtyczki:
 
 **TODO:**
 - obsługa walut,
-- refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum,
+- refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 - obsługa potrzeb, zamówień i wiązanie z dokumentami,
 
 **Zmienne konfiguracyjne:**
