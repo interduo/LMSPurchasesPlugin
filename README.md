@@ -17,7 +17,7 @@ Instalacja wtyczki:
 Aktualizacja wtyczki:
 1. cd plugins/LMSPurchasesPlugin; git fetch origin; git pull origin main;
 
-**TODO: (dla wersji 1.0)**
+**TODO: (dla wersji 2.0)**
 - testy i porządny review kodu przez kilku mądrzejszych,
 
 **TODO:**
