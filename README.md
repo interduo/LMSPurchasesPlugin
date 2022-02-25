@@ -20,8 +20,8 @@ Aktualizacja wtyczki:
 **TODO: (dla wersji 2.0)**
 - testy i porządny review kodu przez kilku mądrzejszych,
 - obsługa walut,
-- refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 - obsługa potrzeb, zamówień i wiązanie z dokumentami,
+- refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 
 **Zmienne konfiguracyjne:**
 - **pd.storage_dir** - lokalizacja skanów faktur dla nowouploadowanych plików,
@@ -34,10 +34,11 @@ Aktualizacja wtyczki:
 
 Do czego służy wtyczka:
 1. Ewidencja wydatków - szybki dostęp do dokumentów kosztowych i ich skanów.
-2. Export koszyka niezapłaconych faktur jako wrzut płatności do koszyka banku.
-3. Statystykowanie wydatków firmy z uwzględnieniem podziału na projekty/kategorie wydatków/stan płatności.
-4. Korzystanie z białej listy podatników pomaga dodatkowo zabezpieczyć się przed utratą miedziaków.
-5. Export dokumentów kosztowych do systemu księgowego.
+2. Export niezapłaconych faktur jako plik gotowy do wrzucenia do UI banku.
+3. Pilnowanie terminów płatności dokumentów.
+4. Statystykowanie wydatków firmy z uwzględnieniem podziału na projekty/kategorie wydatków/stan płatności.
+5. Korzystanie z białej listy podatników pomaga dodatkowo zabezpieczyć się przed utratą miedziaków.
+6. Export dokumentów kosztowych do systemu księgowego.
 
 Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
