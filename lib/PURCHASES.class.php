@@ -342,7 +342,8 @@ class PURCHASES
     }
 
     public function GetCustomerTen($customerid) {
-        return $this->db->GetOne('SELECT ten FROM customers WHERE id = ?', array($customerid));
+        $customerten = $this->db->GetOne('SELECT ten FROM customers WHERE id = ?', array($customerid));
+        return (int) filter_var($customerten, FILTER_SANITIZE_NUMBER_INT);
     }
 
     public function GetPurchaseDocumentInfo($id)
