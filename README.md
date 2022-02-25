@@ -19,8 +19,6 @@ Aktualizacja wtyczki:
 
 **TODO: (dla wersji 2.0)**
 - testy i porządny review kodu przez kilku mądrzejszych,
-
-**TODO:**
 - obsługa walut,
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 - obsługa potrzeb, zamówień i wiązanie z dokumentami,
