@@ -85,3 +85,5 @@ $_LANG['Add purchase category'] = 'Dodaj kategorię wydatków';
 $_LANG['No attachment for this purchase. Please go back.'] = 'Brak załącznika do tego wydatku. Proszę cofnij.';
 $_LANG['Could not remove only row'] = 'Nie możesz usunąć jedynej linii';
 $_LANG['No supplier TEN'] = 'Brak NIP dostawcy';
+$_LANG['with category'] = 'z kategorią';
+$_LANG['without category'] = 'bez kategorii';
