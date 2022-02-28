@@ -490,9 +490,15 @@ class PURCHASES
 
     public function DeletePurchaseDocument($id)
     {
-        return $this->db->Execute('DELETE FROM pds WHERE id = ?',
-            array($id)
-        );
+        if (!empty($id)) {
+            $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+            print_r(rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id));
+
+            return $this->db->Execute(
+                'DELETE FROM pds WHERE id = ?',
+                array($id)
+            );
+        }
     }
 
     public function MarkAsPaid($id)
