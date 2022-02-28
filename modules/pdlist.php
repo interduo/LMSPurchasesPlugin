@@ -176,6 +176,7 @@ $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
 $SMARTY->assign('categorylist', $PURCHASES->GetPurchaseCategoryList());
 $SMARTY->assign('taxrates', $LMS->GetTaxes());
 $SMARTY->assign('default_taxid', $default_taxid);
+$SMARTY->assign('default_document_typeid', $PURCHASES->GetDefaultDocumentTypeid());
 
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);

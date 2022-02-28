@@ -323,6 +323,10 @@ class PURCHASES
         );
     }
 
+    public function GetDefaultDocumentTypeid() {
+        return $this->db->GetOne('SELECT id FROM pdtypes WHERE defaultflag IS TRUE');
+    }
+
     public function GetPurchaseDocumentExpences($pdid)
     {
 
