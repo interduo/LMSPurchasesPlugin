@@ -323,6 +323,10 @@ class PURCHASES
         );
     }
 
+    public function GetDefaultDocumentTypeid() {
+        return $this->db->GetOne('SELECT id FROM pdtypes WHERE defaultflag IS TRUE');
+    }
+
     public function GetPurchaseDocumentExpences($pdid)
     {
 
@@ -342,7 +346,8 @@ class PURCHASES
     }
 
     public function GetCustomerTen($customerid) {
-        return $this->db->GetOne('SELECT ten FROM customers WHERE id = ?', array($customerid));
+        $customerten = $this->db->GetOne('SELECT ten FROM customers WHERE id = ?', array($customerid));
+        return (int) filter_var($customerten, FILTER_SANITIZE_NUMBER_INT);
     }
 
     public function GetPurchaseDocumentInfo($id)
@@ -489,9 +494,15 @@ class PURCHASES
 
     public function DeletePurchaseDocument($id)
     {
-        return $this->db->Execute('DELETE FROM pds WHERE id = ?',
-            array($id)
-        );
+        if (!empty($id)) {
+            $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+            print_r(rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id));
+
+            return $this->db->Execute(
+                'DELETE FROM pds WHERE id = ?',
+                array($id)
+            );
+        }
     }
 
     public function MarkAsPaid($id)

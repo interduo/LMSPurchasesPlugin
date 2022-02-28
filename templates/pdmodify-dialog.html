@@ -65,11 +65,11 @@
                             {icon name="description" label="Document type"}
                         </td>
                         <td>
-                            <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select">
-                                {foreach $typeslist as $pd}
-                                <option value="{$pd.id}" {if (!isset($pdinfo.typeid) && $pdinfo.typeid == $pd.id) || !empty($pd.defaultflag)} selected{/if}>{$pd.name|trunescape:"25"}</option>
+                            <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select" data-default-value="0" required>
+                                <option {if empty($default_document_typeid)}selected{/if}>{trans("undefined")}</option>
+                                {foreach $typeslist as $type}
+                                <option value="{$type.id}" {if $type.id == $default_document_typeid}selected{/if}>{$type.name|trunescape:"25"}</option>
                                 {/foreach}
-                                <option value="">{trans("undefined")}</option>
                             </select>
                         </td>
                     </tr>
@@ -227,7 +227,11 @@
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
         $("#addpd-form")[0].reset();
         $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $("#dialog-id", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate").val('');
+        $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate").val('');
+
+        $('#dialog-typeid option:selected').removeAttr('selected');
+        $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
+        updateAdvancedSelects("#dialog-typeid");
 
         $('#dialog-divisionid option').removeAttr('selected');
         $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
@@ -251,10 +255,6 @@
         change_pay_type();
 
         $('#dialog-supplierid').val('').trigger('input');
-
-        $('#dialog-typeid').val('');
-        $('#dialog-typeid option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-typeid");
 
         $('#dialog-invprojects0').val('');
         $('#dialog-invprojects0 option:selected').removeAttr('selected');
