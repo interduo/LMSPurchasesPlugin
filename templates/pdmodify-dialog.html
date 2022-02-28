@@ -568,4 +568,7 @@
     for (let idx = 0, len = elem; idx < len; idx++) {
         elem.addEventListener('lms:fileupload:complete', function(idx) { console.log('plik wrzucony' + idx); }, false);
     }
+
+    let elem2 = document.getElementById('dialog-paytype');
+     elem2.addEventListener("click", elem2=>change_pay_type(), false);
 </script>
