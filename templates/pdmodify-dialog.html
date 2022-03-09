@@ -227,7 +227,10 @@
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
         $("#addpd-form")[0].reset();
         $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-        $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate").val('');
+        $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
+
+        $("#dialog-iban").show();
+        $("#bankaccounts-container").empty();
 
         $('#dialog-typeid option:selected').removeAttr('selected');
         $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
@@ -511,7 +514,7 @@
             for (let i=0; i < ibans.length; i++) {
                 ibansHTML += '<input id="iban' + i + '" type="checkbox" name="addpd[iban]" value="' + ibans[i] + '" class="onlyoneselectedcheckbox" onchange="selectOnlyThis(iban' + i + ')">' + ibans[i];
                 if (ibans[i] != ibans.length) {
-            ibansHTML += '<br>';
+                    ibansHTML += '<br>';
                 }
             }
             var ibaninput = document.getElementById("dialog-iban");
@@ -568,4 +571,7 @@
     for (let idx = 0, len = elem; idx < len; idx++) {
         elem.addEventListener('lms:fileupload:complete', function(idx) { console.log('plik wrzucony' + idx); }, false);
     }
+
+    let elem2 = document.getElementById('dialog-paytype');
+     elem2.addEventListener("click", elem2=>change_pay_type(), false);
 </script>
