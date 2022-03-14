@@ -99,8 +99,8 @@ class PurchasesInitHandler
         $access = AccessRights::getInstance();
 
         $permission = new Permission(
-            'purchases_administration',
-            '(PURCHASES) Ewidencja dokumentów zakupowych',
+            'purchases',
+            '(PURCHASES) Ewidencja dokumentów kosztowych',
             '^pd.*$',
             null,
             array('purchases' => Permission::MENU_ALL)
