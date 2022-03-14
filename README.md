@@ -21,7 +21,7 @@ Aktualizacja wtyczki:
 - testy i porządny review kodu przez kilku mądrzejszych,
 - obsługa walut,
 - obsługa potrzeb, zamówień i wiązanie z dokumentami,
-- przycisk tworzący automatycznie PZ z dokumentu,
+- przycisk tworzący automatycznie PZ (plugin warehouse) z dokumentu,
 - zaciąganie faktur z maila i wrzucanie automatycznie do systemu,
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
