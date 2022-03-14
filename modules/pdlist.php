@@ -1,7 +1,12 @@
 <?php
+if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('superuser')) {
+    $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
+} else {
+    access_denied();
+}
+
 $default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
-$PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
 check_file_uploads();
 
