@@ -51,12 +51,14 @@ class PurchasesInitHandler
                 'tip' => trans('Purchase Documents'),
                 'accesskey' => 'p',
                 'submenu' => array(
+                    /*
                     array(
                         'name' => trans('Dashboard'),
                         'link' => '?m=pddashboard',
                         'tip' => trans('Purchase documents dashboard'),
                         'prio' => 180,
                     ),
+                    */
                     array(
                         'name' => trans('Purchase document list'),
                         'link' => '?m=pdlist',
