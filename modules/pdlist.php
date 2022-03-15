@@ -7,6 +7,7 @@ if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('s
 
 $default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
+$pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
 
 check_file_uploads();
 
