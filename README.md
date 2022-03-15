@@ -33,7 +33,8 @@ Aktualizacja wtyczki:
 - **pd.default_taxid** - ID domyślnej stawki podatkowej,
 - **pd.default_paytype** - ID domyślnego typu płatności (patrz: $PAYTYPES w lms/lib/definitions.php),
 - **pd.source_iban** - numer źródłowego rachunku bankowego dla pliku eksportu płatności do banku,
-- **pd.export_filename** - nazwa pliku exportu
+- **pd.export_filename** - nazwa pliku exportu,
+- **pd.pagelimit** - ilość pozycji na pojedyńczej stronie dokumentów/wydatków,
 
 Do czego służy wtyczka:
 1. Ewidencja wydatków - szybki dostęp do dokumentów kosztowych i ich skanów.
