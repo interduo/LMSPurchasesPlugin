@@ -190,7 +190,7 @@ class PURCHASES
         }
 
         if (empty($expences)) {
-            $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, (ROUND(SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)), 2) AS grossvalue';
+            $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, ROUND(SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue), 2) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
         } else {
             $split = ' pdc.netvalue, ROUND((pdc.netvalue*tx.value/100)+pdc.netvalue, 2) AS grossvalue, pdc.description, pdc.id AS expenceid';
