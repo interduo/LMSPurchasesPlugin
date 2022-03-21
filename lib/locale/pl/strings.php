@@ -1,5 +1,6 @@
 <?php
 
+$_LANG['Add many'] = 'Dodaj wiele';
 $_LANG['Add empty row'] = 'Dodaj pusty wiersz';
 $_LANG['expences'] = 'wydatki';
 $_LANG['Default'] = 'Domyślny';
