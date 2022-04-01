@@ -1,0 +1,68 @@
+﻿{extends file="layout.html"}
+{block name=title}LMS: {$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+<!--// $Id$ //-->
+<H1>{$layout.pagetitle}</H1>
+
+<FORM name="pduploads" id="pduploads-form" method="POST" action="?m=pduploads">
+<INPUT type="submit" class="hiddenbtn">
+<input type="hidden" name="pduploads" value="1">
+<TABLE class="lmsbox">
+	<COLGROUP>
+		<COL style="width: 1%;">
+		<COL style="width: 1%;">
+		<COL style="width: 98%;">
+	</COLGROUP>
+    <THEAD>
+	<TR>
+		<TD>
+			{icon name="document"}
+		</TD>
+		<TD class="bold nobr" colspan="2">
+			{trans("Select files with document scans")}
+		</TD>
+	</TR>
+    </THEAD>
+    <TBODY>
+	<TR>
+		<TD>
+			{icon name="attachment"}
+		</TD>
+		<TD class="bold">
+			{trans("Files:")}
+		</TD>
+		<TD>
+			{fileupload id="files" fileupload=$files form="pduploads-form" accept=$allowed_mime_types}
+		</TD>
+	</TR>
+	<TR>
+		<TD colspan="3" class="lms-ui-box-buttons">
+			{button type="submit" icon="save" label="Submit"}
+			{button icon="clear" label="Clear" data_action="clear"}
+			{button icon="cancel" label="Cancel" data_action="cancel"}
+		</TD>
+	</TR>
+    </TBODY>
+</TABLE>
+
+</FORM>
+
+<script>
+
+	$(function() {
+		$('[data-action]').click(function() {
+			var form = $('#documentscanadd-form');
+			form.attr('action', form.attr('action') + '&action=' + $(this).attr('data-action')).submit();
+		});
+
+		$('.document-selector').click(function() {
+			$(this).closest('.document-list').siblings('.lms-ui-multi-check').val($(this).val());
+			var checkbox = $(this).closest('.document-list').siblings('.lms-ui-multi-check');
+			if (!checkbox.prop('checked')) {
+				checkbox.click();
+			}
+		});
+	});
+
+</script>
+{/block}

@@ -1,0 +1,58 @@
+{extends file="layout.html"}
+{block name=title}{$layout.pagetitle|striphtml}{/block}
+{block name=module_content}
+
+<h1>{$pagetitle|escape}</h1>
+
+<table class="lmsbox lms-ui-background-cycle lms-ui-datatable">
+    <thead>
+        <tr class="bold">
+            <td>
+                {icon name="id" label="ID"}
+            </td>
+            <td>
+                {icon name="name" label="Name"}
+            </td>
+            <td>
+                {icon name="description" label="Description"}
+            </td>
+            <td class="text-right" class="lms-ui-box-buttons">
+                {button name="addpdc" id="addpdcbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach $pdclist as $pdc}
+        <tr class="highlight" data-template-id="{$pdc.id}">
+            <td>
+                {$pdc.id}
+            </td>
+            <td data-template-name="{$pdc.name}">
+                {$pdc.name|escape}
+            </td>
+            <td data-template-description="{$pdc.description}" {tip text=$pdc.description}>
+                {$pdc.description|trunescape:40}
+            </td>
+            <td class="buttons">
+                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pdc.id})"}
+                {button type="link" icon="delete" href="?m=pdcategorylist&action=delete&id={$pdc.id}" tip="Delete" class="delete-pdc"}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+{include file="pdcmodify-dialog.html"}
+
+<script>
+    $(function() {
+        $( '.delete-pdc' ).click(function() {
+            confirmDialog( $t("Are you sure you want to delete that purchase category?") , this).done(function() {
+                location.href = $(this).attr('href');
+            });
+            return false;
+        });
+    });
+</script>
+
+{/block}

@@ -1,0 +1,100 @@
+<style>
+    #addpdtmodal {
+        overflow: visible;
+    }
+    input {
+        margin-top: 5px;
+    }
+    .button-bar {
+        padding-top: 20px;
+    }
+</style>
+
+<div id="addpdtmodal" class="lms-ui-modal-dialog">
+    <form method="POST" action="?m=pdtlist&action={if $action == 'modify'}modify&id={$pdtinfo.id}{else}add{/if}"
+              name="addpdt" id="addpdt-form">
+        <table>
+            <tbody>
+                {if isset($action) && $action == 'modify'}
+                    <tr>
+                        <td>
+                            <input type="text" name="addpdt[id]" value="{$pdtinfo.id}" hidden>
+                        </td>
+                    </tr>
+                {/if}
+                <tr>
+                    <td>
+                        {icon name="summary" label="Name"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-name" name="addpdt[name]" value="{$pdtinfo.name}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="description" label="Description"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-description" name="addpdt[description]" value="{$pdtinfo.description|escape}">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="checked" label="Default"}
+                    </td>
+                    <td>
+                        <input type="checkbox" id="dialog-defaultflag" name="addpdt[defaultflag]" value="{$pdinfo.defaultflag}">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="button-bar text-center">
+                        {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
+                        {button label="Cancel" icon="cancel" id="close"}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+</div>
+
+<script>
+    $( "#addpdtmodal" ).dialog( {
+        autoOpen: {if $action}true{else}false{/if},
+        resizable: false,
+        width: 'auto',
+        modal: true,
+        title: "{if isset($action) && $action == 'modify'}{trans("Modify purchase type")} {$pdtinfo.id}{else}{trans("Add purchase document type")}{/if}"
+    });
+
+    $( "#close" ).click(function() {
+        $( "#addpdtmodal" ).dialog( "close" );
+    });
+
+    function open_add_dialog() {
+        $( "#addpdt-form" ).attr('action', '?m=pdtlist&action=add');
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+	    $( "#addpdt-form" )[0].reset();
+        $( "#dialog-id", "#dialog-name", "#dialog-description", "#dialog-defaultflag" ).val('');
+        $( "#addpdtmodal" ).dialog( "option", "title", "{trans("Add purchase document type")}").dialog( "open" );
+    };
+
+    function open_modify_dialog (template_id) {
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
+        $( "#addpdt-form" ).attr('action', '?m=pdtlist&action=modify&id=' + template_id);
+        if (template_id) {
+            var row = $('[data-template-id=' + template_id + ']');
+            $("#dialog-name").val($(row).find("[data-template-name]").attr('data-template-name'));
+            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+            var defaultflag_value = document.querySelector('tr[data-template-id="'+ template_id + '"] td[data-template-defaultflag]').getAttribute('data-template-defaultflag');
+            var defaultflag_checkbox = document.getElementById('dialog-defaultflag');
+            if (defaultflag_value === 't') {
+                defaultflag_checkbox.value = true;
+                defaultflag_checkbox.checked = true;
+            } else {
+                defaultflag_checkbox.value = false;
+                defaultflag_checkbox.checked = false;
+            }
+        }
+        $( "#addpdtmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
+    };
+</script>

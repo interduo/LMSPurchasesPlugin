@@ -1,0 +1,582 @@
+{$default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2)}
+{$default_divisionid = ConfigHelper::getConfig('pd.default_divisionid')}
+
+<style>
+    #addpdmodal {
+    display: flex;
+    padding-left: 10px;
+    overflow: visible;
+    }
+
+    input {
+        margin-top: 5px;
+    }
+
+    input.netvalue-input {
+        width: 9em;
+    }
+
+    input#dialog-iban {
+        width: 20em;
+    }
+
+    .button-bar {
+        padding-top: 20px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    #column1 {
+        overflow: visible;
+        padding-right: 2em;
+        flex: 0 0 50%;
+    }
+
+    #column2-pdf-loaded {
+        padding-left: 2em;
+        flex: 0 0 50%;
+    }
+</style>
+
+<div id="addpdmodal" class="lms-ui-modal-dialog">
+    <div id="column2">
+        <form method="POST" action="?m=pdlist&action={if !isset($action) || $action == 'add'}add{else}modify&id={$pdinfo.id}{/if}"
+              name="addpd" id="addpd-form">
+            <h2>{trans("Purchase Document")}</h2>
+            <table>
+                <tbody>
+                    {if isset($action) && $action == 'modify'}
+                        <tr>
+                            <td>
+                                <input type="text" name="addpd[id]" value="{$pdinfo.id}" hidden>
+                            </td>
+                        </tr>
+                    {/if}
+                    <tr>
+                        <td>{icon name="division" label="Division"}
+                        <td>
+                            {division_selection name="addpd[divisionid]" id="dialog-divisionid" selected=$default_divisionid required=true}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="description" label="Document type"}
+                        </td>
+                        <td>
+                            <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select" data-default-value="0" required>
+                                <option {if empty($default_document_typeid)}selected{/if}>{trans("undefined")}</option>
+                                {foreach $typeslist as $type}
+                                <option value="{$type.id}" {if $type.id == $default_document_typeid}selected{/if}>{$type.name|trunescape:"25"}</option>
+                                {/foreach}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="summary" label="Document number"}
+                        </td>
+                        <td>
+                            <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{$pdinfo.fullnumber}" placeholder="{trans("Document number")}" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="timetable" label="Document date"}
+                        </td>
+                        <td>
+                            <input
+                                type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate|date_format:'%Y/%m/%d'}"
+                                placeholder="{trans('yyyy/mm/dd')}"
+                                {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
+                                required>
+                            {day_selection elem='[name="addpd[sdate]"]' from_selector="#dialog-sdate" days="0,-1,-2,-3"}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="customer" label="Supplier"}
+                        </td>
+                        <td>
+                            {customerlist
+                                version=2
+                                required=true
+                                form="addpd-form"
+                                input_id="dialog-supplierid"
+                                inputname="addpd[supplierid]"
+                                selectname="customer-select"
+                                selected="{$pdinfo.supplierid}"
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="nobr">
+                            {icon name="paytype" label="Payment type"}
+                        </td>
+                        <td>
+                            {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$default_paytype required="true"}
+                            {button id="import_iban_button" icon="money" tip="import from MF whitelist" onclick="fill_iban()"}
+                        </td>
+                    </tr>
+                    <tr id="dialog-iban-tr">
+                        <td class="nobr">
+                            {icon name="cash" label="IBAN"}
+                        </td>
+                        <td>
+                            <input type='text' minlength='28' name="addpd[iban]" id="dialog-iban" value="{$pdinfo.iban}" required>
+                            <span class="nobr" id="bankaccounts-container"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="nobr">
+                            {icon name="deadline" label="Deadline"}
+                        </td>
+                        <td>
+                            <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required>
+                            {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="money" label="Pay date"}
+                        </td>
+                        <td>
+                            <input
+                                type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
+                                placeholder="{trans('yyyy/mm/dd')}"
+                                {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
+                        </td>
+                    </tr>
+                    <tr id="filecontainer">
+                        <td class="nobr">
+                            {icon name="attachment" label="Attachments"}
+                        </td>
+                        <td>
+                            {if $attid}
+                                {icon name="upload" label="{$anteroom.$attid.name}"}
+                                <input type="hidden" name="addpd[attid]" value="{$anteroom.$attid.id}">
+                            {else}
+                                {fileupload id="files" fileupload=$pdinfo.files form="addpd-form" multiple=false view_selector="herewillbethepdf"}
+                            {/if}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>{trans("Expence")}</h2>
+
+            <table id="expencestable">
+                <tbody>
+                    <tr class="expencesrow" id="expence0">
+                        <td>
+                            <span class="nobr">
+                                {icon name="value" tip="Net value"}
+                                <input class="netvalue-input" max="9999999999" type="number" step=".01" id="dialog-netvalue0" name="addpd[expenses][0][netvalue]" value="{if isset($pdinfo) && $pdinfo.netvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
+                                {icon name="value" tip="Tax rate"}
+                                <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" required>
+                                    {foreach $taxrates as $t}
+                                        <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
+                                            {$t.label} ({$t.value|string_format:"%d"}%)
+                                       </option>
+                                   {/foreach}
+                                </select>
+                                {icon name="description" tip="Description"}
+                                <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{if isset($pdinfo) && $pdinfo.description|escape}{/if}" size="40" placeholder="{trans('Description')}">
+                            </span>
+                            <span class="nobr">
+                                {icon name="invproject" tip="Inv. Project"}
+                                <select id="dialog-invprojects0" name="addpd[expenses][0][invprojects][]" class="lms-ui-advanced-select" multiple>
+                                    {foreach $projectslist as $p}
+                                        <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
+                                    {/foreach}
+                                </select>
+                                {icon name="categories" tip="Categories"}
+                                <select id="dialog-categories0" name="addpd[expenses][0][categories][]" class="lms-ui-advanced-select" multiple>
+                                    {foreach $categorylist as $p}
+                                        <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
+                                    {/foreach}
+                                </select>
+                                {button id="btnclone0" icon="clone" tip="Clone" class="clonebtn" onClick="clone_expence_row(this.id)"}
+                                {button id="btnremove0" icon="remove" tip="Remove" class="removebtn" onClick="delete_nearest_tr(this.id)"}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
+            {button label="Cancel" icon="cancel" id="close"}
+            {button icon="add" tip="Add empty row" id="addrow" onClick="add_expence_row('expencestable')"}
+        </form>
+    </div>
+    <div id="herewillbethepdf" class="hidden"></div>
+</div>
+
+<script>
+    let lastCostCounter = 1;
+
+    $( "#addpdmodal" ).dialog( {
+        autoOpen: {if isset($action)}true{else}false{/if},
+        resizable: false,
+        width: 'auto',
+        height: 'auto',
+        modal: true,
+        title: "{if !isset($action) || $action == 'add'}{trans("Add purchase document")}{else}{trans("Modify purchase document.")} {$pdinfo.id}{/if}"
+    });
+
+    $( "#close" ).click(function() {
+        $( "#addpdmodal" ).dialog( "close" );
+    });
+
+    function open_add_dialog() {
+        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+        $("#addpd-form")[0].reset();
+        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+        $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
+
+        $("#dialog-iban").show();
+        $("#bankaccounts-container").empty();
+
+        $('#dialog-typeid option:selected').removeAttr('selected');
+        $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
+        updateAdvancedSelects("#dialog-typeid");
+
+        $('#dialog-divisionid option').removeAttr('selected');
+        $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
+        $("#dialog-divisionid").val( {$default_divisionid} );
+
+        document.querySelectorAll('input.fileupload-tmpdir').forEach(e => e.value = '');
+        document.querySelectorAll('div.fileupload-files').forEach(e => e.innerHTML = '');
+        document.querySelectorAll('div#herewillbethepdf').forEach(e => e.innerHTML = '');
+
+        //clear expences - start
+        $(".cloned").remove();
+        $('#dialog-netvalue0', '#dialog-description0').val('');
+
+        $('#dialog-taxid0 option').removeAttr('selected');
+        $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
+        $("#dialog-taxid0").val( {$default_taxid} );
+
+        $('#dialog-paytype option').removeAttr('selected');
+        $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
+        $('#dialog-paytype').val( {$default_paytype} );
+        change_pay_type();
+
+        $('#dialog-supplierid').val('').trigger('input');
+
+        $('#dialog-invprojects0').val('');
+        $('#dialog-invprojects0 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-invprojects0");
+
+        $('#dialog-categories0').val('');
+        $('#dialog-categories0 option:selected').removeAttr('selected');
+        updateAdvancedSelects("#dialog-categories0");
+        //clear expences - end
+
+        var pdfview = document.getElementById('column1');
+        if (pdfview) {
+            switch (typeof(pdfview)) {
+                case 'object':
+                    pdfview.innerHTML = '';
+                    pdfview.id='herewillbethepdf';
+                    $( "#addpdmodal" ).dialog('option','width', 'auto').dialog('option','height', 'auto');
+                    break;
+                case 'null':
+                case 'undefined':
+                default:
+                    break;
+            }
+        }
+        $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
+        $( "#filecontainer").removeClass('hidden');
+    };
+
+    function get_ajax_pdinfo(id){
+        var response = $.get({
+            url: '?m=pdlist',
+            type: 'GET',
+            dataType: "json",
+            async: false,
+            data: "pdid=" + id,
+        });
+        return response.responseJSON;
+    };
+
+    function open_modify_dialog (template_id) {
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
+        $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
+
+        if (template_id) {
+            var pd = get_ajax_pdinfo(template_id);
+            if (pd.typeid) {
+                $("#dialog-typeid").val(pd.typeid).attr('data-template-typeid');
+            }
+            updateAdvancedSelects("#dialog-typeid");
+
+            $("#dialog-deadline").val(pd.deadline_formatted);
+
+            $("#dialog-divisionid option").removeAttr('selected');
+            $("#dialog-divisionid").val( pd.divisionid );
+            $("#dialog-divisionid option[value='" + pd.paytype + "']").attr("selected", "true");
+
+            $("#dialog-fullnumber").val(pd.fullnumber);
+            $("#dialog-sdate").val(pd.sdate_formatted);
+            $("#dialog-paydate").val(pd.paydate_formatted);
+
+            $("#dialog-paytype option").removeAttr('selected');
+            $("#dialog-paytype").val( pd.paytype );
+            $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
+            change_pay_type();
+            $("#dialog-iban").val( pd.iban );
+
+            $("#dialog-supplierid").removeAttr('data-customer-name', 'data-prev-value').val( pd.supplierid );
+            $("#dialog-supplierid").trigger('input');
+
+            $( ".cloned" ).remove();
+
+            for (let index = 0; index < pd.expences_count; index++) {
+                if (index != 0) {
+                    clone_expence_row('expencestable');
+                };
+
+                $("#dialog-netvalue" + index).val(pd.expences[index].netvalue);
+                $("#dialog-taxid" + index).val(pd.expences[index].taxid);
+                $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
+                $("#dialog-description" + index).val(pd.expences[index].description);
+
+                var invprojects_itemname = '#dialog-invprojects' + index;
+                $( invprojects_itemname + ' option:selected').removeAttr('selected');
+                if (pd.expences[index].invprojects) {
+                    for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
+                        makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
+                    }
+                }
+                if (index == 0) {
+                    updateAdvancedSelects( invprojects_itemname );
+                } else {
+                    initAdvancedSelects( invprojects_itemname );
+                }
+
+                var categories_itemname = '#dialog-categories' + index;
+                if (pd.expences[index].categories) {
+                    for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
+                        makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
+                    }
+                }
+                if (index == 0) {
+                    updateAdvancedSelects( categories_itemname );
+                } else {
+                    initAdvancedSelects( categories_itemname );
+                }
+            }
+        }
+
+        $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
+        show_inline_pdf_from_link('?m=pdview&id=' + template_id);
+    };
+
+    function makeMultiselectOptionsSelectedUsingValue(selectid, value) {
+      $( selectid + ' option[value="' + value + '"]').attr('selected','true');
+    }
+
+    function increaseStringValue(str){
+      if (!str) {
+          return;
+      }
+      return str.replaceAll(/\d+/ig,
+        function(a){ return +a+1;});
+    }
+
+    function reindexIdNameInAllElementsOfTable(tableid) {
+        var table = document.getElementById(tableid);
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            if (i == '0') {
+                $( row ).removeClass('cloned');
+            }
+            setIndexIdNameInAllElementsOfTableRow(row, i);
+            row.setAttribute("id", row.getAttribute('id').replaceAll(/\d+/ig, i));
+        }
+    }
+
+    function setIndexIdNameInAllElementsOfTableRow(elem, indexnum) {
+        var elements = elem.querySelectorAll("tr, div, td, select, input:not(.chosen-search-input), button");
+        for (let i = 0; i < elements.length; i++) {
+          var e = elements[i];
+          if (e.getAttribute('id')) {
+            e.setAttribute("id", e.getAttribute('id').replaceAll(/\d+/ig, indexnum));
+          }
+          if (e.getAttribute('name')) {
+            e.setAttribute("name", e.getAttribute('name').replaceAll(/\d+/ig, indexnum));
+          }
+        }
+    }
+
+    function increaseIdNameInAllElementsOfTableRow(elem) {
+        var elementList = elem.querySelectorAll("select, input, tr, button");
+        for (let i = 0; i < elementList.length; i++) {
+          elementList[i].setAttribute("id", increaseStringValue(elementList[i].getAttribute('id')));
+          elementList[i].setAttribute("name", increaseStringValue(elementList[i].getAttribute('name')));
+        }
+        elem.setAttribute("id", increaseStringValue(elem.getAttribute('id')));
+    }
+
+    function add_expence_row(tableid) {
+        var row = document.getElementById(tableid).lastElementChild.lastElementChild.cloneNode(true);
+        row.classList.add("cloned");
+        row.querySelector('select[id^="dialog-taxid"]').value = '{$default_taxid}';
+        row.querySelectorAll('input, textarea, select').forEach(e => e.value = '');
+        row.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
+        row.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
+
+        document.getElementById(tableid).lastElementChild.lastElementChild.after(row);
+        reindexIdNameInAllElementsOfTable(tableid);
+        delete row;
+    }
+
+    function clone_expence_row(elem) {
+        var kopia = document.getElementById(elem).parentElement.parentElement.parentElement.cloneNode(true);
+        kopia.classList.add("cloned");
+        kopia.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
+        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
+
+        document.getElementById(elem).parentElement.parentElement.parentElement.after(kopia);
+
+        reindexIdNameInAllElementsOfTable('expencestable');
+    };
+
+    function delete_nearest_tr(btnid) {
+        var elem = document.getElementById(btnid);
+        var tableid = elem.closest('table').id;
+        var rowid = elem.closest('tr').id;
+        delete_table_row(tableid, rowid);
+    }
+
+    function delete_table_row (tableid, rowid) {
+        var rowscount = document.getElementById(tableid).rows.length;
+
+        if (rowscount > 1) {
+            document.getElementById(rowid).remove();
+        } else {
+            alert($t("Could not remove only row"));
+        }
+        reindexIdNameInAllElementsOfTable(tableid);
+    }
+
+    function change_pay_type() {
+        var elem = document.getElementById('dialog-paytype');
+        var paytype = elem.value;
+        var iban = document.getElementById("dialog-iban-tr");
+        var ibaninput = document.getElementById("dialog-iban");
+        var iban_button = document.getElementById("import_iban_button");
+
+        if (paytype != 2 && paytype != 3) {
+            iban.style.display = 'none';
+            iban_button.style.display = 'none';
+            ibaninput.removeAttribute('required');
+            if (paytype == 1) {
+                var paydate = document.getElementById("dialog-paydate");
+                var sdate = document.getElementById("dialog-sdate").value;
+                paydate.value = sdate;
+            }
+        } else {
+            iban.style.display = '';
+            ibaninput.setAttribute('required','');
+            iban_button.style.display = '';
+        }
+    }
+
+    function selectOnlyThis(id) {
+        var clickedcheckbox = document.getElementsByClassName("onlyoneselectedcheckbox");
+        Array.prototype.forEach.call(clickedcheckbox, function(el){ el.checked = false; });
+        id.checked = true;
+    }
+
+    function get_customer_ten(customerid) {
+        var response = $.get({
+            url: '?m=pdlist',
+            type: 'GET',
+            dataType: "json",
+            async: false,
+            data: "get_customer_ten=" + customerid,
+        });
+        return response.responseJSON;
+    }
+
+    function format_number_to_iban(str, index, arr) {
+        arr[index] = str.substr(0, 2) + " " + str.substr(2, 4) + " " + str.substr(6, 4) + " " + str.substr(10, 4) + " " + str.substr(14, 4) + " " + str.substr(18, 4) + " " + str.substr(22, 4)
+    };
+
+
+    function fill_iban() {
+        var customerid = document.getElementById("dialog-supplierid").value;
+        var customerten = get_customer_ten(customerid);
+
+        if (customerten) {
+            var ibans = import_iban(customerten);
+            ibans.forEach(format_number_to_iban);
+
+            var ibansHTML = '';
+            for (let i=0; i < ibans.length; i++) {
+                ibansHTML += '<input id="iban' + i + '" type="checkbox" name="addpd[iban]" value="' + ibans[i] + '" class="onlyoneselectedcheckbox" onchange="selectOnlyThis(iban' + i + ')">' + ibans[i];
+                if (ibans[i] != ibans.length) {
+                    ibansHTML += '<br>';
+                }
+            }
+            var ibaninput = document.getElementById("dialog-iban");
+            ibaninput.style.display='none';
+            ibaninput.removeAttribute('required');
+            document.getElementById('bankaccounts-container').innerHTML = ibansHTML;
+        } else {
+            alert( '{trans("No supplier choosen or supplier got no TEN")}' );
+        }
+    }
+
+    function import_iban(nip) {
+        var dateObj = new Date();
+        var month = ('0' + (dateObj.getMonth()+1)).slice(-2);
+        var day = ('0' + dateObj.getDate()).slice(-2);
+        var year = dateObj.getFullYear();
+        var currentdate = year + "-" + month + "-" + day;
+
+        var iban = $.get({
+            url: 'https://wl-api.mf.gov.pl/api/search/nip/' + nip,
+            type: 'GET',
+            async: false,
+            data: 'date=' + currentdate,
+        });
+        return iban.responseJSON.result.subject.accountNumbers;
+    }
+
+    function show_inline_pdf_from_link(pdflink) {
+        $( "#addpdmodal" ).dialog('option', 'width', 'auto').dialog('option', 'height', 'auto');
+
+        if (!pdflink) {
+            alert("No pdf attached");
+            return;
+        }
+
+        var column2 = document.getElementById('column2');
+        if (column2) {
+            column2.id = 'column2-pdf-loaded';
+        }
+        var pdfcolumn = document.getElementById("herewillbethepdf");
+        if (!pdfcolumn) {
+            pdfcolumn = document.getElementById("column1");
+            pdfcolumn.innerHTML = '';
+        }
+
+        pdfcolumn.innerHTML = '<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>';
+        pdfcolumn.id = 'column1';
+        pdfcolumn.classList.remove('hidden', 'herewillbethepdf');
+
+        $( "#addpdmodal" ).dialog('option', 'width', window.innerWidth*0.9).dialog('option', 'height', window.innerHeight*0.9);
+    }
+
+    let elem = document.getElementsByClassName('fileupload-files');
+    for (let idx = 0, len = elem; idx < len; idx++) {
+        elem.addEventListener('lms:fileupload:complete', function(idx) { console.log('plik wrzucony' + idx); }, false);
+    }
+
+    let elem2 = document.getElementById('dialog-paytype');
+     elem2.addEventListener("click", elem2=>change_pay_type(), false);
+</script>

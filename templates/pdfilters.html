@@ -1,0 +1,79 @@
+﻿<form method="GET" action="?m=pdlist" name="filter" form="filter-form">
+    <table class="lmsbox">
+        <tr>
+            <td class="nobr">
+                <input type="submit" class="hiddenbtn">
+                <input type="hidden" name="m" value="pdlist">
+                {if isset($action)}<input type="hidden" name="action" value="{$action}">{/if}
+                {icon name="division" label="Division"}
+                <br>{division_selection name="divisionid" selected=$params.divisionid onchange="document.filter.submit();"}
+            </td>
+            <td class="nobr">
+                {icon name="customer" label="Supplier"}
+                <br><select name="supplier" onChange="document.filter.submit();" class="lms-ui-advanced-select">
+                    <option value="">{trans("filter off")}</option>
+                    {foreach $supplierslist as $s}
+                    <option value="{$s.id}" {if isset($params.supplier) && $s.id == $params.supplier} selected{/if}>{$s.lastname|trunescape:"25"}</option>
+                    {/foreach}
+                </select>
+            </td>
+            <td class="nobr">
+                {icon name="money" label="Payment"}
+                <br><select size="1" name="payments" onchange="document.filter.submit();">
+                    <option value="" {if empty($params.payments)} selected{/if}>{trans("filter off")}</option>
+                    <option value="-1" {if !empty($params.payments) && $params.payments=='-1'} selected{/if}>{trans("unpaid only")}</option>
+                    <option value="-6" {if !empty($params.payments) && $params.payments=='-6'} selected{/if}>{trans("unpaid with today payment date")}</option>
+                    <option value="-2" {if !empty($params.payments) && $params.payments=='-2'} selected{/if}>{trans("unpaid with upcoming payment date (to 3 days)")}</option>
+                    <option value="-3" {if !empty($params.payments) && $params.payments=='-3'} selected{/if}>{trans("unpaid with upcoming payment date (to 7 days)")}</option>
+                    <option value="-4" {if !empty($params.payments) && $params.payments=='-4'} selected{/if}>{trans("unpaid with upcoming payment date (to 14 days)")}</option>
+                    <option value="-5" {if !empty($params.payments) && $params.payments=='-5'} selected{/if}>{trans("expired only")}</option>
+                </select>
+            </td>
+            <td class="nobr">
+                {icon name="money" label="Gross value"}
+                <br><input type="text" size="8" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();" class="filters">
+                <br><input type="text" size="8" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();" class="filters">
+            </td>
+            <td class="nobr">
+            {icon name="summary" label="Document number"}
+                <br><input type="text" size="10" name="docnumber" placeholder="{trans("document number")}" value="{if $params.docnumber}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
+            </td>
+            <td class="nobr">
+                {icon name="timetable" label="Document date"}
+                <br><select size="1" name="period" onchange="document.filter.submit();">
+                    <option value="-1" {if $params.period=='-1'} selected{/if}>{trans("filter off")}</option>
+                    <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("current week")}</option>
+                    <option value="2" {if !empty($params.period) && $params.period=='2'} selected{/if}>{trans("previous week")}</option>
+                    <option value="3" {if !empty($params.period) && $params.period=='3'} selected{/if}>{trans("current month")}</option>
+                    <option value="4" {if !empty($params.period) && $params.period=='4'} selected{/if}>{trans("previous month")}</option>
+                    <option value="5" {if !empty($params.period) && $params.period=='5'} selected{/if}>{trans("current quarter")}</option>
+                    <option value="6" {if !empty($params.period) && $params.period=='6'} selected{/if}>{trans("current year")}</option>
+                </select>
+            </td>
+            <td class="nobr">
+                {icon name='type' label="Type"}
+                <br><select name="expences" onchange="document.filter.submit();">
+                    <option value="0">{trans("documents")}</option>
+                    <option value="1"{if isset($params.expences) && $params.expences=='1'} selected{/if}>{trans("expences")}</option>
+                </select>
+            </td>
+            <td class="nobr">
+                {icon name='categories' label="Categories"}
+                <br><select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-multiselect" multiple>
+                    {foreach $categorylist as $c}
+                        <option value="{$c.id}" {if !empty($params.catids) && in_array($c.id, $params.catids)} selected{/if}>{$c.name}</option>
+                    {/foreach}
+                    <option value="-1" {if !empty($params.catids) && in_array(-1, $params.catids)} selected{/if} data-exclusive>{trans("with category")}</option>
+                    <option value="-2" {if !empty($params.catids) && in_array(-2, $params.catids)} selected{/if} data-exclusive>{trans("without category")}</option>
+                    <option value="" {if empty($params.catids)}selected{/if} data-exclusive>{trans("filter off")}</option>
+                </select>
+            </td>
+            <td class="nobr">
+                <input type="hidden" name="export" id="export-input" value="0">
+                {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add" onclick="open_add_dialog()"}<br>
+                {button id="massadbtn" icon="upload" accesskey="u" label="Add many" href="?m=pduploads"}<br>
+                {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export" onclick="document.getElementById('export-input').value=1; document.filter.submit();"}
+            </td>
+        </tr>
+    </table>
+</form>

@@ -1,0 +1,83 @@
+<style>
+    #addpdcmodal {
+        overflow: visible;
+    }
+    input {
+        margin-top: 5px;
+    }
+    .button-bar {
+        padding-top: 20px;
+    }
+</style>
+
+<div id="addpdcmodal" class="lms-ui-modal-dialog">
+    <form method="POST" action="?m=pdcategorylist&action={if $action == 'modify'}modify&id={$pdcinfo.id}{else}add{/if}"
+              name="addpdc" id="addpdc-form">
+        <table>
+            <tbody>
+                {if $action == 'modify'}
+                    <tr>
+                        <td>
+                            <input type="text" name="addpdc[id]" value="{$pdcinfo.id}" hidden>
+                        </td>
+                    </tr>
+                {/if}
+                <tr>
+                    <td>
+                        {icon name="summary" label="Name"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-name" name="addpdc[name]" value="{$pdcinfo.name}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nobr">
+                        {icon name="description" label="Description"}
+                    </td>
+                    <td>
+                        <input type="text" id="dialog-description" name="addpdc[description]" value="{$pdcinfo.description|escape}">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="button-bar text-center">
+                        {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
+                        {button label="Cancel" icon="cancel" id="close"}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+</div>
+
+<script>
+    $( "#addpdcmodal" ).dialog( {
+        autoOpen: {if $action}true{else}false{/if},
+        resizable: false,
+        width: 'auto',
+        modal: true,
+        title: "{if $action == 'modify'}{trans("Modify purchase category")} {$pdcinfo.id}{else}{trans("Add purchase category")}{/if}"
+    });
+
+    $( "#close" ).click(function() {
+        $( "#addpdcmodal" ).dialog( "close" );
+    });
+
+    function open_add_dialog() {
+        $( "#addpdc-form" ).attr('action', '?m=pdcategorylist&action=add');
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+
+        $( "#dialog-id", "#dialog-name", "#dialog-description" ).val();
+        $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Add purchase document type")}").dialog( "open" );
+    };
+
+    function open_modify_dialog (template_id) {
+        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
+        $( "#addpdc-form" ).attr('action', '?m=pdcategorylist&action=modify&id=' + template_id);
+        if (template_id) {
+            var row = $('[data-template-id=' + template_id + ']');
+            $("#dialog-name").val($(row).find("[data-template-name]").attr('data-template-name'));
+            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
+        }
+        $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
+    };
+</script>
