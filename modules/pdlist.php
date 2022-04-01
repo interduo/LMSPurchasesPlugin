@@ -11,6 +11,13 @@ $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
 
 check_file_uploads();
 
+$attid = intval($_GET['attid']);
+if ($_GET['action'] == 'delete' && !empty($attid)) {
+    $params['attid'] = $attid;
+    $PURCHASES->DeleteAttachementFile($params);
+    $SESSION->redirect('?m=pdlist');
+}
+
 if (!empty($_GET['pdid'])) {
     $pdid = intval($_GET['pdid']);
     print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($pdid)));
@@ -27,6 +34,7 @@ if (isset($_POST['addpd'])) {
     $addpd = $_POST['addpd'];
 
     $result = handle_file_uploads('files', $error);
+
     extract($result);
     $SMARTY->assign('files', $files);
 
@@ -112,6 +120,11 @@ if (isset($_GET['valueto'])) {
     }
 }
 
+// document number filter
+if (!empty($_GET['docnumber'])) {
+    $params['docnumber'] = htmlspecialchars($_GET['docnumber']);
+}
+
 // categories filter
 if (!empty($_GET['catid'])) {
     if (!is_array($_GET['catid'])) {
@@ -125,7 +138,7 @@ if (!empty($_GET['catid'])) {
     }
 }
 
-// filters or documents
+// filters: expences or documents
 if (isset($_GET['expences'])) {
     $params['expences'] = intval($_GET['expences']);
 }
@@ -141,7 +154,7 @@ if (!isset($pdinfo['taxid'])) {
 }
 
 if (!empty($_GET['action'])) {
-    isset($_GET['id']) ? $id = intval($_GET['id']) : '';
+    $id = isset($_GET['id']) ? intval($_GET['id']) : '';
     $action = $_GET['action'];
     switch ($action) {
         case 'add':
@@ -175,7 +188,8 @@ if (!empty($_GET['action'])) {
     }
     $SMARTY->assign('action', $action);
 }
-
+$params['anteroom'] = true;
+$SMARTY->assign('anteroom', $PURCHASES->GetPurchaseFiles($params));
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());

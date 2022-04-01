@@ -97,9 +97,11 @@ Structure of table "pdattachments"
 DROP TABLE IF EXISTS pdattachments CASCADE;
 CREATE TABLE pdattachments (
     id serial PRIMARY KEY,
-    pdid integer NOT NULL
+    pdid integer
         CONSTRAINT pdattachments_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    anteroom boolean NOT NULL,
     filename varchar(255) DEFAULT '' NOT NULL,
+    fullpath varchar(255) DEFAULT '' NOT NULL,
     contenttype varchar(255) DEFAULT '' NOT NULL
 );
 

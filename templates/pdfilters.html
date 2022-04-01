@@ -35,6 +35,10 @@
                 <br><input type="text" size="8" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td class="nobr">
+            {icon name="summary" label="Document number"}
+                <br><input type="text" size="10" name="docnumber" placeholder="{trans("document number")}" value="{if $params.docnumber}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
+            </td>
+            <td class="nobr">
                 {icon name="timetable" label="Document date"}
                 <br><select size="1" name="period" onchange="document.filter.submit();">
                     <option value="-1" {if $params.period=='-1'} selected{/if}>{trans("filter off")}</option>
@@ -67,6 +71,7 @@
             <td class="nobr">
                 <input type="hidden" name="export" id="export-input" value="0">
                 {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add" onclick="open_add_dialog()"}<br>
+                {button id="massadbtn" icon="upload" accesskey="u" label="Document uploads" href="?m=pduploads"}<br>
                 {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export" onclick="document.getElementById('export-input').value=1; document.filter.submit();"}
             </td>
         </tr>

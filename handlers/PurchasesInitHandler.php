@@ -51,43 +51,50 @@ class PurchasesInitHandler
                 'tip' => trans('Purchase Documents'),
                 'accesskey' => 'p',
                 'submenu' => array(
+                    /*
                     array(
                         'name' => trans('Dashboard'),
                         'link' => '?m=pddashboard',
                         'tip' => trans('Purchase documents dashboard'),
                         'prio' => 180,
                     ),
+                    */
                     array(
                         'name' => trans('Purchase document list'),
                         'link' => '?m=pdlist',
                         'tip' => trans('Purchase document list'),
-                        'prio' => 181,
+                        'prio' => 10,
+                    ),
+                    array(
+                        'name' => trans('Document uploads'),
+                        'link' => '?m=pduploads',
+                        'tip' => trans('Document Uploads'),
+                        'prio' => 20,
                     ),
                     array(
                         'name' => trans('Purchase document types'),
                         'link' => '?m=pdtlist',
                         'tip' => trans('Purchase document types'),
-                        'prio' => 182,
+                        'prio' => 30,
                     ),
                     array(
                         'name' => trans('Purchase categories'),
                         'link' => '?m=pdcategorylist',
                         'tip' => trans('Purchase categories'),
-                        'prio' => 183,
+                        'prio' => 40,
                     ),
                 ),
             ),
         );
+
         $menu_keys = array_keys($hook_data);
         $i = array_search('documentation', $menu_keys);
 
-        $hook_data = array_merge(
+        return $hook_data = array_merge(
             array_slice($hook_data, 0, $i, true),
             $menu_pd,
             array_slice($hook_data, $i, null, true)
         );
-
-        return $hook_data;
     }
 
     /**

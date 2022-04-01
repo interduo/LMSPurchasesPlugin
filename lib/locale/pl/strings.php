@@ -1,5 +1,8 @@
 <?php
 
+$_LANG['Import box'] = 'Wrzutnia';
+$_LANG['Document uploads'] = 'Przekaż dokumenty';
+$_LANG['Add many'] = 'Dodaj wiele';
 $_LANG['Add empty row'] = 'Dodaj pusty wiersz';
 $_LANG['expences'] = 'wydatki';
 $_LANG['Default'] = 'Domyślny';

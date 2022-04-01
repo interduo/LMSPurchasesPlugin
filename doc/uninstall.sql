@@ -9,4 +9,4 @@ DROP TABLE IF EXISTS pdcontents CASCADE;
 
 DELETE FROM dbinfo WHERE keytype='dbversion_LMSPurchasesPlugin';
 DELETE FROM uiconfig WHERE section='pd';
-UPDATE uiconfig SET value = REPLACE(value,'LMSPurchasesPlugin','') WHERE section='phpui' AND var='plugins';
+UPDATE uiconfig SET value = REPLACE(value, 'LMSPurchasesPlugin', '') WHERE section='phpui' AND var='plugins';

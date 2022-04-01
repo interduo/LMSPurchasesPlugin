@@ -91,6 +91,13 @@ class PURCHASES
             $paymentsfilter = '';
         }
 
+        // DOCNUMBER FILTER
+        if (!empty($docnumber)) {
+            $docnumberfilter = ' AND fullnumber LIKE \'%' . htmlspecialchars($docnumber) . '%\'';
+        } else {
+            $docnumberfilter = '';
+        }
+
         // CATEGORY FILTER
         if (!empty($catids)) {
             $categoriesfilter = ' AND pdcc.categoryid IN (' . implode(',', $catids) . ')';
@@ -190,7 +197,7 @@ class PURCHASES
         }
 
         if (empty($expences)) {
-            $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, (ROUND(SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue)), 2) AS grossvalue';
+            $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, ROUND(SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue), 2) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
         } else {
             $split = ' pdc.netvalue, ROUND((pdc.netvalue*tx.value/100)+pdc.netvalue, 2) AS grossvalue, pdc.description, pdc.id AS expenceid';
@@ -213,6 +220,7 @@ class PURCHASES
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $divisionfilter
+            . $docnumberfilter
             . $categoriesfilter
             . $supplierfilter
             . $paymentsfilter
@@ -227,7 +235,8 @@ class PURCHASES
 
         if (empty($expences)) {
             foreach ($result as $idx => $r) {
-                $docfiles = $this->GetPurchaseFiles($r['id']);
+                $params['pdid'] = $r['id'];
+                $docfiles = $this->GetPurchaseFiles($params);
                 (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
                 $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
                 (!empty($docexpencecategory) ? $result[$idx]['categories'] = $docexpencecategory : '');
@@ -236,7 +245,8 @@ class PURCHASES
             }
         } else {
             foreach ($result as $idx => $r) {
-                $docfiles = $this->GetPurchaseFiles($r['id']);
+                $params['pdid'] = $r['id'];
+                $docfiles = $this->GetPurchaseFiles($params);
                 (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
                 $expencecategories = $this->GetCategoriesUsingExpenceId($r['expenceid']);
                 (!empty($expencecategories) ? $result[$idx]['categories'] = $expencecategories : '');
@@ -253,7 +263,7 @@ class PURCHASES
             foreach ($result as $r) {
                 $title = $r['typename'] . $r['fullnumber'];
                 $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                    . $r['grossvalue'] . ';' . $title . ';;;' . date("Y-m-d") . '';
+                    . $r['grossvalue'] . ';' . $title . ';;;' . date("Y-m-d");
             }
             header('Content-Disposition: attachment; filename=' . $exportfilename);
             print_r($exported);
@@ -280,9 +290,9 @@ class PURCHASES
     {
         return $this->db->GetAll(
             'SELECT categoryid, pdc.name 
-                    FROM pdcontentcat pcc
-                        LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
-                    WHERE contentid = ?',
+                FROM pdcontentcat pcc
+                    LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
+                WHERE contentid = ?',
             array($expenceid)
         );
     }
@@ -304,23 +314,44 @@ class PURCHASES
     {
         return $this->db->GetAll(
             'SELECT pdp.invprojectid, inv.name 
-                    FROM pdcontentinvprojects pdp
-                        LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
-                    WHERE contentid = ?',
+                FROM pdcontentinvprojects pdp
+                    LEFT JOIN invprojects inv ON (inv.id = pdp.invprojectid)
+                WHERE contentid = ?',
             array($id)
         );
     }
 
-    public function GetPurchaseFiles($pdid)
+    public function GetPurchaseFiles($params)
     {
-        $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd');
+        $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd' . DIRECTORY_SEPARATOR);
 
-        return $this->db->GetAll(
-            'SELECT filename AS name, contenttype AS type, CONCAT_WS(\'' . DIRECTORY_SEPARATOR . '\', \'' . $storage_dir . '\', ?, filename) AS fullpath
-            FROM pdattachments
-            WHERE pdid = ?',
-            array($pdid, $pdid)
+        if (!empty($params)) {
+            extract($params);
+        }
+
+        switch ($anteroom) {
+            case '0':
+                $anteroomfilter = 'AND anteroom IS FALSE';
+                break;
+            case '1':
+                $anteroomfilter = 'AND anteroom IS TRUE';
+                break;
+            default:
+                $anteroomfilter = '';
+        }
+
+        empty($pdid) ? $pdidfilter = ' AND pdid IS NULL' : $pdidfilter = ' AND pdid = ' . intval($pdid);
+        empty($attid) ? $attidfilter = '' : $attidfilter = ' AND id = ' . intval($attid);
+
+        $result = $this->db->GetAll(
+            'SELECT id, filename AS name, contenttype AS type, fullpath
+                FROM pdattachments
+                WHERE 1=1 '
+            . $anteroomfilter
+            . $pdidfilter
+            . $attidfilter
         );
+        return $result;
     }
 
     public function GetDefaultDocumentTypeid() {
@@ -372,62 +403,84 @@ class PURCHASES
         );
         $result['iban'] = format_bankaccount($result['iban']);
         $result['expences'] = $this->GetPurchaseDocumentExpences($id);
-        $result['fileupload'] = $this->GetPurchaseFiles($id);
+        $result['fileupload'] = $this->GetPurchaseFiles(array('pdid' => $id));
 
         return $result;
     }
 
-    private function AddPurchaseFiles($pdid, $files, $cleanup = false)
+    public function AddPurchaseFiles($params)
     {
+        extract($params);
+
         $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
         $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
 
         if (!empty($files) && $pd_dir) {
-            $pdid_dir = $pd_dir . DIRECTORY_SEPARATOR . $pdid;
+                $pdid_dir = $pd_dir . DIRECTORY_SEPARATOR . (empty($anteroom) ? $pdid : 'anteroom');
 
             @umask(0007);
 
-            @mkdir($pdid_dir, $storage_dir_permission);
-            @chown($pdid_dir, $storage_dir_owneruid);
-            @chgrp($pdid_dir, $storage_dir_ownergid);
+            if (@is_dir($pdid_dir)) {
+                @chown($pdid_dir, $storage_dir_owneruid);
+                @chgrp($pdid_dir, $storage_dir_ownergid);
+            } else {
+                @mkdir($pdid_dir, $storage_dir_permission);
+            }
 
             $dirs_to_be_deleted = array();
-            foreach ($files as $file) {
-                $filename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
-                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $filename;
-                if (isset($file['content'])) {
-                    $fh = @fopen($dstfile, 'w');
-                    if (empty($fh)) {
-                        continue;
-                    }
-                    fwrite($fh, $file['content'], strlen($file['content']));
-                    fclose($fh);
-                } else {
-                    if ($cleanup) {
-                        $dirs_to_be_deleted[] = dirname($file['name']);
-                    }
-                    if (!@rename(isset($file['tmp_name']) ? $file['tmp_name'] : $file['name'], $dstfile)) {
-                        continue;
-                    }
+            $tmp_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
+
+            foreach ($files['files'] as $file) {
+                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
+
+                if ($cleanup) {
+                    $dirs_to_be_deleted[] = dirname($file['name']);
                 }
+
+                @rename($tmp_dir . DIRECTORY_SEPARATOR . $file['name'], $dstfile);
 
                 @chown($dstfile, $storage_dir_owneruid);
                 @chgrp($dstfile, $storage_dir_ownergid);
 
                 $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype) VALUES (?, ?, ?)',
-                    array($pdid, $filename, $file['type'])
+                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, fullpath) VALUES (?, ?, ?, ?, ?)',
+                    array(
+                        $pdid,
+                        $file['name'],
+                        $file['type'],
+                        $anteroom ? 'true' : 'false',
+                        $dstfile,
+                    )
                 );
             }
-            if (!empty($dirs_to_be_deleted)) {
-                $dirs_to_be_deleted = array_unique($dirs_to_be_deleted);
-                foreach ($dirs_to_be_deleted as $dir) {
-                    rrmdir($dir);
+
+            if ($cleanup && empty($anteroom)) {
+                if (!empty($dirs_to_be_deleted)) {
+                    $dirs_to_be_deleted = array_unique($dirs_to_be_deleted);
+                    foreach ($dirs_to_be_deleted as $dir) {
+                        rrmdir($dir);
+                    }
                 }
             }
         }
+    }
+
+    public function DeleteAttachementFile($params)
+    {
+        $file = $this->db->GetOne('SELECT fullpath FROM pdattachments WHERE id = ?',
+            array($params['attid'])
+        );
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
+        return $this->db->Execute(
+            'DELETE FROM pdattachments WHERE id = ?',
+            array($params['attid'])
+        );
     }
 
     public function AddPurchase($args, $files = null)
@@ -486,7 +539,11 @@ class PURCHASES
             }
         }
         if (!empty($files)) {
-            $this->AddPurchaseFiles($params['pdid'], $files);
+            $params = array(
+                'pdid' => $params['pdid'],
+                'files'=> $files
+            );
+            $this->AddPurchaseFiles($params);
         }
 
         return $result;
@@ -503,6 +560,8 @@ class PURCHASES
                 array($id)
             );
         }
+
+        return null;
     }
 
     public function MarkAsPaid($id)
@@ -624,14 +683,12 @@ class PURCHASES
 
     public function GetPurchaseTypeInfo($id)
     {
-        $result = $this->db->GetAll(
+        return $this->db->GetAll(
             'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag
             FROM pdtypes
             WHERE pdtypes.id = ?',
             array($id)
         );
-
-        return $result;
     }
 
     public function AddPurchaseType($args)
@@ -639,7 +696,7 @@ class PURCHASES
         $args = array(
             'name' => $args['name'],
             'description' => empty($args['description']) ? null : $args['description'],
-            'defaultflag' => empty($args['defaultflag']) ? false : true
+            'defaultflag' => !empty($args['defaultflag'])
         );
 
 	if ($args['defaultflag']) {
@@ -717,14 +774,12 @@ class PURCHASES
 
     public function GetPurchaseCategoryInfo($id)
     {
-        $result = $this->db->GetAll(
+        return $this->db->GetAll(
             'SELECT pdcategories.id, pdcategories.name, pdcategories.description
             FROM pdcategories
             WHERE pdcategories.id = ?',
             array($id)
         );
-
-        return $result;
     }
 
     public function AddPurchaseCategory($args)
@@ -734,12 +789,10 @@ class PURCHASES
             'description' => empty($args['description']) ? null : $args['description']
         );
 
-        $result = $this->db->Execute(
+        return $this->db->Execute(
             'INSERT INTO pdcategories (name, description) VALUES (?, ?)',
             $args
         );
-
-        return $result;
     }
 
     public function DeletePurchaseCategory($id)
@@ -755,12 +808,10 @@ class PURCHASES
             'id' => $args['id'],
         );
 
-        $result = $this->db->Execute(
+        return $this->db->Execute(
             'UPDATE pdcategories SET name = ?, description = ? WHERE id = ?',
             $args
         );
-
-        return $result;
     }
 
     public function PDStats()
@@ -818,13 +869,10 @@ class PURCHASES
             SUM(CASE WHEN ' . $status['filter'] . ' THEN grossvalue END) AS '.$status['alias'].'value,
             ';
         }
-        $result = $this->db->GetRow(
-            'SELECT
-            ' . $sql . ' COUNT(id) AS unpaid
-            FROM pds
-            '
+        return $this->db->GetRow(
+            'SELECT ' . $sql . ' COUNT(id) AS unpaid
+            FROM pds'
         );
-        return $result;
     }
 
     public function SupplierStats()
