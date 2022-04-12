@@ -20,29 +20,7 @@
 {include file="pdfilters.html"}
 
 {if $anteroom|@size > 0}
-    <table class="lmsbox anteroom">
-        <thead>
-            <tr>
-                <td colspan="2" class="bold">
-                    {icon name="upload" label="Import box"}
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            {foreach $anteroom as $att}
-                <tr class="bold">
-                    <td>
-                        {$att.name}
-                    </td>
-                    <td class="text-right">
-                        {button type="link" icon="add" href="?m=pdlist&action=add&attid={$att.id}"}
-                        {button type="link" icon="print" href="?m=pdview&attid={$att.id}"}
-                        {button type="link" icon="delete" href="?m=pdlist&action=delete&attid={$att.id}" class="delete-pd"}
-                    </td>
-                </tr>
-            {/foreach}
-        </tbody>
-    </table>
+    {include file="pdanteroom.html"}
 {/if}
 
 <table class="lmsbox lms-ui-background-cycle lms-ui-datatable" data-page-length="{$pagelimit}">
