@@ -228,8 +228,12 @@
         $( "#addpdmodal" ).dialog( "close" );
     });
 
-    function open_add_dialog() {
-        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+    function open_add_dialog(attid) {
+        if (attid === null) {
+            document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+        } else {
+            document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add' + '&attid=' + attid);
+        }
         $("#addpd-form")[0].reset();
         $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
         $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
@@ -288,7 +292,14 @@
             }
         }
         $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
-        $( "#filecontainer").removeClass('hidden');
+
+        if (attid === null) {
+            $( "#filecontainer").removeClass('hidden');
+        } else {
+            $( "#filecontainer").addClass('hidden');
+            show_inline_pdf_from_link('?m=pdview&attid=' + attid);
+            $( "#addpdmodal" ).dialog('option','width', 'auto').dialog('option','height', 'auto');
+        }
     };
 
     function get_ajax_pdinfo(id){

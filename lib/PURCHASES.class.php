@@ -233,7 +233,7 @@ class PURCHASES
             . $orderby,
             'id');
 
-        if (empty($expences)) {
+        if (!empty($result) && empty($expences)) {
             foreach ($result as $idx => $r) {
                 $params['pdid'] = $r['id'];
                 $docfiles = $this->GetPurchaseFiles($params);
@@ -510,10 +510,10 @@ class PURCHASES
         return $result;
     }
 
-    public function DeleteAttachementFile($params)
+    public function DeleteAttachementFile($attid)
     {
         $file = $this->db->GetOne('SELECT fullpath FROM pdattachments WHERE id = ?',
-            array($params['attid'])
+            array($attid)
         );
 
         if (file_exists($file)) {
@@ -522,7 +522,7 @@ class PURCHASES
 
         return $this->db->Execute(
             'DELETE FROM pdattachments WHERE id = ?',
-            array($params['attid'])
+            array($attid)
         );
     }
 
@@ -604,12 +604,13 @@ class PURCHASES
     {
         if (!empty($id)) {
             $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
-            print_r(rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id));
 
             return $this->db->Execute(
                 'DELETE FROM pds WHERE id = ?',
                 array($id)
             );
+
+            @rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id);
         }
 
         return null;

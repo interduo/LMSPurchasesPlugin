@@ -11,16 +11,6 @@ $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
 
 check_file_uploads();
 
-if (!empty($_GET['attid'])) {
-    $attid = intval($_GET['attid']);
-}
-
-if ($_GET['action'] == 'delete' && !empty($attid)) {
-    $params['attid'] = $attid;
-    $PURCHASES->DeleteAttachementFile($params);
-    $SESSION->redirect('?m=pdlist');
-}
-
 if (!empty($_GET['pdid'])) {
     $pdid = intval($_GET['pdid']);
     print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($pdid)));
@@ -158,6 +148,8 @@ if (!isset($pdinfo['taxid'])) {
 
 if (!empty($_GET['action'])) {
     $id = isset($_GET['id']) ? intval($_GET['id']) : '';
+    $attid = isset($_GET['attid']) ? intval($_GET['attid']) : '';
+
     $action = $_GET['action'];
     switch ($action) {
         case 'add':
@@ -178,6 +170,11 @@ if (!empty($_GET['action'])) {
                 $PURCHASES->DeletePurchaseDocument($id);
             }
             break;
+        case 'delete-attachment':
+            if (!empty($attid)) {
+                $PURCHASES->DeleteAttachementFile($attid);
+            }
+            break;
         case 'markaspaid':
             if (!empty($id)) {
                 $PURCHASES->MarkAsPaid($id);
@@ -186,7 +183,7 @@ if (!empty($_GET['action'])) {
         default:
             break;
     }
-    if (!empty($id) || !empty($addpd)) {
+    if (!empty($id) || !empty($attid) || !empty($addpd)) {
         $SESSION->redirect('?m=pdlist');
     }
     $SMARTY->assign('action', $action);
