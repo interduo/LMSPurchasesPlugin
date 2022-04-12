@@ -1,7 +1,12 @@
-# LMSPurchasePlugin 
+# LMSPurchasePlugin Do czego służy wtyczka:
+1. Ewidencja wydatków - szybki dostęp do dokumentów kosztowych i ich skanów.
+2. Export niezapłaconych danych faktur w formie CSV do wrzucenia do banku.
+3. Pilnowanie terminów płatności dokumentów.
+4. Statystykowanie wydatków firmy z uwzględnieniem podziału na projekty/kategorie wydatków/stan płatności.
+5. Korzystanie z białej listy podatników pomaga dodatkowo zabezpieczyć się przed utratą miedziaków.
+6. Export dokumentów kosztowych do systemu księgowego.
 
-Wtyczka: LMSPurchase Plugin (PD)
-Opis: wtyczka służąca do ewidencji dokumentów kosztowych.
+Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
 **UWAGA:**
 - wsparcie tylko dla PostgreSQL,
@@ -35,16 +40,6 @@ Opis: wtyczka służąca do ewidencji dokumentów kosztowych.
 - **pd.source_iban** - numer źródłowego rachunku bankowego dla pliku eksportu płatności do banku,
 - **pd.export_filename** - nazwa pliku exportu,
 - **pd.pagelimit** - ilość pozycji na pojedyńczej stronie dokumentów/wydatków,
-
-Do czego służy wtyczka:
-1. Ewidencja wydatków - szybki dostęp do dokumentów kosztowych i ich skanów.
-2. Export niezapłaconych faktur jako plik gotowy do wrzucenia do UI banku.
-3. Pilnowanie terminów płatności dokumentów.
-4. Statystykowanie wydatków firmy z uwzględnieniem podziału na projekty/kategorie wydatków/stan płatności.
-5. Korzystanie z białej listy podatników pomaga dodatkowo zabezpieczyć się przed utratą miedziaków.
-6. Export dokumentów kosztowych do systemu księgowego.
-
-Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
 Jarosław Kłopotek <jkl@interduo.pl>,
 Grzegorz Cichowski <gc@ptlanet.pl>
