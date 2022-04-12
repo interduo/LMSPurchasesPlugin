@@ -7,14 +7,14 @@ Opis: wtyczka służąca do ewidencji dokumentów kosztowych.
 - wsparcie tylko dla PostgreSQL,
 - wsparcie dla LMS > 28.x,
 
-Instalacja wtyczki:
+**Instalacja wtyczki:**
 1. Przejdź do głównego katalogu LMS,
 2. git clone https://github.com/interduo/LMSPurchasesPlugin/ plugins/LMSPurchasesPlugin
 3. composer update --no-dev
 4. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 5. Nadaj uprawnienia użytkownikowi do wtyczki
 
-Aktualizacja wtyczki:
+**Aktualizacja wtyczki:**
 1. cd plugins/LMSPurchasesPlugin; git fetch origin; git pull origin main;
 
 **TODO: (dla wersji 2.0)**
