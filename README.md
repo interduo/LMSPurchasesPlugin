@@ -1,4 +1,5 @@
-# LMSPurchasePlugin Do czego służy wtyczka:
+# LMSPurchasePlugin 
+Do czego służy wtyczka:
 1. Ewidencja wydatków - szybki dostęp do dokumentów kosztowych i ich skanów.
 2. Export niezapłaconych danych faktur w formie CSV do wrzucenia do banku.
 3. Pilnowanie terminów płatności dokumentów.
