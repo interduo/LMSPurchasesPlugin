@@ -26,6 +26,7 @@ $_LANG['Enter document date in YYYY/MM/DD format or click to select it from cale
 $_LANG['Enter document deadline date in YYYY/MM/DD format or click to select it from calendar'] = 'Wprowadź termin płatności dokumentu w formacie YYYY/MM/DD lub kliknij, by wybrać ją z kalendarza';
 
 $_LANG['Add purchase document'] = 'Dodaj dokument zakupu';
+$_LANG['Add purchase document from anteroom'] = 'Dodaj dokument zakupu z wrzutni';
 $_LANG['Modify purchase document'] = 'Modyfikuj dokument zakupu';
 
 $_LANG['expired only'] = 'tylko przeterminowane';

@@ -153,8 +153,16 @@ if (!empty($_GET['action'])) {
     $action = $_GET['action'];
     switch ($action) {
         case 'add':
-            if (isset($addpd)) {
+            if (!empty($addpd)) {
                 $PURCHASES->AddPurchase($addpd, $files);
+                $docid = $DB->GetLastInsertID('pds');
+                if (!empty($attid)) {
+                    $argv = array(
+                        'attid' => $attid,
+                        'pdid' => $docid
+                    );
+                    $PURCHASES->MovePurchaseFileFromAnteroom($argv);
+                }
             }
             break;
         case 'modify':

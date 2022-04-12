@@ -228,14 +228,8 @@
         $( "#addpdmodal" ).dialog( "close" );
     });
 
-    function open_add_dialog(attid) {
-        if (attid === null) {
-            document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
-        } else {
-            document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add' + '&attid=' + attid);
-        }
+    function clear_pd_form() {
         $("#addpd-form")[0].reset();
-        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
         $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
 
         $("#dialog-iban").show();
@@ -276,6 +270,14 @@
         $('#dialog-categories0 option:selected').removeAttr('selected');
         updateAdvancedSelects("#dialog-categories0");
         //clear expences - end
+    }
+
+    function open_add_dialog() {
+        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+
+        clear_pd_form();
+
+        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
         var pdfview = document.getElementById('column1');
         if (pdfview) {
@@ -283,23 +285,37 @@
                 case 'object':
                     pdfview.innerHTML = '';
                     pdfview.id='herewillbethepdf';
-                    $( "#addpdmodal" ).dialog('option','width', 'auto').dialog('option','height', 'auto');
                     break;
                 case 'null':
                 case 'undefined':
                 default:
+                    pdfview.innerHTML = '';
+                    pdfview.id='herewillbethepdf';
                     break;
             }
         }
-        $( "#addpdmodal" ).dialog( "option", "title", "{trans("Add purchase document")}").dialog( "open" );
+        $( "#filecontainer").removeClass('hidden');
 
-        if (attid === null) {
-            $( "#filecontainer").removeClass('hidden');
-        } else {
-            $( "#filecontainer").addClass('hidden');
-            show_inline_pdf_from_link('?m=pdview&attid=' + attid);
-            $( "#addpdmodal" ).dialog('option','width', 'auto').dialog('option','height', 'auto');
-        }
+        $( "#addpdmodal" ).dialog({
+          width: 'auto',
+          height: 'auto',
+          title: "{trans('Add purchase document')}"
+        }).dialog( "open" );
+    };
+
+    function open_add_anteroom_dialog(attid) {
+        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add' + '&attid=' + attid);
+
+        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+
+        $( "#filecontainer").addClass('hidden');
+        show_inline_pdf_from_link('?m=pdview&attid=' + attid);
+
+        $( "#addpdmodal" ).dialog({
+          width: 'auto',
+          height: 'auto',
+          title: "{trans('Add purchase document from anteroom')}"
+        }).dialog( "open" );
     };
 
     function get_ajax_pdinfo(id){

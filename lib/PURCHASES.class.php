@@ -542,7 +542,7 @@ class PURCHASES
             'attid' => empty($args['attid']) ? null : $args['attid']
         );
 
-        $result = $this->db->Execute(
+        $this->db->Execute(
             'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, userid)
                     VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?)',
             array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
@@ -597,7 +597,7 @@ class PURCHASES
             $this->MovePurchaseFileFromAnteroom($argv);
         }
 
-        return $result;
+        return null;
     }
 
     public function DeletePurchaseDocument($id)
