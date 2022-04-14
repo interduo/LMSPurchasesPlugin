@@ -362,13 +362,15 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
 
                     $files[] = array(
                         'name' => $file_name,
+                        'extension' => pathinfo($file_name, PATHINFO_EXTENSION),
                         'type' => $partdata['content-type'],
                         'content' => &$file_content,
                         'content-id' => !$isAttachment && isset($partdata['content-id']) ? $partdata['content-id'] : null,
                     );
                     $attachments[] = array(
-                        'content_type' => $partdata['content-type'],
                         'filename' => $file_name,
+                        'extension' => pathinfo($file_name, PATHINFO_EXTENSION),
+                        'content_type' => $partdata['content-type'],
                         'data' => &$file_content,
                         'content-id' => !$isAttachment && isset($partdata['content-id']) ? $partdata['content-id'] : null,
                     );
@@ -414,6 +416,13 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
         }
 
         $timestamp = time();
+
+        /// remove other attachments than pdf
+        foreach ($files as $idx => $f) {
+            if ($f['extension'] !== 'pdf') {
+                unset($files[$idx]);
+            }
+        }
 
         $params = array(
             'createtime' => $timestamp,
