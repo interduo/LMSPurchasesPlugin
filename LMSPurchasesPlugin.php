@@ -10,7 +10,7 @@
 class LMSPurchasesPlugin extends LMSPlugin
 {
     const PLUGIN_DIRECTORY_NAME = 'LMSPurchasesPlugin';
-    const PLUGIN_DB_VERSION = '2022040100';
+    const PLUGIN_DB_VERSION = '2022041400';
     const PLUGIN_SOFTWARE_VERSION = '1.0-beta';
     const PLUGIN_NAME = 'Purchase Documents';
     const PLUGIN_DESCRIPTION = 'Ewidencja dokumentów kosztowych.';

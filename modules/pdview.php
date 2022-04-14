@@ -20,7 +20,18 @@ if (!empty($files)) {
 }
 
 if (!empty($firstfile)) {
-    $SESSION->redirect($firstfile['fullpath']);
+    if ($attid) {
+        $content = file_get_contents($firstfile['fullpath']);
+        header('Content-Type: application/pdf');
+        header('Content-Length: ' . strlen($content));
+        header('Content-Disposition: inline; filename=' . $firstfile['filename'] . '"');
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
+        ini_set('zlib.output_compression','0');
+        die($content);
+    } else {
+        $SESSION->redirect($firstfile['fullpath']);
+    }
 } else {
     die("No attachment for this purchase. Please go back.");
 }
