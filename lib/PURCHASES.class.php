@@ -438,6 +438,12 @@ class PURCHASES
                 $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
 
                 if ($file['content']) {
+                    $i = 1;
+                    while (file_exists($dstfile)) {
+                        $pathinfo = pathinfo($dstfile);
+                        $dstfile = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . '-' . $i . '.' . $pathinfo['extension'];
+                        $i++;
+                    };
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
                     $srcfile = $tmp_dir . DIRECTORY_SEPARATOR . $file['name'];
