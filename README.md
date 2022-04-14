@@ -6,6 +6,7 @@ Do czego służy wtyczka:
 4. Statystykowanie wydatków firmy z uwzględnieniem podziału na projekty/kategorie wydatków/stan płatności.
 5. Korzystanie z białej listy podatników pomaga dodatkowo zabezpieczyć się przed utratą miedziaków.
 6. Export dokumentów kosztowych do systemu księgowego.
+7. Automatyczne zaciąganie dokumentów wydatkowych z maila np. faktury@domena
 
 Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
@@ -28,7 +29,6 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 - obsługa walut,
 - obsługa potrzeb, zamówień i wiązanie z dokumentami kosztowymi,
 - przycisk tworzący automatycznie PZ (plugin warehouse) z linii dokumentu kosztowego,
-- zaciąganie faktur z maila i wrzucanie automatycznie do systemu,
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 

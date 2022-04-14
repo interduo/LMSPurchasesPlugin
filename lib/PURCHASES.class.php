@@ -323,8 +323,6 @@ class PURCHASES
 
     public function GetPurchaseFiles($params)
     {
-        $storage_dir = ConfigHelper::GetConfig("pd.storage_dir", 'storage' . DIRECTORY_SEPARATOR . 'pd' . DIRECTORY_SEPARATOR);
-
         if (!empty($params)) {
             extract($params);
         }
@@ -348,7 +346,7 @@ class PURCHASES
         empty($attid) ? $attidfilter = '' : $attidfilter = ' AND id = ' . intval($attid);
 
         $result = $this->db->GetAllByKey(
-            'SELECT id, filename AS name, contenttype AS type, fullpath
+            'SELECT id, filename AS name, contenttype AS type, fullpath, createtime, sender, sender_mail, comment
                 FROM pdattachments
                 WHERE 1=1 '
             . $anteroomfilter
@@ -433,33 +431,42 @@ class PURCHASES
             }
 
             $dirs_to_be_deleted = array();
-            $tmp_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
+
+            $tmp_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . empty($files['files-tmpdir']) ? 'tmp' : $files['files-tmpdir'];
 
             foreach ($files['files'] as $file) {
-                $srcfile = $tmp_dir . DIRECTORY_SEPARATOR . $file['name'];
                 $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
 
-                if ($cleanup) {
+                if ($file['content']) {
+                    file_put_contents($dstfile, $file['content'], LOCK_EX);
+                } else {
+                    $srcfile = $tmp_dir . DIRECTORY_SEPARATOR . $file['name'];
+                    @rename($srcfile, $dstfile);
+                    @chown($dstfile, $storage_dir_owneruid);
+                    @chgrp($dstfile, $storage_dir_ownergid);
+                }
+
+                if (!empty($cleanup)) {
                     $dirs_to_be_deleted[] = dirname($file['name']);
                 }
 
-                @rename($srcfile, $dstfile);
-                @chown($dstfile, $storage_dir_owneruid);
-                @chgrp($dstfile, $storage_dir_ownergid);
-
                 $result = $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, fullpath) VALUES (?, ?, ?, ?, ?)',
+                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, fullpath, createtime, sender, sender_mail, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     array(
-                        $pdid,
+                        empty($pdid) ? null : $pdid,
                         $file['name'],
                         $file['type'],
-                        $anteroom ? 'true' : 'false',
+                        empty($anteroom) ? 'false' : 'true',
                         $dstfile,
+                        $createtime,
+                        $sender,
+                        $sender_mail,
+                        $comment,
                     )
                 );
             }
 
-            if ($cleanup && empty($anteroom)) {
+            if (!empty($cleanup) && empty($anteroom)) {
                 if (!empty($dirs_to_be_deleted)) {
                     $dirs_to_be_deleted = array_unique($dirs_to_be_deleted);
                     foreach ($dirs_to_be_deleted as $dir) {
