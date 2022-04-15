@@ -164,6 +164,7 @@ if (ConfigHelper::checkConfig('phpui.logging') && class_exists('SYSLOG')) {
 $AUTH = null;
 
 $LMS = new LMS($DB, $AUTH, $SYSLOG);
+$timestamp = time();
 
 $rtparser_server = ConfigHelper::getConfig('pd.imap_server', 'mail.domain.pl');
 $rtparser_port = ConfigHelper::getConfig('pd.imap_port', '993');
@@ -173,6 +174,9 @@ $rtparser_password = ConfigHelper::getConfig('pd.imap_password', 'password_not_s
 $rtparser_use_seen_flag = ConfigHelper::getConfig('pd.imap_use_seen_flag', true);
 $rtparser_folder = ConfigHelper::getConfig('pd.imap_folder', 'INBOX');
 $rtparser_move_to_trashbin = ConfigHelper::getConfig('pd.move_to_trashbin', true);
+$rtparser_replace_spaces_in_attachment_names = ConfigHelper::getConfig('pd.replace_spaces_in_attachment_names', true);
+$rtparser_import_only_file_extensions = ConfigHelper::getConfig('pd.import_only_file_extensions', 'pdf');
+$rtparser_allowed_sender_emails = ConfigHelper::getConfig('pd.allowed_sender_emails', false);
 
 $stderr = fopen('php://stderr', 'w');
 
@@ -286,7 +290,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                 $isAttachment = isset($partdata['content-disposition']) && $partdata['content-disposition'] == 'attachment';
                 if (!$isAttachment
                     && preg_match('/text/', $partdata['content-type'])
-                    && ($mail_body == '' || ($html && $prefer_html) || (!$html && !$use_html))) {
+                    && ($mail_body == '' || ($html))) {
                     $mail_body = substr($buffer, $partdata['starting-pos-body'], $partdata['ending-pos-body'] - $partdata['starting-pos-body']);
                     $charset = $partdata['content-charset'];
                     $transfer_encoding = isset($partdata['transfer-encoding']) ? $partdata['transfer-encoding'] : '';
@@ -303,13 +307,8 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                     $contenttype = 'text/plain';
 
                     if ($partdata['content-type'] == 'text/html') {
-                        if ($use_html) {
-                            $contenttype = 'text/html';
-                            $mail_body = $hm_purifier->purify($mail_body);
-                        } else {
-                            $html2text = new \Html2Text\Html2Text($mail_body, array());
-                            $mail_body = $html2text->getText();
-                        }
+                        $html2text = new \Html2Text\Html2Text($mail_body, array());
+                        $mail_body = $html2text->getText();
                     }
                 } elseif (preg_match('#multipart/alternative#', $partdata['content-type']) && $mail_body == '') {
                     while (!empty($parts) && strpos($parts[0], $partid . '.') === 0) {
@@ -318,7 +317,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                         $subpartdata = mailparse_msg_get_part_data($subpart);
                         $html = strpos($subpartdata['content-type'], 'html') !== false;
                         if (preg_match('/text/', $subpartdata['content-type'])
-                            && (trim($mail_body) == '' || ($html && $prefer_html) || (!$html && !$use_html))) {
+                            && (trim($mail_body) == '' || ($html))) {
                             $mail_body = substr($buffer, $subpartdata['starting-pos-body'], $subpartdata['ending-pos-body'] - $subpartdata['starting-pos-body']);
                             $charset = $subpartdata['content-charset'];
                             $transfer_encoding = isset($subpartdata['transfer-encoding']) ? $subpartdata['transfer-encoding'] : '';
@@ -358,7 +357,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                         unset($file_content);
                         continue;
                     }
-                    $file_name = iconv_mime_decode($file_name);
+                    $file_name = trim(iconv_mime_decode($file_name));
 
                     $files[] = array(
                         'name' => $file_name,
@@ -395,8 +394,8 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
             $contenttype = 'text/plain';
 
             if ($partdata['content-type'] == 'text/html') {
-                    $html2text = new \Html2Text\Html2Text($mail_body, array());
-                    $mail_body = $html2text->getText();
+                $html2text = new \Html2Text\Html2Text($mail_body, array());
+                $mail_body = $html2text->getText();
             }
         }
 
@@ -415,26 +414,36 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
             }
         }
 
-        $timestamp = time();
-
-        /// remove other attachments than pdf
+        // import only defined file extensions
+        $allowed_file_types = explode(',', $rtparser_import_only_file_extensions);
         foreach ($files as $idx => $f) {
-            if ($f['extension'] !== 'pdf') {
+            if (!in_array($f['extension'], $allowed_file_types)) {
                 unset($files[$idx]);
             }
         }
 
-        $params = array(
-            'createtime' => $timestamp,
-            'sender' => (empty($fromname) ? substr(trim($mh_from), 0, 254) : substr(trim($fromname),0,254)),
-            'sender_mail' => (empty($fromemail) ? null : substr(trim($fromemail),0,254)),
-            'comment' => substr(trim($mh_subject), 0, 254),
-            'files' => array('files' => $files),
-            'anteroom' => true,
-        );
+        // change the spaces to underscores
+        if ($rtparser_replace_spaces_in_attachment_names) {
+            foreach ($files as $idx => $f) {
+                if (str_contains($f['name'], ' ')) {
+                    $files[$idx]['name'] = str_replace(' ', '_', $f['name']);
+                }
+            }
+        }
 
-        $PURCHASES1 = new PURCHASES;
-        $PURCHASES1->AddPurchaseFiles($params);
+        if (empty($rtparser_allowed_sender_emails) || in_array($fromemail, explode(',', $rtparser_allowed_sender_emails))) {
+            $params = array(
+                'createtime' => $timestamp,
+                'sender' => (empty($fromname) ? substr(trim($mh_from), 0, 254) : substr(trim($fromname),0,254)),
+                'sender_mail' => (empty($fromemail) ? null : substr(trim($fromemail),0,254)),
+                'comment' => substr(trim($mh_subject), 0, 254),
+                'files' => array('files' => $files),
+                'anteroom' => true,
+            );
+
+            $PURCHASES1 = new PURCHASES;
+            $PURCHASES1->AddPurchaseFiles($params);
+        }
     }
 
     if ($postid !== false && $postid !== null) {
