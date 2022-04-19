@@ -21,6 +21,7 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 4. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 5. Ustawić zmienne konfiguracyjne wtyczki.
 6. Nadaj uprawnienia użytkownikowi do wtyczki.
+(opcjonalnie) Dodaj do crontaba skrypt bin/lms-pdf-import-imap-parser.php zaciągający dokumenty kosztowe z maila
 
 **Aktualizacja wtyczki:**
 1. cd plugins/LMSPurchasesPlugin; git fetch origin; git pull origin main;
