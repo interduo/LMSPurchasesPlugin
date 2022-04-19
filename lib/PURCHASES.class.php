@@ -32,7 +32,7 @@ class PURCHASES
                     $orderby = ' ORDER BY pds.netvalue';
                     break;
                 case 'description':
-                    $orderby = ' ORDER BY pds.description';
+                    $orderby = ' ORDER BY pdc.description';
                     break;
                 case 'id':
                 default:
