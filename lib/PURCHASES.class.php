@@ -198,6 +198,8 @@ class PURCHASES
 
         if (!empty($description)) {
             $expencedescriptionfilter = ' AND pdc.description LIKE \'%' . $description . '%\'';
+        } else {
+            $expencedescriptionfilter = '';
         }
 
         if (empty($expences)) {
@@ -439,7 +441,8 @@ class PURCHASES
 
             $dirs_to_be_deleted = array();
 
-            $tmp_dir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . empty($files['files-tmpdir']) ? 'tmp' : $files['files-tmpdir'];
+            $sys_tmp_dir = sys_get_temp_dir();
+            $tmp_dir = (empty($sys_tmp_dir) ? '/tmp' : $sys_tmp_dir) . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
 
             foreach ($files['files'] as $file) {
                 $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
@@ -454,9 +457,9 @@ class PURCHASES
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
                     $srcfile = $tmp_dir . DIRECTORY_SEPARATOR . $file['name'];
-                    @rename($srcfile, $dstfile);
-                    @chown($dstfile, $storage_dir_owneruid);
-                    @chgrp($dstfile, $storage_dir_ownergid);
+                    rename($srcfile, $dstfile);
+                    chown($dstfile, $storage_dir_owneruid);
+                    chgrp($dstfile, $storage_dir_ownergid);
                 }
 
                 if (!empty($cleanup)) {
@@ -472,9 +475,9 @@ class PURCHASES
                         empty($anteroom) ? 'false' : 'true',
                         $dstfile,
                         time(),
-                        $sender,
-                        $sender_mail,
-                        $comment,
+                        empty($sender) ? null : $sender,
+                        empty($sender_mail) ? null : $sender_mail,
+                        empty($comment) ? null : $comment,
                     )
                 );
             }
