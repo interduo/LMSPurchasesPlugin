@@ -137,4 +137,4 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'import_only_file_extension', 'pdf', 'zaczytuj tylko załączniki z rozszerzenami zdefiniowanymi tą zmienną - rozszerzenia oddzielone przecinkami', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'allowed_sender_emails', 'mail1@domain.pl,mail2@domain.pl', 'zaczytuj tylko maile z podanych adresów zdefiniowanych tą zmienną - maile oddzielone przecinkami, pusta wartość lub wyłączona listę dostępu', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype) DO UPDATE SET keyvalue='2022041400';
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2022041400') ON CONFLICT (keytype) DO UPDATE SET keyvalue='2022041400';

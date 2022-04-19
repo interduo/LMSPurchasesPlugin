@@ -469,7 +469,7 @@ class PURCHASES
                         $file['type'],
                         empty($anteroom) ? 'false' : 'true',
                         $dstfile,
-                        $createtime,
+                        time(),
                         $sender,
                         $sender_mail,
                         $comment,
