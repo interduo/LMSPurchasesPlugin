@@ -215,5 +215,6 @@ $SMARTY->assign('default_document_typeid', $PURCHASES->GetDefaultDocumentTypeid(
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
+$SMARTY->assign('pagelimit', $pagelimit);
 
 $SMARTY->display('pdlist.html');
