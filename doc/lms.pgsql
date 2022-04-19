@@ -120,7 +120,7 @@ INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (7, 'proforma', 
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (8, 'nota księgowa', NULL, false);
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_taxid', '3', 'ID domyślnej stawki podatku', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_divisionid', '1', 'ID domyślnego oddziału', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'pagelimit', '50', 'ilość pozycji na stronie', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
@@ -135,6 +135,6 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'move_to_trashbin', true, 'przenieś maila do kosza', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'replace_spaces_in_attachment_names', true, 'zamień spacje w nazwach plików', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'import_only_file_extension', 'pdf', 'zaczytuj tylko załączniki z rozszerzenami zdefiniowanymi tą zmienną - rozszerzenia oddzielone przecinkami', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'allowed_sender_emails', false, 'zaczytuj tylko maile z podanych adresów zdefiniowanych tą zmienną - maile oddzielone przecinkami, pusta wartość lub wyłączona listę dostępu', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'allowed_sender_emails', 'mail1@domain.pl,mail2@domain.pl', 'zaczytuj tylko maile z podanych adresów zdefiniowanych tą zmienną - maile oddzielone przecinkami, pusta wartość lub wyłączona listę dostępu', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2021112700') ON CONFLICT (keytype) DO UPDATE SET keyvalue='2022041400';
