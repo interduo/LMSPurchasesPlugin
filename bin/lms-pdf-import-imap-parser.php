@@ -425,7 +425,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
         // change the spaces to underscores
         if ($rtparser_replace_spaces_in_attachment_names) {
             foreach ($files as $idx => $f) {
-                if (str_contains($f['name'], ' ')) {
+                if (strpos($f['name'], ' ') !== false) {
                     $files[$idx]['name'] = str_replace(' ', '_', $f['name']);
                 }
             }
