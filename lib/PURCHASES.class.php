@@ -196,6 +196,10 @@ class PURCHASES
             $valuetohavingfilter = '';
         }
 
+        if (!empty($description)) {
+            $expencedescriptionfilter = ' AND pdc.description LIKE \'%' . $description . '%\'';
+        }
+
         if (empty($expences)) {
             $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, ROUND(SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue), 2) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
@@ -223,6 +227,7 @@ class PURCHASES
             . $docnumberfilter
             . $categoriesfilter
             . $supplierfilter
+            . $expencedescriptionfilter
             . $paymentsfilter
             . $periodfilter
             . $groupby

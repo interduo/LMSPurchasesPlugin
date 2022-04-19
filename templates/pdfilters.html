@@ -51,7 +51,12 @@
                 </select>
             </td>
             <td class="nobr">
-                {icon name='type' label="Type"}
+                {icon name='description' label="expence description"}
+                <br><input type="text" name="description" placeholder="{trans('expence description')}"
+                        onchange="document.filter.submit();" value="{if $params.description}{$params.description|escape}{/if}">
+            </td>
+            <td class="nobr">
+                {icon name="type" label="View type"}
                 <br><select name="expences" onchange="document.filter.submit();">
                     <option value="0">{trans("documents")}</option>
                     <option value="1"{if isset($params.expences) && $params.expences=='1'} selected{/if}>{trans("expences")}</option>

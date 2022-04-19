@@ -131,6 +131,11 @@ if (!empty($_GET['catid'])) {
     }
 }
 
+// filters: expence description
+if (!empty($_GET['description'])) {
+    $params['description'] = htmlspecialchars($_GET['description']);
+}
+
 // filters: expences or documents
 if (isset($_GET['expences'])) {
     $params['expences'] = intval($_GET['expences']);
