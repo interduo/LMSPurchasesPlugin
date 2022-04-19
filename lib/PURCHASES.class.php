@@ -238,25 +238,27 @@ class PURCHASES
             . $orderby,
             'id');
 
-        if (!empty($result) && empty($expences)) {
-            foreach ($result as $idx => $r) {
-                $params['pdid'] = $r['id'];
-                $docfiles = $this->GetPurchaseFiles($params);
-                (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
-                $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
-                (!empty($docexpencecategory) ? $result[$idx]['categories'] = $docexpencecategory : '');
-                $docexpenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
-                (!empty($docexpenceinvprojects) ? $result[$idx]['invprojects'] = $docexpenceinvprojects : '');
-            }
-        } else {
-            foreach ($result as $idx => $r) {
-                $params['pdid'] = $r['id'];
-                $docfiles = $this->GetPurchaseFiles($params);
-                (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
-                $expencecategories = $this->GetCategoriesUsingExpenceId($r['expenceid']);
-                (!empty($expencecategories) ? $result[$idx]['categories'] = $expencecategories : '');
-                $expenceinvprojects = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
-                (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '');
+        if (!empty($result)) {
+            if (empty($expences)) {
+                foreach ($result as $idx => $r) {
+                    $params['pdid'] = $r['id'];
+                    $docfiles = $this->GetPurchaseFiles($params);
+                    (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
+                    $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
+                    (!empty($docexpencecategory) ? $result[$idx]['categories'] = $docexpencecategory : '');
+                    $docexpenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
+                    (!empty($docexpenceinvprojects) ? $result[$idx]['invprojects'] = $docexpenceinvprojects : '');
+                }
+            } else {
+                foreach ($result as $idx => $r) {
+                    $params['pdid'] = $r['id'];
+                    $docfiles = $this->GetPurchaseFiles($params);
+                    (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
+                    $expencecategories = $this->GetCategoriesUsingExpenceId($r['expenceid']);
+                    (!empty($expencecategories) ? $result[$idx]['categories'] = $expencecategories : '');
+                    $expenceinvprojects = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
+                    (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '');
+                }
             }
         }
 
