@@ -1,6 +1,6 @@
 ﻿<?php
 
-if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('superuser')) {
+if (ConfigHelper::checkPrivilege('purchases')) {
     $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 } else {
     access_denied();

@@ -265,6 +265,10 @@ class PURCHASES
         }
 
         if (isset($export) && $export == 1) {
+            if (!ConfigHelper::checkPrivilege('purchases_export_purchases'))  {
+                die();
+            }
+
             $src_iban = ConfigHelper::getConfig('pd.source_iban');
             $exportfilename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d')));
 

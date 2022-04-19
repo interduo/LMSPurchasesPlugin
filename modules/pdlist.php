@@ -158,7 +158,7 @@ if (!empty($_GET['action'])) {
     $action = $_GET['action'];
     switch ($action) {
         case 'add':
-            if (!empty($addpd)) {
+            if (!empty($addpd) && ConfigHelper::checkPrivilege('purchase_add_purchase')) {
                 $PURCHASES->AddPurchase($addpd, $files);
                 $docid = $DB->GetLastInsertID('pds');
                 if (!empty($attid)) {
@@ -173,23 +173,23 @@ if (!empty($_GET['action'])) {
         case 'modify':
             $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
             $SMARTY->assign('pdinfo', $pdinfo);
-            if (isset($addpd)) {
+            if (isset($addpd) && ConfigHelper::checkPrivilege('purchase_modify_purchase')) {
                 $addpd['id'] = $id;
                 $PURCHASES->UpdatePurchaseDocument($addpd);
             }
             break;
         case 'delete':
-            if (!empty($id)) {
+            if (!empty($id) && ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
                 $PURCHASES->DeletePurchaseDocument($id);
             }
             break;
         case 'delete-attachment':
-            if (!empty($attid)) {
+            if (!empty($attid) && ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
                 $PURCHASES->DeleteAttachementFile($attid);
             }
             break;
         case 'markaspaid':
-            if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_as_paid')) {
+            if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')) {
                 $PURCHASES->MarkAsPaid($id);
             }
             break;

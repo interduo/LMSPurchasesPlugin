@@ -148,16 +148,20 @@
                 <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
             </td>
             <td class="buttons">
-                {if isset($pd.files)}
+                {if isset($pd.files) && ConfigHelper::checkPrivilege('purchase_add_purchase')}
                     {foreach $pd.files as $file}
                         {button type="link" icon="fileupload" tip=$file.filename href=$file.fullpath}
                     {/foreach}
                 {/if}
-                {if !$pd.paydate && ConfigHelper::checkPrivilege('purchases_mark_as_paid')}
+                {if !$pd.paydate && empty($params.expences) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')}
                     {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
                 {/if}
-                {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
-                {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
+                {if ConfigHelper::checkPrivilege('purchases_modify_purchase')}
+                    {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
+                {/if}
+                {if empty($params.expences) && ConfigHelper::checkPrivilege('purchases_delete_purchase')}
+                    {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
+                {/if}
             </td>
         </tr>
         {/foreach}

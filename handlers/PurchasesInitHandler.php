@@ -108,7 +108,7 @@ class PurchasesInitHandler
         $permission = new Permission(
             'purchases',
             '(PURCHASES) Ewidencja dokumentów kosztowych',
-            '^pd.*$',
+            '^pd(list|uploads|view).*$',
             null,
             array('purchases' => Permission::MENU_ALL)
         );
@@ -116,8 +116,54 @@ class PurchasesInitHandler
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
-            'purchases_mark_as_paid',
-            '(PURCHASES) Oznaczanie dokumentów jako zapłacone'
+            'purchases_mark_purchase_as_paid',
+            '(PURCHASES) Oznaczanie dokumentów jako zapłacone',
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchases_delete_purchase',
+            '(PURCHASES) Kasowanie dokumentów kosztowych',
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchase_modify_purchase',
+            '(PURCHASES) Edycja zakupów/wydatków/dokumentów kosztowych',
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchase_add_purchase',
+            '(PURCHASES) Księgowanie zakupów/wydatków/dokumentów kosztowych',
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchase_export_purchases',
+            '(PURCHASES) Export zakupów CSV',
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchase_management_types',
+            '(PURCHASES) Zarządzanie typami dokumentów kosztowych',
+            '^pdtlist.*$',
+            null,
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchase_management_categories',
+            '(PURCHASES) Zarządzanie kategoriami wydatków',
+            '^pdclist.*$',
+            null,
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
