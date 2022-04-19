@@ -28,8 +28,6 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 **TODO: (dla wersji 2.0)**
 - testy i porządny review kodu przez kilku mądrzejszych,
 - obsługa walut,
-- obsługa potrzeb, zamówień i wiązanie z dokumentami kosztowymi,
-- przycisk tworzący automatycznie PZ (plugin warehouse) z linii dokumentu kosztowego,
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 
