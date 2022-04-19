@@ -114,5 +114,12 @@ class PurchasesInitHandler
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchases_mark_as_paid',
+            '(PURCHASES) Oznaczanie dokumentów jako zapłacone'
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
     }
 }

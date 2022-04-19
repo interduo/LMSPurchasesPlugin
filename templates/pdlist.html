@@ -153,7 +153,7 @@
                         {button type="link" icon="fileupload" tip=$file.filename href=$file.fullpath}
                     {/foreach}
                 {/if}
-                {if !$pd.paydate}
+                {if !$pd.paydate && ConfigHelper::checkPrivilege('purchases_mark_as_paid')}
                     {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
                 {/if}
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}

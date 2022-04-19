@@ -189,7 +189,7 @@ if (!empty($_GET['action'])) {
             }
             break;
         case 'markaspaid':
-            if (!empty($id)) {
+            if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_as_paid')) {
                 $PURCHASES->MarkAsPaid($id);
             }
             break;
