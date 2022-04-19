@@ -59,29 +59,32 @@ class PurchasesInitHandler
                         'prio' => 180,
                     ),
                     */
-                    array(
+                    'pdlist' => array(
                         'name' => trans('Purchase document list'),
                         'link' => '?m=pdlist',
                         'tip' => trans('Purchase document list'),
                         'prio' => 10,
                     ),
-                    array(
+                    'pduploads' => array(
                         'name' => trans('Document uploads'),
                         'link' => '?m=pduploads',
                         'tip' => trans('Document Uploads'),
                         'prio' => 20,
+                        'key' => 'pduploads',
                     ),
-                    array(
+                    'pdtlist' => array(
                         'name' => trans('Purchase document types'),
                         'link' => '?m=pdtlist',
                         'tip' => trans('Purchase document types'),
                         'prio' => 30,
+                        'key' => 'pdtlist',
                     ),
-                    array(
+                    'pdcategorylist' => array(
                         'name' => trans('Purchase categories'),
                         'link' => '?m=pdcategorylist',
                         'tip' => trans('Purchase categories'),
                         'prio' => 40,
+                        'key' => 'pdcategorylist',
                     ),
                 ),
             ),
@@ -110,7 +113,7 @@ class PurchasesInitHandler
             '(PURCHASES) Ewidencja dokumentów kosztowych',
             '^pd(list|uploads|view).*$',
             null,
-            array('purchases' => Permission::MENU_ALL)
+            array('purchases' => array('pdlist', 'pduploads'))
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
@@ -155,6 +158,7 @@ class PurchasesInitHandler
             '(PURCHASES) Zarządzanie typami dokumentów kosztowych',
             '^pdtlist.*$',
             null,
+            array('purchases' => array('pdtlist'))
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
@@ -164,6 +168,7 @@ class PurchasesInitHandler
             '(PURCHASES) Zarządzanie kategoriami wydatków',
             '^pdclist.*$',
             null,
+            array('purchases' => array('pdcategorylist'))
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
