@@ -1,5 +1,6 @@
 <?php
 
+$_LANG['Delete from anteroom'] = 'Usuń z poczekalnii';
 $_LANG['expence description'] = 'opis wydatku';
 $_LANG['Import box'] = 'Wrzutnia';
 $_LANG['View type'] = 'Typ widoku';
@@ -37,6 +38,7 @@ $_LANG['Today date of payment'] = 'Dzisiaj termin płatności';
 $_LANG['Pay date'] = 'Data zapłaty';
 $_LANG['Document scan'] = 'Skan dokumentu';
 $_LANG['Show All'] = 'Pokaż wszystkie';
+$_LANG['Show uploaded document'] = 'Pokaż wgrany dokument';
 $_LANG['Net value'] = 'Wartość netto';
 $_LANG['Gross value'] = 'Wartość brutto';
 $_LANG['Inv. Project'] = 'Projekt inw.';

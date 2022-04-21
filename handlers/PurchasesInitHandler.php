@@ -68,7 +68,7 @@ class PurchasesInitHandler
                     'pduploads' => array(
                         'name' => trans('Document uploads'),
                         'link' => '?m=pduploads',
-                        'tip' => trans('Document Uploads'),
+                        'tip' => trans('Document uploads'),
                         'prio' => 20,
                         'key' => 'pduploads',
                     ),
