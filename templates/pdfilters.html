@@ -6,7 +6,7 @@
                 <input type="hidden" name="m" value="pdlist">
                 {if isset($action)}<input type="hidden" name="action" value="{$action}">{/if}
                 {icon name="division" label="Division"}
-                <br>{division_selection name="divisionid" selected=$params.divisionid onchange="document.filter.submit();"}
+                <br>{division_selection name="divisionid" use_shortname=true selected=$params.divisionid onchange="document.filter.submit();"}
             </td>
             <td class="nobr">
                 {icon name="customer" label="Supplier"}
