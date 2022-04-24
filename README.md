@@ -12,7 +12,7 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
 **UWAGA:**
 - wsparcie tylko dla PostgreSQL,
-- wsparcie dla LMS > 28.x,
+- wsparcie dla LMS > 28.x (obecna gałąź master),
 
 **Instalacja wtyczki:**
 1. Przejdź do głównego katalogu LMS.
