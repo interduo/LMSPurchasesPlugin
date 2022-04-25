@@ -1,6 +1,11 @@
 {extends file="layout.html"}
 {block name=title}{$layout.pagetitle|striphtml}{/block}
 {block name=module_content}
+
+{$default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2)}
+{$default_divisionid = ConfigHelper::getConfig('pd.default_divisionid')}
+
+
 <style>
     table.anteroom {
         max-width: 300px;
@@ -85,8 +90,9 @@
         </tr>
     </thead>
     <tbody>
+    {if !empty($pdlist)}
         {foreach $pdlist as $pd}
-        <tr class="{if $smarty.now > $pd.deadline+86399 && !$pd.paydate}red{elseif $pd.paydate}blend{/if} highlight">
+        <tr class="{if empty($pd.paydate) && $smarty.now > $pd.deadline+86399}red{elseif $pd.paydate}blend{/if} highlight">
             <td data-target-url="?m=pdview&id={$pd.id}">
                 {if !empty($params.expences)}
                     {$pd.expenceid}
@@ -95,11 +101,11 @@
                 {/if}
             </td>
             <td data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.typename|escape}
+                {if isset($pd.typename)}{$pd.typename|escape}{/if}
             </td>
             <td>
                 {icon name="clipboard" class="lms-ui-button-clipboard nocolor" data_clipboard_text=$pd.fullnumber|escape}
-                {$pd.fullnumber|escape}
+                {if isset($pd.fullnumber)}{$pd.fullnumber|escape}{/if}
             </td>
             <td data-order="{$pd.netvalue}" data-target-url="?m=pdview&id={$pd.id}">
                 {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
@@ -116,36 +122,44 @@
                 {$pd.sdate|escape|date_format:"%Y/%m/%d"}
             </td>
             <td data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.deadline|escape|date_format:"%Y/%m/%d"}
+                {if isset($pd.deadline)}{$pd.deadline|escape|date_format:'%Y/%m/%d'}{/if}
             </td>
             <td data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.paydate|escape|date_format:"%Y/%m/%d"}
+                {if isset($pd.paydate)}{$pd.paydate|escape|date_format:'%Y/%m/%d'}{/if}
             </td>
             <td data-target-url="?m=pdview&id={$pd.id}">
                 {trans("{$_PAYTYPES[{$pd.paytype}]}")}
             </td>
             {if !empty($params.expences)}
             <td {tip text=$pd.description} data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.description|trunescape:40}
+                {if isset($pd.description)}{$pd.description|trunescape:40}{/if}
             </td>
             {/if}
             <td {tip text=$pd.supplier_name}>
-                <a href="?m=customerinfo&id={$pd.supplierid}">
-                    {$pd.supplier_name|trunescape:25:"&hellip;":true}
-                </a>
+                {if isset($pd.supplier_name)}
+                    <a href="?m=customerinfo&id={$pd.supplierid}">
+                        {$pd.supplier_name|trunescape:25:"&hellip;":true}
+                    </a>
+                {/if}
             </td>
             <td>
-                {foreach $pd.invprojects as $p}
-                    {$p.name|trunescape:25:"&hellip;":true}<br>
-                {/foreach}
+                {if isset($pd.invprojects)}
+                    {foreach $pd.invprojects as $p}
+                        {$p.name|trunescape:25:"&hellip;":true}<br>
+                    {/foreach}
+                {/if}
             </td>
             <td>
-                {foreach $pd.categories as $c}
-                    {$c.name|trunescape:25:"&hellip;":true}<br>
-                {/foreach}
+                {if !empty($pd.categories)}
+                    {foreach $pd.categories as $c}
+                        {$c.name|trunescape:25:"&hellip;":true}<br>
+                    {/foreach}
+                {/if}
             </td>
             <td>
-                <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
+                {if isset($pd.userid)}
+                    <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
+                {/if}
             </td>
             <td class="buttons">
                 {if isset($pd.files) && ConfigHelper::checkPrivilege('purchase_add_purchase')}
@@ -165,6 +179,7 @@
             </td>
         </tr>
         {/foreach}
+    {/if}
     </tbody>
 </table>
 

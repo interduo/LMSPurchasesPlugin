@@ -7,6 +7,7 @@ if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('s
 
 $default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
+$default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
 
 check_file_uploads();
@@ -56,6 +57,8 @@ if (!empty($_GET['divisionid'])) {
     } else {
         $params['divisionid'] = intval($_GET['divisionid']);
     }
+} else {
+    $params['divisionid'] = null;
 }
 
 // supplier filter
@@ -74,6 +77,8 @@ if (!empty($_GET['payments'])) {
     } else {
         $params['payments'] = intval($_GET['payments']);
     }
+} else {
+    $params['payments'] = null;
 }
 
 // period filter
@@ -84,7 +89,7 @@ if (!empty($_GET['period'])) {
         $params['period'] = intval($_GET['period']);
     }
 } else {
-    $params['period'] = ConfigHelper::getConfig('pd.filter_default_period', 6);
+    $params['period'] = $default_period_filter;
 }
 
 // valuefrom filter
@@ -134,6 +139,8 @@ if (!empty($_GET['catid'])) {
 // filters: expence description
 if (!empty($_GET['description'])) {
     $params['description'] = htmlspecialchars($_GET['description']);
+} else {
+    $params['description'] = null;
 }
 
 // filters: expences or documents
@@ -203,7 +210,9 @@ if (!empty($_GET['action'])) {
 }
 
 $SMARTY->assign('anteroom', $PURCHASES->GetPurchaseFiles(array('anteroom' => true)));
-$SMARTY->assign('attid', intval($_GET['attid']));
+if (!empty($_GET['attid'])) {
+    $SMARTY->assign('attid', intval($_GET['attid']));
+}
 $SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
 $SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());

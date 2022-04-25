@@ -1,6 +1,3 @@
-{$default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2)}
-{$default_divisionid = ConfigHelper::getConfig('pd.default_divisionid')}
-
 <style>
     #addpdmodal {
     display: flex;
@@ -67,9 +64,11 @@
                         <td>
                             <select id="dialog-typeid" name="addpd[typeid]" class="lms-ui-advanced-select" data-default-value="0" required>
                                 <option {if empty($default_document_typeid)}selected{/if}>{trans("undefined")}</option>
-                                {foreach $typeslist as $type}
-                                <option value="{$type.id}" {if $type.id == $default_document_typeid}selected{/if}>{$type.name|trunescape:"25"}</option>
-                                {/foreach}
+                                {if !empty($typeslist)}
+                                    {foreach $typeslist as $type}
+                                    <option value="{$type.id}" {if $type.id == $default_document_typeid}selected{/if}>{$type.name|trunescape:"25"}</option>
+                                    {/foreach}
+                                {/if}
                             </select>
                         </td>
                     </tr>
@@ -78,7 +77,7 @@
                             {icon name="summary" label="Document number"}
                         </td>
                         <td>
-                            <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{$pdinfo.fullnumber}" placeholder="{trans("Document number")}" required>
+                            <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{if isset($pdinfo.fullnumber)}{$pdinfo.fullnumber}{/if}" placeholder="{trans("Document number")}" required>
                         </td>
                     </tr>
                     <tr>
@@ -87,10 +86,9 @@
                         </td>
                         <td>
                             <input
-                                type="text" id="dialog-sdate" name="addpd[sdate]" value="{$pdinfo.sdate|date_format:'%Y/%m/%d'}"
-                                placeholder="{trans('yyyy/mm/dd')}"
-                                {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}
-                                required>
+                                type="text" id="dialog-sdate" name="addpd[sdate]" placeholder="{trans('yyyy/mm/dd')}"
+                                value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required
+                                {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}>
                             {day_selection elem='[name="addpd[sdate]"]' from_selector="#dialog-sdate" days="0,-1,-2,-3"}
                         </td>
                     </tr>
@@ -124,7 +122,7 @@
                             {icon name="cash" label="IBAN"}
                         </td>
                         <td>
-                            <input type='text' minlength='28' name="addpd[iban]" id="dialog-iban" value="{$pdinfo.iban}" required>
+                            <input type='text' minlength='28' name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required>
                             <span class="nobr" id="bankaccounts-container"></span>
                         </td>
                     </tr>
@@ -133,7 +131,10 @@
                             {icon name="deadline" label="Deadline"}
                         </td>
                         <td>
-                            <input id="dialog-deadline" type="text" name="addpd[deadline]" value="{$pdinfo.deadline|date_format:"%Y/%m/%d"}" size="20" placeholder="{trans('yyyy/mm/dd')}" {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"} required>
+                            <input id="dialog-deadline" type="text" name="addpd[deadline]"
+                            value="{if isset($pdinfo.deadline)}{$pdinfo.deadline|date_format:'%Y/%m/%d'}{/if}" required
+                            size="20" placeholder="{trans('yyyy/mm/dd')}"
+                            {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}>
                             {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
                         </td>
                     </tr>
@@ -143,8 +144,8 @@
                         </td>
                         <td>
                             <input
-                                type="text" id="dialog-paydate" name="addpd[paydate]" value="{$pdinfo.paydate|date_format:'%Y/%m/%d'}"
-                                placeholder="{trans('yyyy/mm/dd')}"
+                                type="text" id="dialog-paydate" name="addpd[paydate]" placeholder="{trans('yyyy/mm/dd')}"
+                                value="{if isset($pdinfo.paydate)}{$pdinfo.paydate|date_format:'%Y/%m/%d'}{/if}"
                                 {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
                         </td>
                     </tr>
@@ -153,7 +154,7 @@
                             {icon name="attachment" label="Attachments"}
                         </td>
                         <td>
-                            {if $attid}
+                            {if isset($attid)}
                                 {icon name="upload" label="{$anteroom.$attid.name}"}
                                 <input type="hidden" name="addpd[attid]" value="{$anteroom.$attid.id}">
                             {else}
@@ -182,20 +183,24 @@
                                    {/foreach}
                                 </select>
                                 {icon name="description" tip="Description"}
-                                <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{if isset($pdinfo) && $pdinfo.description|escape}{/if}" size="40" placeholder="{trans('Description')}">
+                                <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{if isset($pdinfo.description)}{$pdinfo.description|escape}{/if}" size="40" placeholder="{trans('Description')}">
                             </span>
                             <span class="nobr">
                                 {icon name="invproject" tip="Inv. Project"}
                                 <select id="dialog-invprojects0" name="addpd[expenses][0][invprojects][]" class="lms-ui-advanced-select" multiple>
-                                    {foreach $projectslist as $p}
-                                        <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
-                                    {/foreach}
+                                    {if isset($projectslist)}
+                                        {foreach $projectslist as $p}
+                                            <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
+                                        {/foreach}
+                                    {/if}
                                 </select>
                                 {icon name="categories" tip="Categories"}
                                 <select id="dialog-categories0" name="addpd[expenses][0][categories][]" class="lms-ui-advanced-select" multiple>
-                                    {foreach $categorylist as $p}
-                                        <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
-                                    {/foreach}
+                                    {if isset($categorylist)}
+                                        {foreach $categorylist as $p}
+                                            <option value="{$p.id}">{$p.name|trunescape:"25"}</option>
+                                        {/foreach}
+                                    {/if}
                                 </select>
                                 {button id="btnclone0" icon="clone" tip="Clone" class="clonebtn" onClick="clone_expence_row(this.id)"}
                                 {button id="btnremove0" icon="remove" tip="Remove" class="removebtn" onClick="delete_nearest_tr(this.id)"}
