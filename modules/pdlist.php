@@ -68,6 +68,8 @@ if (!empty($_GET['supplier'])) {
     } else {
         $params['supplier'] = intval($_GET['supplier']);
     }
+} else {
+    $params['supplier'] = null;
 }
 
 // payments filter
