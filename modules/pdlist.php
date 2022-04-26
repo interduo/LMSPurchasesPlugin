@@ -103,6 +103,8 @@ if (isset($_GET['valuefrom'])) {
             $params['valuefrom'] = intval($_GET['valuefrom']);
         }
     }
+} else {
+    $params['valuefrom'] = null;
 }
 
 // valueto filter
@@ -116,6 +118,8 @@ if (isset($_GET['valueto'])) {
             $params['valueto'] = intval($_GET['valueto']);
         }
     }
+} else {
+    $params['valueto'] = null;
 }
 
 // document number filter
