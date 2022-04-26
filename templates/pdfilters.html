@@ -5,11 +5,14 @@
                 <input type="submit" class="hiddenbtn">
                 <input type="hidden" name="m" value="pdlist">
                 {if isset($action)}<input type="hidden" name="action" value="{$action}">{/if}
-                {icon name="division" label="Division"}
-                <br>{division_selection form="filter" name="divisionid" shortname=true selected=$params.divisionid onchange="document.filter.submit();"}
+                {icon name="division" tip="Division"}
+                {division_selection
+                    name="divisionid"
+                    shortname=true
+                    selected=$params.divisionid
+                    onchange="document.filter.submit();"}
             </td>
             <td class="nobr">
-                {icon name="customer" label="Supplier"}
                 {customerlist
                     version=2
                     selected=$params.supplier
@@ -18,8 +21,8 @@
                 }
             </td>
             <td class="nobr">
-                {icon name="money" label="Payment"}
-                <br><select size="1" name="payments" onchange="document.filter.submit();">
+                {icon name="money" tip="Payment"}
+                <select size="1" name="payments" onchange="document.filter.submit();">
                     <option value="" {if empty($params.payments)} selected{/if}>{trans("filter off")}</option>
                     <option value="-1" {if !empty($params.payments) && $params.payments=='-1'} selected{/if}>{trans("unpaid only")}</option>
                     <option value="-6" {if !empty($params.payments) && $params.payments=='-6'} selected{/if}>{trans("unpaid with today payment date")}</option>
@@ -30,17 +33,22 @@
                 </select>
             </td>
             <td class="nobr">
-                {icon name="money" label="Gross value"}
-                <br><input type="text" size="8" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();" class="filters">
-                <br><input type="text" size="8" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();" class="filters">
+                {icon name="money" tip="Gross value"}
+                <input type="text" size="8" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();" class="filters">
+                <input type="text" size="8" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td class="nobr">
-            {icon name="summary" label="Document number"}
-                <br><input type="text" size="10" name="docnumber" placeholder="{trans("document number")}" value="{if isset($params.docnumber)}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
+                {icon name="type" tip="View type"}
+                <select name="expences" onchange="document.filter.submit();">
+                    <option value="0">{trans("documents")}</option>
+                    <option value="1"{if isset($params.expences) && $params.expences=='1'} selected{/if}>{trans("expences")}</option>
+                </select>
             </td>
+        </tr>
+        <tr>
             <td class="nobr">
-                {icon name="timetable" label="Document date"}
-                <br><select size="1" name="period" onchange="document.filter.submit();">
+                {icon name="timetable" tip="Document date"}
+                <select size="1" name="period" onchange="document.filter.submit();">
                     <option value="-1" {if $params.period=='-1'} selected{/if}>{trans("filter off")}</option>
                     <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("current week")}</option>
                     <option value="2" {if !empty($params.period) && $params.period=='2'} selected{/if}>{trans("previous week")}</option>
@@ -51,36 +59,33 @@
                 </select>
             </td>
             <td class="nobr">
-                {icon name='description' label="expence description"}
-                <br><input type="text" name="description" placeholder="{trans('expence description')}"
+                {icon name="description" tip="expence description"}
+                <input type="text" name="description" placeholder="{trans('expence description')}"
                         onchange="document.filter.submit();" value="{if $params.description}{$params.description|escape}{/if}">
             </td>
             <td class="nobr">
-                {icon name="type" label="View type"}
-                <br><select name="expences" onchange="document.filter.submit();">
-                    <option value="0">{trans("documents")}</option>
-                    <option value="1"{if isset($params.expences) && $params.expences=='1'} selected{/if}>{trans("expences")}</option>
+                {icon name="categories" tip="Categories"}
+                <select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-multiselect" multiple>
+                    {if !empty($categorylist)}
+                        {foreach $categorylist as $c}
+                            <option value="{$c.id}" {if !empty($params.catids) && in_array($c.id, $params.catids)} selected{/if}>{$c.name}</option>
+                        {/foreach}
+                    {/if}
+                    <option value="-1" {if !empty($params.catids) && in_array(-1, $params.catids)} selected{/if} data-exclusive>{trans("with category")}</option>
+                    <option value="-2" {if !empty($params.catids) && in_array(-2, $params.catids)} selected{/if} data-exclusive>{trans("without category")}</option>
+                    <option value="" {if empty($params.catids)}selected{/if} data-exclusive>{trans("filter off")}</option>
                 </select>
             </td>
-                <td class="nobr">
-                    {icon name='categories' label="Categories"}
-                    <br><select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-multiselect" multiple>
-                        {if !empty($categorylist)}
-                            {foreach $categorylist as $c}
-                                <option value="{$c.id}" {if !empty($params.catids) && in_array($c.id, $params.catids)} selected{/if}>{$c.name}</option>
-                            {/foreach}
-                        {/if}
-                        <option value="-1" {if !empty($params.catids) && in_array(-1, $params.catids)} selected{/if} data-exclusive>{trans("with category")}</option>
-                        <option value="-2" {if !empty($params.catids) && in_array(-2, $params.catids)} selected{/if} data-exclusive>{trans("without category")}</option>
-                        <option value="" {if empty($params.catids)}selected{/if} data-exclusive>{trans("filter off")}</option>
-                    </select>
-                </td>
+            <td class="nobr">
+                {icon name="summary" tip="Document number"}
+                <input type="text" size="10" name="docnumber" placeholder="{trans("document number")}" value="{if isset($params.docnumber)}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
+            </td>
             <td class="nobr">
                 <input type="hidden" name="export" id="export-input" value="0">
                 {if ConfigHelper::checkPrivilege("purchase_add_purchase")}
-                    {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add" onclick="open_add_dialog()"}<br>
+                    {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add" onclick="open_add_dialog()"}
                 {/if}
-                {button id="massadbtn" icon="upload" accesskey="u" label="Add many" href="?m=pduploads"}<br>
+                {button id="massadbtn" icon="upload" accesskey="u" label="Add many" href="?m=pduploads"}
                 {if ConfigHelper::checkPrivilege("purchase_export_purchases")}
                     {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export" onclick="document.getElementById('export-input').value=1; document.filter.submit();"}
                 {/if}

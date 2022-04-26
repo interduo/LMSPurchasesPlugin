@@ -5,7 +5,7 @@
     overflow: visible;
     }
 
-    input {
+    table#documentaddtable input {
         margin-top: 5px;
     }
 
@@ -42,7 +42,7 @@
         <form method="POST" action="?m=pdlist&action={if !isset($action) || $action == 'add'}add{else}modify&id={$pdinfo.id}{/if}"
               name="addpd" id="addpd-form">
             <h2>{trans("Purchase Document")}</h2>
-            <table>
+            <table id="documentaddtable">
                 <tbody>
                     {if isset($action) && $action == 'modify'}
                         <tr>
