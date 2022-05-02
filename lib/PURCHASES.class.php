@@ -358,7 +358,7 @@ class PURCHASES
         empty($pdid) ? $pdidfilter = ' AND pdid IS NULL' : $pdidfilter = ' AND pdid = ' . intval($pdid);
         empty($attid) ? $attidfilter = '' : $attidfilter = ' AND id = ' . intval($attid);
 
-        $result = $this->db->GetAllByKey(
+        return $this->db->GetAllByKey(
             'SELECT id, filename AS name, contenttype AS type, fullpath, createtime, sender, sender_mail, comment
                 FROM pdattachments
                 WHERE 1=1 '
@@ -366,7 +366,6 @@ class PURCHASES
             . $pdidfilter
             . $attidfilter
         , 'id');
-        return $result;
     }
 
     public function GetDefaultDocumentTypeid() {
@@ -457,7 +456,7 @@ class PURCHASES
                         $pathinfo = pathinfo($dstfile);
                         $dstfile = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . '-' . $i . '.' . $pathinfo['extension'];
                         $i++;
-                    };
+                    }
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
                     $srcfile = $tmp_dir . DIRECTORY_SEPARATOR . $file['name'];
@@ -529,12 +528,10 @@ class PURCHASES
         @chown($dstfile, $storage_dir_owneruid);
         @chgrp($dstfile, $storage_dir_ownergid);
 
-        $result = $this->db->Execute(
+        return $this->db->Execute(
             'UPDATE pdattachments SET anteroom = ?, pdid = ?, fullpath = ? WHERE id = ?',
             array('false', $pdid, $dstfile, $attid)
         );
-
-        return $result;
     }
 
     public function DeleteAttachementFile($attid)
@@ -631,16 +628,13 @@ class PURCHASES
     {
         if (!empty($id)) {
             $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+            @rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id);
 
             return $this->db->Execute(
                 'DELETE FROM pds WHERE id = ?',
                 array($id)
             );
-
-            @rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id);
         }
-
-        return null;
     }
 
     public function MarkAsPaid($id)
@@ -694,26 +688,26 @@ class PURCHASES
             );
             $contentid = $this->db->GetLastInsertID('pdcontents');
 
-            if (!empty($e['invprojects'])) {
-                foreach ($e['invprojects'] as $p) {
+            if (!empty($expence['invprojects'])) {
+                foreach ($expence['invprojects'] as $ep) {
                     $this->db->Execute(
                         'INSERT INTO pdcontentinvprojects (contentid, invprojectid) VALUES (?, ?)',
-                        array($contentid, $p)
+                        array($contentid, $ep)
                     );
                 }
             }
 
-            if (!empty($e['categories'])) {
-                foreach ($e['categories'] as $c) {
+            if (!empty($expence['categories'])) {
+                foreach ($expence['categories'] as $ec) {
                     $this->db->Execute(
                         'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
-                        array($contentid, $c)
+                        array($contentid, $ec)
                     );
                 }
             }
         }
 
-        return $result;
+        return null;
     }
     public function GetSuppliers()
     {
@@ -779,19 +773,13 @@ class PURCHASES
         );
 
 	if ($args['defaultflag']) {
-	    $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
-        $result = $this->db->Execute(
-            'INSERT INTO pdtypes (name, description, defaultflag) VALUES (?, ?, true)',
-                array($args['name'], $args['description'])
-        );
-	} else {
-        $result = $this->db->Execute(
-            'INSERT INTO pdtypes (name, description) VALUES (?, ?)',
-                array($args['name'], $args['description'])
-        );
-	}
+        $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
+    }
 
-        return $result;
+    return $this->db->Execute(
+        'INSERT INTO pdtypes (name, description, defaultflag) VALUES (?, ?, ?)',
+            array($args['name'], $args['description'], $args['defaultflag'])
+        );
     }
 
     public function DeletePurchaseDocumentType($id)
@@ -809,15 +797,13 @@ class PURCHASES
         );
 
         if ($args['defaultflag'] === 'true') {
-            $result = $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
+            $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
         }
 
-        $result = $this->db->Execute(
+        return $this->db->Execute(
             'UPDATE pdtypes SET name = ?, description = ?, defaultflag = ? WHERE id = ?',
             $args
         );
-
-        return $result;
     }
 
     public function GetPurchaseCategoryList($params = array())
@@ -993,7 +979,7 @@ class PURCHASES
 // bazuje na https://github.com/kyob/LMSIncomePlugin
     public function SalePerMonth($only_year)
     {
-        $income = $this->db->GetAll(
+        return $this->db->GetAll(
             'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
                    FROM cash
                    WHERE value<0
@@ -1002,7 +988,6 @@ class PURCHASES
                    ORDER BY month
         '
         );
-        return $income;
     }
 
     public function SalePerMonthType($only_year, $servicetype = 'all')
@@ -1033,7 +1018,7 @@ class PURCHASES
             default:
                 break;
         }
-        $income = $this->db->GetAll(
+        return $this->db->GetAll(
             'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
                    FROM cash
                    WHERE value<0
@@ -1043,13 +1028,12 @@ class PURCHASES
                    ORDER BY month
         '
         );
-        return $income;
     }
 
     // bazuje na https://github.com/kyob/LMSIncomePlugin
     public function IncomePerMonth($only_year)
     {
-        $income = $this->db->GetAll(
+        return $this->db->GetAll(
             'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value) AS suma
                    FROM cash
                    WHERE importid IS NOT NULL
@@ -1059,6 +1043,5 @@ class PURCHASES
                    ORDER BY month
         '
         );
-        return $income;
     }
 }

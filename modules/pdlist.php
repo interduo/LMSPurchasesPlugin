@@ -9,7 +9,7 @@ $default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
 $default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
-$force_global_division_context = ConfigHelper::checkValue(ConfigHelper::getConfig('phpui.force_global_division_context'), false);
+$force_global_division_context = ConfigHelper::getConfig('phpui.force_global_division_context', false);
 
 check_file_uploads();
 

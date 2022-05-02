@@ -1,7 +1,7 @@
 ﻿<?php
 
-!empty($_GET['id']) ? $id = intval($_GET['id']) : '';
-!empty($_GET['attid']) ? $attid = intval($_GET['attid']) : '';
+$id = intval($_GET['id']) ?? '';
+$attid = intval($_GET['attid']) ?? '';
 
 if (empty($attid) && empty($id)) {
     access_denied();
