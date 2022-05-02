@@ -8,7 +8,7 @@ CREATE TABLE pdtypes (
     name varchar(50) NOT NULL,
     description varchar(254),
     defaultflag boolean DEFAULT false,
-    CONSTRAINT pdtypes_name_ukey UNIQUE (name),
+    CONSTRAINT pdtypes_name_ukey UNIQUE (name)
     #CONSTRAINT pdtypes_defaultflag_ukey CHECK (SELECT COUNT(id) FROM pdtypes WHERE defaultflag = true OFFSET 1)
 );
 
