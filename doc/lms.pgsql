@@ -6,11 +6,11 @@ DROP TABLE IF EXISTS pdtypes CASCADE;
 CREATE TABLE pdtypes (
     id serial PRIMARY KEY,
     name varchar(50) NOT NULL,
-    description varchar(254) DEFAULT NULL,
+    description varchar(254),
     defaultflag boolean DEFAULT false,
     CONSTRAINT pdtypes_name_ukey UNIQUE (name)
+    #CONSTRAINT pdtypes_defaultflag_ukey CHECK (SELECT COUNT(id) FROM pdtypes WHERE defaultflag = true OFFSET 1)
 );
-CREATE UNIQUE INDEX ON pdtypes (defaultflag) WHERE defaultflag = true;
 
 /* --------------------------------------------------------
 Structure of table "pdcategories"
@@ -20,7 +20,7 @@ DROP TABLE IF EXISTS pdcategories CASCADE;
 CREATE TABLE pdcategories (
     id serial PRIMARY KEY,
     name varchar(50) NOT NULL,
-    description varchar(254) DEFAULT NULL,
+    description varchar(254),
     CONSTRAINT pdcategories_name_ukey UNIQUE (name)
 );
 
@@ -34,16 +34,16 @@ CREATE TABLE pds (
     fullnumber varchar(50) NOT NULL,
     cdate integer NOT NULL,
     sdate integer NOT NULL,
-    deadline integer DEFAULT NULL,
-    paydate integer DEFAULT NULL,
+    deadline integer,
+    paydate integer,
     paytype smallint NOT NULL,
     supplierid integer NOT NULL
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
     divisionid smallint NOT NULL,
-    iban varchar(26) DEFAULT NULL,
-    typeid integer DEFAULT NULL
+    iban varchar(26),
+    typeid integer
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
-    userid integer DEFAULT NULL
+    userid integer
         CONSTRAINT pds_userid_fkey REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT pds_supplierid_fullnumber_ukey UNIQUE (supplierid, fullnumber)
 );
@@ -60,7 +60,7 @@ CREATE TABLE pdcontents (
     netvalue numeric(9,2) NOT NULL,
     taxid integer NOT NULL
         CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE SET NULL ON UPDATE CASCADE,
-    description varchar(254) DEFAULT NULL
+    description varchar(254)
 );
 
 /* --------------------------------------------------------
@@ -72,7 +72,7 @@ CREATE TABLE pdcontentcat (
     id serial PRIMARY KEY,
     contentid integer NOT NULL
         CONSTRAINT pdcontentcat_contentid_fkey REFERENCES pdcontents (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    categoryid integer DEFAULT NULL
+    categoryid integer
         CONSTRAINT pdcontentcat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT pdcontentcat_contentid_categoryid_ukey UNIQUE (contentid, categoryid)
 );
