@@ -9,7 +9,7 @@ CREATE TABLE pdtypes (
     description varchar(254),
     defaultflag boolean DEFAULT false,
     CONSTRAINT pdtypes_name_ukey UNIQUE (name),
-    CONSTRAINT pdtypes_defaultflag_ukey CHECK (SELECT COUNT(id) FROM pdtypes WHERE defaultflag = true OFFSET 1)
+    #CONSTRAINT pdtypes_defaultflag_ukey CHECK (SELECT COUNT(id) FROM pdtypes WHERE defaultflag = true OFFSET 1)
 );
 
 /* --------------------------------------------------------
@@ -76,8 +76,6 @@ CREATE TABLE pdcontentcat (
         CONSTRAINT pdcontentcat_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT pdcontentcat_contentid_categoryid_ukey UNIQUE (contentid, categoryid)
 );
-
-CREATE UNIQUE INDEX ON pdtypes (defaultflag) WHERE defaultflag = true;
 
 /* --------------------------------------------------------
 Structure of table "pdcontentinvprojects"
