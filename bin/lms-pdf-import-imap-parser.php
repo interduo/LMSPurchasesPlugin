@@ -26,6 +26,8 @@
  *  $Id$
  */
 
+use Html2Text\Html2Text;
+
 ini_set('error_reporting', E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 
 $parameters = array(
@@ -247,8 +249,8 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
         $headers = $partdata['headers'];
 
         $mh_from = iconv_mime_decode($headers['from']);
-        if (preg_match('/^(?:(?<display>.*) )?<?(?<address>[a-z0-9_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6})>?$/iA', $mh_from, $m)) {
-            $fromname = isset($m['display']) ? $m['display'] : '';
+        if (preg_match('/^(?:(?<display>.*) )?<?(?<address>[a-z\d_\.-]+@[\da-z\.-]+\.[a-z\.]{2,6})>?$/iA', $mh_from, $m)) {
+            $fromname = $m['display'] ?? '';
             $fromemail = $m['address'];
         } else {
             $fromname = $fromemail = '';
@@ -293,7 +295,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                     && ($mail_body == '' || ($html))) {
                     $mail_body = substr($buffer, $partdata['starting-pos-body'], $partdata['ending-pos-body'] - $partdata['starting-pos-body']);
                     $charset = $partdata['content-charset'];
-                    $transfer_encoding = isset($partdata['transfer-encoding']) ? $partdata['transfer-encoding'] : '';
+                    $transfer_encoding = $partdata['transfer-encoding'] ?? '';
                     switch ($transfer_encoding) {
                         case 'base64':
                             $mail_body = base64_decode($mail_body);
@@ -307,7 +309,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                     $contenttype = 'text/plain';
 
                     if ($partdata['content-type'] == 'text/html') {
-                        $html2text = new \Html2Text\Html2Text($mail_body, array());
+                        $html2text = new Html2Text($mail_body, array());
                         $mail_body = $html2text->getText();
                     }
                 } elseif (preg_match('#multipart/alternative#', $partdata['content-type']) && $mail_body == '') {
@@ -320,7 +322,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                             && (trim($mail_body) == '' || ($html))) {
                             $mail_body = substr($buffer, $subpartdata['starting-pos-body'], $subpartdata['ending-pos-body'] - $subpartdata['starting-pos-body']);
                             $charset = $subpartdata['content-charset'];
-                            $transfer_encoding = isset($subpartdata['transfer-encoding']) ? $subpartdata['transfer-encoding'] : '';
+                            $transfer_encoding = $subpartdata['transfer-encoding'] ?? '';
                             switch ($transfer_encoding) {
                                 case 'base64':
                                     $mail_body = base64_decode($mail_body);
@@ -334,7 +336,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                             $contenttype = 'text/plain';
 
                             if ($subpartdata['content-type'] == 'text/html') {
-                                $html2text = new \Html2Text\Html2Text($mail_body, array());
+                                $html2text = new Html2Text($mail_body, array());
                                 $mail_body = $html2text->getText();
                             }
                         }
@@ -342,7 +344,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                 } elseif ((isset($partdata['content-disposition']) && ($isAttachment
                             || $partdata['content-disposition'] == 'inline')) || isset($partdata['content-id'])) {
                     $file_content = substr($buffer, $partdata['starting-pos-body'], $partdata['ending-pos-body'] - $partdata['starting-pos-body']);
-                    $transfer_encoding = isset($partdata['transfer-encoding']) ? $partdata['transfer-encoding'] : '';
+                    $transfer_encoding = $partdata['transfer-encoding'] ?? '';
                     switch ($transfer_encoding) {
                         case 'base64':
                             $file_content = base64_decode($file_content);
@@ -351,8 +353,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
                             $file_content = quoted_printable_decode($file_content);
                             break;
                     }
-                    $file_name = isset($partdata['content-name']) ? $partdata['content-name'] :
-                        (isset($partdata['disposition-filename']) ? $partdata['disposition-filename'] : '');
+                    $file_name = $partdata['content-name'] ?? ($partdata['disposition-filename'] ?? '');
                     if (!$file_name) {
                         unset($file_content);
                         continue;
@@ -380,7 +381,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
             $charset = $partdata['content-charset'];
             $mail_body = substr($buffer, $partdata['starting-pos-body'], $partdata['ending-pos-body'] - $partdata['starting-pos-body']);
 
-            $transfer_encoding = isset($partdata['transfer-encoding']) ? $partdata['transfer-encoding'] : '';
+            $transfer_encoding = $partdata['transfer-encoding'] ?? '';
             switch ($transfer_encoding) {
                 case 'base64':
                     $mail_body = base64_decode($mail_body);
@@ -394,7 +395,7 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
             $contenttype = 'text/plain';
 
             if ($partdata['content-type'] == 'text/html') {
-                $html2text = new \Html2Text\Html2Text($mail_body, array());
+                $html2text = new Html2Text($mail_body, array());
                 $mail_body = $html2text->getText();
             }
         }

@@ -9,6 +9,7 @@ $default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
 $default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
+$force_global_division_context = ConfigHelper::getConfig('phpui.force_global_division_context', false);
 
 check_file_uploads();
 
@@ -50,15 +51,20 @@ if (isset($_POST['addpd'])) {
 $layout['pagetitle'] = trans('Purchase document list');
 
 $params = array();
+
 // division filter
-if (!empty($_GET['divisionid'])) {
-    if ($_GET['divisionid'] == 'all') {
-        unset($params['divisionid']);
-    } else {
-        $params['divisionid'] = intval($_GET['divisionid']);
-    }
+if ($force_global_division_context) {
+    $params['divisionid'] = $layout['division'];
 } else {
-    $params['divisionid'] = null;
+    if (!empty($_GET['divisionid'])) {
+        if ($_GET['divisionid'] == 'all') {
+            unset($params['divisionid']);
+        } else {
+            $params['divisionid'] = intval($_GET['divisionid']);
+        }
+    } else {
+        $params['divisionid'] = null;
+    }
 }
 
 // supplier filter
@@ -68,6 +74,8 @@ if (!empty($_GET['supplier'])) {
     } else {
         $params['supplier'] = intval($_GET['supplier']);
     }
+} else {
+    $params['supplier'] = null;
 }
 
 // payments filter

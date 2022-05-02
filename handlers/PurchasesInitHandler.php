@@ -11,7 +11,7 @@ class PurchasesInitHandler
      * Sets plugin Smarty templates directory
      *
      * @param Smarty $hook_data Hook data
-     * @return \Smarty Hook data
+     * @return Smarty Hook data
      */
     public function smartyInit(Smarty $hook_data)
     {
@@ -120,35 +120,35 @@ class PurchasesInitHandler
 
         $permission = new Permission(
             'purchases_mark_purchase_as_paid',
-            '(PURCHASES) Oznaczanie dokumentów jako zapłacone',
+            '(PURCHASES) Oznaczanie dokumentów jako zapłacone'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchases_delete_purchase',
-            '(PURCHASES) Kasowanie dokumentów kosztowych',
+            '(PURCHASES) Kasowanie dokumentów kosztowych'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchase_modify_purchase',
-            '(PURCHASES) Edycja zakupów/wydatków/dokumentów kosztowych',
+            '(PURCHASES) Edycja zakupów/wydatków/dokumentów kosztowych'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchase_add_purchase',
-            '(PURCHASES) Księgowanie zakupów/wydatków/dokumentów kosztowych',
+            '(PURCHASES) Księgowanie zakupów/wydatków/dokumentów kosztowych'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchase_export_purchases',
-            '(PURCHASES) Export zakupów CSV',
+            '(PURCHASES) Export zakupów CSV'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);

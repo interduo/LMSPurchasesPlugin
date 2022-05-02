@@ -47,7 +47,7 @@
                     {if isset($action) && $action == 'modify'}
                         <tr>
                             <td>
-                                <input type="text" name="addpd[id]" value="{$pdinfo.id}" hidden>
+                                <input type="text" name="addpd[id]" value="{if isset($pdinfo.id)}{$pdinfo.id}{/if}" hidden>
                             </td>
                         </tr>
                     {/if}
@@ -104,7 +104,7 @@
                                 input_id="dialog-supplierid"
                                 inputname="addpd[supplierid]"
                                 selectname="customer-select"
-                                selected="{$pdinfo.supplierid}"
+                                selected=$pdinfo.supplierid
                             }
                         </td>
                     </tr>
