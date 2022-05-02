@@ -497,23 +497,24 @@
     function change_pay_type() {
         var elem = document.getElementById('dialog-paytype');
         var paytype = elem.value;
-        var iban = document.getElementById("dialog-iban-tr");
-        var ibaninput = document.getElementById("dialog-iban");
+        var iban_input = document.getElementById("dialog-iban");
         var iban_button = document.getElementById("import_iban_button");
+        var paydate = document.getElementById("dialog-paydate");
+        var sdate = document.getElementById("dialog-sdate").value;
+
+        iban_input.disabled = false;
+        iban_button.disabled = false;
+        paydate.disabled = false;
+        iban_input.attributes.required = true;
 
         if (paytype != 2 && paytype != 3) {
-            iban.style.display = 'none';
-            iban_button.style.display = 'none';
-            ibaninput.removeAttribute('required');
-            if (paytype == 1) {
-                var paydate = document.getElementById("dialog-paydate");
-                var sdate = document.getElementById("dialog-sdate").value;
-                paydate.value = sdate;
-            }
-        } else {
-            iban.style.display = '';
-            ibaninput.setAttribute('required','');
-            iban_button.style.display = '';
+            iban_input.disabled = true;
+            iban_button.disabled = true;
+            iban_input.attributes.required = false;
+        }
+        if (paytype == 1 || paytype == 8) {
+            paydate.value = sdate;
+            paydate.disabled = true;
         }
     }
 
