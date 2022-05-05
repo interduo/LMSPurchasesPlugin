@@ -158,7 +158,7 @@ require_once(PLUGINS_DIR . DIRECTORY_SEPARATOR . LMSPurchasesPlugin::PLUGIN_DIRE
     . 'lib' . DIRECTORY_SEPARATOR . 'PURCHASES.class.php');
 
 if (ConfigHelper::checkConfig('phpui.logging') && class_exists('SYSLOG')) {
-    $SYSLOG = new SYSLOG($DB);
+    $SYSLOG = new SYSLOG;
 } else {
     $SYSLOG = null;
 }
@@ -435,8 +435,8 @@ while (isset($buffer) || ($postid !== false && $postid !== null)) {
         if (empty($rtparser_allowed_sender_emails) || in_array($fromemail, explode(',', $rtparser_allowed_sender_emails))) {
             $params = array(
                 'createtime' => $timestamp,
-                'sender' => (empty($fromname) ? substr(trim($mh_from), 0, 254) : substr(trim($fromname),0,254)),
-                'sender_mail' => (empty($fromemail) ? null : substr(trim($fromemail),0,254)),
+                'sender' => (empty($fromname) ? substr(trim($mh_from), 0, 254) : substr(trim($fromname), 0, 254)),
+                'sender_mail' => (empty($fromemail) ? null : substr(trim($fromemail), 0, 254)),
                 'comment' => substr(trim($mh_subject), 0, 254),
                 'files' => array('files' => $files),
                 'anteroom' => true,

@@ -27,7 +27,7 @@ if (!empty($firstfile)) {
         header('Content-Disposition: inline; filename=' . $firstfile['name'] . '"');
         header('Cache-Control: private, max-age=0, must-revalidate');
         header('Pragma: public');
-        ini_set('zlib.output_compression','0');
+        ini_set('zlib.output_compression', '0');
         die($content);
     } else {
         $SESSION->redirect($firstfile['fullpath']);

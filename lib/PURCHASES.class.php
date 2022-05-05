@@ -177,7 +177,7 @@ class PURCHASES
             $valuefrom = intval($valuefrom);
             if (!empty($valuefrom)) {
                 $valuefromhavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) >= ' . $valuefrom;
-            }  else {
+            } else {
                 $valuefromhavingfilter = '';
             }
         } else {
@@ -238,7 +238,8 @@ class PURCHASES
             . ((!empty($valuefromhavingfilter) && !empty($valuetohavingfilter)) ? ' AND ' : '')
             . $valuetohavingfilter
             . $orderby,
-            'id');
+            'id'
+        );
 
         if (!empty($result)) {
             if (empty($expences)) {
@@ -265,7 +266,7 @@ class PURCHASES
         }
 
         if (isset($export) && $export == 1) {
-            if (!ConfigHelper::checkPrivilege('purchases_export_purchases'))  {
+            if (!ConfigHelper::checkPrivilege('purchases_export_purchases')) {
                 die();
             }
 
@@ -364,11 +365,13 @@ class PURCHASES
                 WHERE 1=1 '
             . $anteroomfilter
             . $pdidfilter
-            . $attidfilter
-        , 'id');
+            . $attidfilter,
+            'id'
+        );
     }
 
-    public function GetDefaultDocumentTypeid() {
+    public function GetDefaultDocumentTypeid()
+    {
         return $this->db->GetOne('SELECT id FROM pdtypes WHERE defaultflag IS TRUE');
     }
 
@@ -390,7 +393,8 @@ class PURCHASES
         return $result;
     }
 
-    public function GetCustomerTen($customerid) {
+    public function GetCustomerTen($customerid)
+    {
         $customerten = $this->db->GetOne('SELECT ten FROM customers WHERE id = ?', array($customerid));
         return (int) filter_var($customerten, FILTER_SANITIZE_NUMBER_INT);
     }
@@ -517,7 +521,8 @@ class PURCHASES
             @mkdir($pdid_dir, $storage_dir_permission);
         }
 
-        $filename = $this->db->GetOne('SELECT filename FROM pdattachments WHERE id = ?',
+        $filename = $this->db->GetOne(
+            'SELECT filename FROM pdattachments WHERE id = ?',
             array($attid)
         );
 
@@ -536,7 +541,8 @@ class PURCHASES
 
     public function DeleteAttachementFile($attid)
     {
-        $file = $this->db->GetOne('SELECT fullpath FROM pdattachments WHERE id = ?',
+        $file = $this->db->GetOne(
+            'SELECT fullpath FROM pdattachments WHERE id = ?',
             array($attid)
         );
 
@@ -626,19 +632,25 @@ class PURCHASES
 
     public function DeletePurchaseDocument($id)
     {
-        if (!empty($id)) {
-            $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
-            @rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id);
-
-            return $this->db->Execute(
-                'DELETE FROM pds WHERE id = ?',
-                array($id)
-            );
+        if (empty($id)) {
+            exit;
         }
+
+        $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
+        @rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id);
+
+        return $this->db->Execute(
+            'DELETE FROM pds WHERE id = ?',
+            array($id)
+        );
     }
 
     public function MarkAsPaid($id)
     {
+        if (empty($id)) {
+            exit;
+        }
+
         return $this->db->Execute(
             'UPDATE pds SET paydate = ?NOW?
                     WHERE id = ?',
@@ -769,15 +781,15 @@ class PURCHASES
         $args = array(
             'name' => $args['name'],
             'description' => empty($args['description']) ? null : $args['description'],
-            'defaultflag' => !empty($args['defaultflag'])
+            'defaultflag' => empty($args['defaultflag']) ? 'false' : 'true',
         );
 
-	if ($args['defaultflag']) {
-        $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
-    }
+        if ($args['defaultflag'] === 'true') {
+            $this->db->Execute('UPDATE pdtypes SET defaultflag = false');
+        }
 
-    return $this->db->Execute(
-        'INSERT INTO pdtypes (name, description, defaultflag) VALUES (?, ?, ?)',
+        return $this->db->Execute(
+            'INSERT INTO pdtypes (name, description, defaultflag) VALUES (?, ?, ?)',
             array($args['name'], $args['description'], $args['defaultflag'])
         );
     }
