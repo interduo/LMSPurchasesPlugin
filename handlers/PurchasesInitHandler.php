@@ -13,7 +13,7 @@ class PurchasesInitHandler
      * @param Smarty $hook_data Hook data
      * @return Smarty Hook data
      */
-    public function smartyInit(Smarty $hook_data)
+    public function smartyInit(Smarty $hook_data): Smarty
     {
         $template_dirs = $hook_data->getTemplateDir();
         $plugin_templates = PLUGINS_DIR . DIRECTORY_SEPARATOR . LMSPurchasesPlugin::PLUGIN_DIRECTORY_NAME . DIRECTORY_SEPARATOR . 'templates';
@@ -28,7 +28,7 @@ class PurchasesInitHandler
      * @param array $hook_data Hook data
      * @return array Hook data
      */
-    public function ModulesDirInit(array $hook_data = array())
+    public function ModulesDirInit(array $hook_data = array()): array
     {
         $plugin_modules = PLUGINS_DIR . DIRECTORY_SEPARATOR . LMSPurchasesPlugin::PLUGIN_DIRECTORY_NAME . DIRECTORY_SEPARATOR . 'modules';
         array_unshift($hook_data, $plugin_modules);
