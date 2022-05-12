@@ -759,7 +759,7 @@ class PURCHASES
         }
 
         return $this->db->GetAllByKey(
-            'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag
+            'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag :: int
                 FROM pdtypes '
             . $orderby,
             'id'
@@ -769,14 +769,14 @@ class PURCHASES
     public function GetPurchaseTypeInfo($id)
     {
         return $this->db->GetAll(
-            'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag
+            'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag :: int
             FROM pdtypes
             WHERE pdtypes.id = ?',
             array($id)
         );
     }
 
-    public function AddPurchaseType($args)
+    public function AddPurchaseDocumentType($args)
     {
         $args = array(
             'name' => $args['name'],

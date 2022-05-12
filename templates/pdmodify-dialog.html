@@ -318,7 +318,8 @@
 
         $( "#addpdmodal" ).dialog({
           width: 'auto',
-          height: 'auto',
+          height: $(window).height()*0.95,
+          resizable: true,
           title: "{trans('Add purchase document from anteroom')}"
         }).dialog( "open" );
     };

@@ -38,7 +38,7 @@ $pdtlist = $PURCHASES->GetPurchaseDocumentTypesList($params);
 
 switch ($action) {
     case 'add':
-            $PURCHASES->AddPurchaseType($addpdt);
+            $PURCHASES->AddPurchaseDocumentType($addpdt);
             $SESSION->redirect('?m=pdtlist');
         break;
     case 'modify':

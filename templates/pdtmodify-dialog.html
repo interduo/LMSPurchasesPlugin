@@ -87,7 +87,7 @@
             $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
             var defaultflag_value = document.querySelector('tr[data-template-id="'+ template_id + '"] td[data-template-defaultflag]').getAttribute('data-template-defaultflag');
             var defaultflag_checkbox = document.getElementById('dialog-defaultflag');
-            if (defaultflag_value === 't') {
+            if (defaultflag_value == true) {
                 defaultflag_checkbox.value = true;
                 defaultflag_checkbox.checked = true;
             } else {

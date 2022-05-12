@@ -37,7 +37,7 @@
                 {$pdt.description|trunescape:40}
             </td>
             <td data-template-defaultflag="{$pdt.defaultflag}">
-                {if $pdt.defaultflag == 't'}{icon name="checked"}{/if}
+                {if $pdt.defaultflag}{icon name="checked"}{/if}
             </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pdt.id})"}
