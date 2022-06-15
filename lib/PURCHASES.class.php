@@ -28,8 +28,8 @@ class PURCHASES
                 case 'fullnumber':
                     $orderby = ' ORDER BY pds.fullnumber';
                     break;
-                case 'netvalue':
-                    $orderby = ' ORDER BY pds.netvalue';
+                case 'netcurrencyvalue':
+                    $orderby = ' ORDER BY pds.netcurrencyvalue';
                     break;
                 case 'description':
                     $orderby = ' ORDER BY pdc.description';
@@ -176,7 +176,7 @@ class PURCHASES
         if (isset($valuefrom)) {
             $valuefrom = intval($valuefrom);
             if (!empty($valuefrom)) {
-                $valuefromhavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) >= ' . $valuefrom;
+                $valuefromhavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) >= ' . $valuefrom;
             } else {
                 $valuefromhavingfilter = '';
             }
@@ -188,7 +188,7 @@ class PURCHASES
         if (isset($valueto)) {
             $valueto = intval($valueto);
             if (!empty($valueto)) {
-                $valuetohavingfilter = ' SUM((pdc.netvalue*tx.value/100)+pdc.netvalue) <= ' . $valueto;
+                $valuetohavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) <= ' . $valueto;
             } else {
                 $valuetohavingfilter = '';
             }
@@ -203,16 +203,16 @@ class PURCHASES
         }
 
         if (empty($expences)) {
-            $split = 'SUM(pdc.netvalue) AS netvalue, SUM(pdc.netvalue*tx.value/100) AS vatvalue, ROUND(SUM(pdc.netvalue*tx.value/100)+SUM(pdc.netvalue), 2) AS grossvalue';
+            $split = 'SUM(pdc.netcurrencyvalue) AS netcurrencyvalue, SUM(pdc.netcurrencyvalue*tx.value/100) AS vatvalue, ROUND(SUM(pdc.netcurrencyvalue*tx.value/100)+SUM(pdc.netcurrencyvalue), 2) AS grossvalue';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
         } else {
-            $split = ' pdc.netvalue, ROUND((pdc.netvalue*tx.value/100)+pdc.netvalue, 2) AS grossvalue, pdc.description, pdc.id AS expenceid';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netvalue, pdc.id, pdc.description';
+            $split = ' pdc.netcurrencyvalue, ROUND((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue, 2) AS grossvalue, pdc.description, pdc.id AS expenceid';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netcurrencyvalue, pdc.id, pdc.description';
         }
 
         $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber,
-                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netvalue) AS expencescount,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.currency, pds,vatplnvalue,
+                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     pds.supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,'
                     . $split
@@ -377,11 +377,12 @@ class PURCHASES
 
     public function GetPurchaseDocumentExpences($pdid)
     {
-
         $result = $this->db->GetAll(
-            'SELECT pdid, pdc.id AS expenceid, pdc.netvalue, pdc.taxid, tx.value AS tax_value, pdc.description
+            'SELECT pdid, pdc.id AS expenceid, pdc.netcurrencyvalue, pdc.taxid,
+                tx.value AS tax_value, pdc.description, currency
             FROM pdcontents pdc
                 LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
+                LEFT JOIN pds ON (pdc.pdid = pds.id)
             WHERE pdid = ?',
             array($pdid)
         );
@@ -389,7 +390,17 @@ class PURCHASES
         foreach ($result as $idx => $r) {
             $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($r['expenceid']);
             $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
+
+            ////round money values depending on document currency
+            switch ($result[$idx]['currency']) {
+                case 'PLN':
+                default:
+                    $precision = 2;
+                    break;
+            }
+            $result[$idx]['netcurrencyvalue'] = round($result[$idx]['netcurrencyvalue'], $precision);
         }
+
         return $result;
     }
 
@@ -402,14 +413,14 @@ class PURCHASES
     public function GetPurchaseDocumentInfo($id)
     {
         $result = $this->db->GetRow(
-            'SELECT pds.id, pds.typeid, pds.fullnumber, 
+            'SELECT pds.id, pds.typeid, pds.fullnumber, pds.currency, pds.vatplnvalue,
             pds.cdate, to_char(TO_TIMESTAMP(pds.cdate), \'YYYY/MM/DD\') AS cdate_formatted, 
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
             pds.paytype, pds.supplierid, pds.divisionid, pds.iban, cv.ten AS supplier_ten,'
             . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
-            SUM(pd.netvalue) AS doc_netvalue, (SUM(pd.netvalue*tx.value/100)+SUM(pd.netvalue)) AS doc_grossvalue,
+            SUM(pd.netcurrencyvalue) AS doc_netcurrencyvalue, (SUM(pd.netcurrencyvalue*tx.value/100)+SUM(pd.netcurrencyvalue)) AS doc_grossvalue,
             COUNT(pd.pdid) AS expences_count
             FROM pds
                 LEFT JOIN customers cv ON (cv.id = pds.supplierid)
@@ -560,6 +571,8 @@ class PURCHASES
     {
         $params = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
+            'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
+            'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
             'fullnumber' => $args['fullnumber'],
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
@@ -569,13 +582,13 @@ class PURCHASES
             'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
             'divisionid' => intval($args['divisionid']),
             'userid' => Auth::GetCurrentUser(),
-            'attid' => empty($args['attid']) ? null : $args['attid']
+            'attid' => empty($args['attid']) ? null : $args['attid'],
         );
 
         $this->db->Execute(
-            'INSERT INTO pds (typeid, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, userid)
-                    VALUES (?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
+            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, userid)
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
                     $params['paydate'], $params['supplierid'], $params['divisionid'], $params['iban'], $params['userid'])
         );
 
@@ -583,7 +596,7 @@ class PURCHASES
 
         foreach ($args['expenses'] as $idx => $e) {
             $args['expenses'][$idx] = array(
-                'netvalue' => str_replace(",", ".", $e['netvalue']),
+                'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
                 'taxid' => $e['taxid'],
                 'description' => empty($args['description']) ? null : $e['description'],
                 'invprojects' => empty($args['invprojects']) ? null : $e['invprojects'],
@@ -591,8 +604,8 @@ class PURCHASES
             );
 
             $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
-                array($params['pdid'], $e['netvalue'], $e['taxid'], $e['description'])
+                'INSERT INTO pdcontents (pdid, netcurrencyvalue, taxid, description) VALUES (?, ?, ?, ?)',
+                array($params['pdid'], $e['netcurrencyvalue'], $e['taxid'], $e['description'])
             );
             $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
             if (!empty($e['invprojects'])) {
@@ -663,6 +676,8 @@ class PURCHASES
         $params = array(
             'id' => $args['id'],
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
+            'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
+            'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
             'fullnumber' => $args['fullnumber'],
             'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
@@ -674,9 +689,9 @@ class PURCHASES
         );
 
         $this->db->Execute(
-            'UPDATE pds SET typeid = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
+            'UPDATE pds SET typeid = ?, currency = ?, vatplnvalue = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
                     paydate = ?, supplierid = ?, divisionid = ?, iban = ? WHERE id = ?',
-            array($params['typeid'], $params['fullnumber'], $params['sdate'], $params['deadline'],
+            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'],
                     $params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
                     $params['iban'], $params['id'])
         );
@@ -688,15 +703,15 @@ class PURCHASES
 
         foreach ($args['expenses'] as $e) {
             $expence = array(
-                'netvalue' => str_replace(",", ".", $e['netvalue']),
+                'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
                 'taxid' => $e['taxid'],
                 'description' => empty($e['description']) ? null : $e['description'],
                 'invprojects' => !empty($e['invprojects']) ? $e['invprojects'] : null,
                 'categories' => !empty($e['categories']) ? $e['categories'] : null,
             );
             $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netvalue, taxid, description) VALUES (?, ?, ?, ?)',
-                array($args['id'], $expence['netvalue'], $expence['taxid'], $expence['description'])
+                'INSERT INTO pdcontents (pdid, netcurrencyvalue, taxid, description) VALUES (?, ?, ?, ?)',
+                array($args['id'], $expence['netcurrencyvalue'], $expence['taxid'], $expence['description'])
             );
             $contentid = $this->db->GetLastInsertID('pdcontents');
 

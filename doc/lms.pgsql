@@ -30,6 +30,8 @@ Structure of table "pds"
 DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
     id serial PRIMARY KEY,
+    currency varchar(3) NOT NULL DEFAULT 'PLN',
+    vatplnvalue integer,
     fullnumber varchar(50) NOT NULL,
     cdate integer NOT NULL,
     sdate integer NOT NULL,
@@ -56,7 +58,7 @@ CREATE TABLE pdcontents (
     id serial PRIMARY KEY,
     pdid integer NOT NULL
         CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    netvalue numeric(9,2) NOT NULL,
+    netcurrencyvalue numeric(17,10) NOT NULL,
     taxid integer NOT NULL
         CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     description varchar(254)
@@ -122,6 +124,7 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_taxid', '3', 'ID domyślnej stawki podatku', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_divisionid', '1', 'ID domyślnego oddziału', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_currency', 'PLN', 'domyślna waluta', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'pagelimit', '50', 'ilość pozycji na stronie', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_server', 'mail.domain.pl', 'adres serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;

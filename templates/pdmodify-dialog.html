@@ -9,7 +9,7 @@
         margin-top: 5px;
     }
 
-    input.netvalue-input {
+    input.netcurrencyvalue-input {
         width: 9em;
     }
 
@@ -109,6 +109,27 @@
                         </td>
                     </tr>
                     <tr>
+                        <td>
+                            {icon name="money" label="Document currency"}
+                        </td>
+                        <td>
+                            {currency_selection
+                                selected=$default_currency
+                                elemid="dialog-currency"
+                                elementname="addpd[currency]"
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="money" label="VAT value in PLN"}
+                        </td>
+                        <td>
+                            <input type="number" id="dialog-vatplnvalue" name="addpd[vatplnvalue]" value="{$pdinfo.plnvatvalue}"
+                                {tip text="Document VAT value in PLN"}>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="nobr">
                             {icon name="paytype" label="Payment type"}
                         </td>
@@ -165,7 +186,7 @@
                 </tbody>
             </table>
 
-            <h2>{trans("Expence")}</h2>
+            <h2>{trans("Expences")}</h2>
 
             <table id="expencestable">
                 <tbody>
@@ -173,7 +194,7 @@
                         <td>
                             <span class="nobr">
                                 {icon name="value" tip="Net value"}
-                                <input class="netvalue-input" max="9999999999" type="number" step=".01" id="dialog-netvalue0" name="addpd[expenses][0][netvalue]" value="{if isset($pdinfo) && $pdinfo.netvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
+                                <input class="netcurrencyvalue-input" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
                                 {icon name="value" tip="Tax rate"}
                                 <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" required>
                                     {foreach $taxrates as $t}
@@ -254,7 +275,7 @@
 
         //clear expences - start
         $(".cloned").remove();
-        $('#dialog-netvalue0', '#dialog-description0').val('');
+        $('#dialog-netcurrencyvalue0', '#dialog-description0').val('');
 
         $('#dialog-taxid0 option').removeAttr('selected');
         $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
@@ -352,6 +373,10 @@
             $("#dialog-divisionid").val( pd.divisionid );
             $("#dialog-divisionid option[value='" + pd.paytype + "']").attr("selected", "true");
 
+            $("#dialog-currency").val(pd.currency);
+            $("#dialog-vatplnvalue").val(pd.vatplnvalue);
+            change_currency();
+
             $("#dialog-fullnumber").val(pd.fullnumber);
             $("#dialog-sdate").val(pd.sdate_formatted);
             $("#dialog-paydate").val(pd.paydate_formatted);
@@ -372,7 +397,7 @@
                     clone_expence_row('expencestable');
                 };
 
-                $("#dialog-netvalue" + index).val(pd.expences[index].netvalue);
+                $("#dialog-netcurrencyvalue" + index).val(pd.expences[index].netcurrencyvalue);
                 $("#dialog-taxid" + index).val(pd.expences[index].taxid);
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
                 $("#dialog-description" + index).val(pd.expences[index].description);
@@ -495,6 +520,21 @@
         reindexIdNameInAllElementsOfTable(tableid);
     }
 
+    function change_currency() {
+        var elem = document.getElementById('dialog-currency');
+        var currency = elem.value;
+        var currencyinput = document.getElementById('dialog-vatplnvalue');
+
+        if (currency == 'PLN') {
+            currencyinput.disabled=true;
+            currencyinput.removeAttribute('required');
+            currencyinput.value = '';
+        } else {
+            currencyinput.disabled=false;
+            currencyinput.setAttribute('required','');
+        }
+    }
+
     function change_pay_type() {
         var elem = document.getElementById('dialog-paytype');
         var paytype = elem.value;
@@ -503,18 +543,21 @@
         var iban_button = document.getElementById("import_iban_button");
 
         if (paytype != 2 && paytype != 3) {
-            iban.style.display = 'none';
-            iban_button.style.display = 'none';
+            iban.removeAttribute('required');
+            iban.disabled = true;
+            iban_button.disabled = true;
             ibaninput.removeAttribute('required');
+            ibaninput.disabled = true;
             if (paytype == 1) {
                 var paydate = document.getElementById("dialog-paydate");
                 var sdate = document.getElementById("dialog-sdate").value;
                 paydate.value = sdate;
             }
         } else {
-            iban.style.display = '';
+            iban.disabled = false;
             ibaninput.setAttribute('required','');
-            iban_button.style.display = '';
+            ibaninput.disabled = false;
+            iban_button.disabled = false;
         }
     }
 
@@ -612,4 +655,7 @@
 
     let elem2 = document.getElementById('dialog-paytype');
      elem2.addEventListener("click", elem2=>change_pay_type(), false);
+
+     let elem3 = document.getElementById('dialog-currency');
+     elem3.addEventListener("click", elem3=>change_currency(), false);
 </script>

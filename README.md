@@ -28,9 +28,10 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
 **TODO: (dla wersji 1.0)**
 - testy i porządny review kodu przez kilku mądrzejszych,
-- obsługa walut,
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 
 Jarosław Kłopotek <jkl@interduo.pl>,
+
+Podziękowania dla:
 Grzegorz Cichowski <gc@ptlanet.pl>

@@ -3,8 +3,8 @@
 {block name=module_content}
 
 {$default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2)}
-{$default_divisionid = ConfigHelper::getConfig('pd.default_divisionid')}
-
+{$default_divisionid = ConfigHelper::getConfig('pd.default_divisionid', 1)}
+{$default_currency = ConfigHelper::getConfig('pd.default_currency', 'PLN')}
 
 <style>
     table.anteroom {
@@ -20,6 +20,7 @@
         width: 5em;
     }
 </style>
+
 <h1>{$pagetitle|escape}</h1>
 
 {include file="pdfilters.html"}
@@ -107,8 +108,8 @@
                 {icon name="clipboard" class="lms-ui-button-clipboard nocolor" data_clipboard_text=$pd.fullnumber|escape}
                 {if isset($pd.fullnumber)}{$pd.fullnumber|escape}{/if}
             </td>
-            <td data-order="{$pd.netvalue}" data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.netvalue|rtrim:'0'|rtrim:'.'|escape} PLN
+            <td data-order="{$pd.netcurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
+                {$pd.netcurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
             </td>
             {if !empty($params.expences)}
                 <td data-order="{$pd.tax_value}" data-target-url="?m=pdview&id={$pd.id}">
@@ -116,7 +117,7 @@
                 </td>
             {/if}
             <td data-order="{$pd.grossvalue}" data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape} PLN
+                {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape}  {$pd.currency}
             </td>
             <td data-target-url="?m=pdview&id={$pd.id}">
                 {$pd.sdate|escape|date_format:"%Y/%m/%d"}
