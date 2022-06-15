@@ -40,6 +40,7 @@ $_LANG['Pay date'] = 'Data zapłaty';
 $_LANG['Document scan'] = 'Skan dokumentu';
 $_LANG['Show All'] = 'Pokaż wszystkie';
 $_LANG['Show uploaded document'] = 'Pokaż wgrany dokument';
+$_LANG['Amount'] = 'Ilość';
 $_LANG['Net value'] = 'Wartość netto';
 $_LANG['Gross value'] = 'Wartość brutto';
 $_LANG['Inv. Project'] = 'Projekt inw.';

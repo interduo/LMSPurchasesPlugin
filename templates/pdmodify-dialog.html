@@ -9,8 +9,12 @@
         margin-top: 5px;
     }
 
-    input.netcurrencyvalue-input {
+    input.netcurrencyvalue-input, input.grosscurrencyvalue-input {
         width: 9em;
+    }
+
+    input.amount-input {
+        width: 4em;
     }
 
     input#dialog-iban {
@@ -194,9 +198,38 @@
                         <td>
                             <span class="nobr">
                                 {icon name="value" tip="Net value"}
-                                <input class="netcurrencyvalue-input" step=".01" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
+                                <input class="netcurrencyvalue-input" onchange="convert_expence_values('netvalue')" step=".01" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]"
+                                    value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
+                                <input class="amount-input" onchange="convert_expence_values('amount')" step=".01" type="number" id="dialog-amount0" name="addpd[expenses][0][amount]"
+                                    value="{if isset($pdinfo) && $pdinfo.amount|rtrim:'0'|rtrim:'.'}{$pdinfo.amount}{/if}" placeholder="{trans('Amount')}" required>
+                                <input class="grosscurrencyvalue-input" onchange="convert_expence_values('grossvalue')" step=".01" type="number" id="dialog-grosscurrencyvalue0" name="addpd[expenses][0][grosscurrencyvalue]"
+                                    value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Gross value')}" required>
+                                    <script type="text/javascript">
+                                    function convert_expence_values() {
+                                        var elemid = event.target.id;
+                                        var expenceid = elemid.replace(/\D/g, "");
+
+                                        var elemnetto = document.getElementById('dialog-netcurrencyvalue' + expenceid);
+                                        var elemgross = document.getElementById('dialog-grosscurrencyvalue' + expenceid);
+                                        var elemtaxid = document.getElementById('dialog-taxid' + expenceid);
+
+                                        console.log("kliknięte pole:" + elemid + ' w wierszu:' + expenceid);
+
+                                        switch(elemid) {
+                                            case 'dialog-grosscurrencyvalue' + expenceid:
+                                                console.log("wyliczam netto uzywając taxid");
+                                                break;
+                                            case 'dialog-taxid' + expenceid:
+                                            case 'dialog-netcurrencyvalue' + expenceid:
+                                            case 'dialog-amount' + expenceid:
+                                            default:
+                                                console.log("wyliczam brutto uzywając taxid");
+                                                break;
+                                        }
+                                    }
+                                    </script>
                                 {icon name="value" tip="Tax rate"}
-                                <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" required>
+                                <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" onchange="convert_expence_values('taxid')" required>
                                     {foreach $taxrates as $t}
                                         <option value="{$t.id}" {if $t.id == $default_taxid}selected{/if}>
                                             {$t.label} ({$t.value|string_format:"%d"}%)
@@ -273,13 +306,9 @@
         document.querySelectorAll('div.fileupload-files').forEach(e => e.innerHTML = '');
         document.querySelectorAll('div#herewillbethepdf').forEach(e => e.innerHTML = '');
 
-        //clear expences - start
-        $(".cloned").remove();
-        $('#dialog-netcurrencyvalue0', '#dialog-description0').val('');
-
-        $('#dialog-taxid0 option').removeAttr('selected');
-        $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
-        $("#dialog-taxid0").val( {$default_taxid} );
+        $("#dialog-currency").val(pd.currency);
+        $("#dialog-vatplnvalue").val(pd.vatplnvalue);
+        change_currency();
 
         $('#dialog-paytype option').removeAttr('selected');
         $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
@@ -287,6 +316,14 @@
         change_pay_type();
 
         $('#dialog-supplierid').val('').trigger('input');
+
+        //clear expences - start
+        $(".cloned").remove();
+        $('#dialog-netcurrencyvalue0', '#dialog-description0').val('');
+
+        $('#dialog-taxid0 option').removeAttr('selected');
+        $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
+        $("#dialog-taxid0").val( {$default_taxid} );
 
         $('#dialog-invprojects0').val('');
         $('#dialog-invprojects0 option:selected').removeAttr('selected');
@@ -385,6 +422,7 @@
             $("#dialog-paytype").val( pd.paytype );
             $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
             change_pay_type();
+
             $("#dialog-iban").val( pd.iban );
 
             $("#dialog-supplierid").removeAttr('data-customer-name', 'data-prev-value').val( pd.supplierid );
