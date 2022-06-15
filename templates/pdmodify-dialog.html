@@ -194,7 +194,7 @@
                         <td>
                             <span class="nobr">
                                 {icon name="value" tip="Net value"}
-                                <input class="netcurrencyvalue-input" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
+                                <input class="netcurrencyvalue-input" step=".01" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
                                 {icon name="value" tip="Tax rate"}
                                 <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" required>
                                     {foreach $taxrates as $t}
