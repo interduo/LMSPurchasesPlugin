@@ -9,6 +9,10 @@
         margin-top: 5px;
     }
 
+    #disabled_class {
+        color: grey;
+    }
+
     input.netcurrencyvalue-input, input.grosscurrencyvalue-input {
         width: 9em;
     }
@@ -124,7 +128,7 @@
                             }
                         </td>
                     </tr>
-                    <tr>
+                    <tr id="dialog-vatinpln-tr">
                         <td>
                             {icon name="money" label="VAT value in PLN"}
                         </td>
@@ -147,7 +151,7 @@
                         </td>
                         <td>
                             {button id="import_iban_button" icon="money" tip="import from MF whitelist" onclick="fill_iban()"}
-                            <input type='text' minlength='28' name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required><br>
+                            <input type="text" minlength="28" name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required><br>
                             <span class="nobr" id="bankaccounts-container"></span>
                         </td>
                     </tr>
@@ -564,6 +568,7 @@
     }
 
     function change_currency() {
+        var elemtr = document.getElementById('dialog-vatinpln-tr');
         var elem = document.getElementById('dialog-currency');
         var vatplnvalue = document.getElementById('dialog-vatplnvalue');
 
@@ -571,9 +576,11 @@
             vatplnvalue.value = '';
             vatplnvalue.disabled=true;
             vatplnvalue.removeAttribute('required');
+            elemtr.classList.remove('lms-ui-disabled');
         } else {
             vatplnvalue.disabled=false;
             vatplnvalue.setAttribute('required', '');
+            elemtr.classList.add('lms-ui-disabled');
         }
     }
 
@@ -586,7 +593,7 @@
 
         if (paytype != 2 && paytype != 3) {
             iban.removeAttribute('required');
-            iban.disabled = true;
+            iban.classList.add("lms-ui-disabled");
             iban_button.disabled = true;
             ibaninput.removeAttribute('required');
             ibaninput.disabled = true;
@@ -596,7 +603,7 @@
                 paydate.value = sdate;
             }
         } else {
-            iban.disabled = false;
+            iban.classList.remove("lms-ui-disabled");
             ibaninput.setAttribute('required','');
             ibaninput.disabled = false;
             iban_button.disabled = false;
