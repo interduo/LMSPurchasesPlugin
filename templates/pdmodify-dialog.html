@@ -520,10 +520,14 @@
     function add_expence_row(tableid) {
         var row = document.getElementById(tableid).lastElementChild.lastElementChild.cloneNode(true);
         row.classList.add("cloned");
-        row.querySelector('select[id^="dialog-taxid"]').value = "{$default_taxrate}";
         row.querySelectorAll('input, textarea, select').forEach(e => e.value = '');
         row.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
         row.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
+
+        var elemX = row.querySelectorAll("select[id^='dialog-taxid'] option");
+        elemX.forEach(e => e.removeAttribute("selected"));
+        var selX = [...elemX].find( (b) => b.text.includes( "({$default_taxrate}%)" )).value;
+        row.querySelectorAll("select[id^='dialog-taxid']").forEach(e => e.value = selX);
 
         document.getElementById(tableid).lastElementChild.lastElementChild.after(row);
         reindexIdNameInAllElementsOfTable(tableid);
