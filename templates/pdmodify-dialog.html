@@ -139,7 +139,6 @@
                         </td>
                         <td>
                             {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$default_paytype required="true"}
-                            {button id="import_iban_button" icon="money" tip="import from MF whitelist" onclick="fill_iban()"}
                         </td>
                     </tr>
                     <tr id="dialog-iban-tr">
@@ -147,7 +146,8 @@
                             {icon name="cash" label="IBAN"}
                         </td>
                         <td>
-                            <input type='text' minlength='28' name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required>
+                            {button id="import_iban_button" icon="money" tip="import from MF whitelist" onclick="fill_iban()"}
+                            <input type='text' minlength='28' name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required><br>
                             <span class="nobr" id="bankaccounts-container"></span>
                         </td>
                     </tr>
