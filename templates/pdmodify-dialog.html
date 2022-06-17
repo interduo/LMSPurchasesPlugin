@@ -118,9 +118,9 @@
                         </td>
                         <td>
                             {currency_selection
-                                selected=$default_currency
-                                elemid="dialog-currency"
-                                elementname="addpd[currency]"
+                              selected=$default_currency
+                              elemid="dialog-currency"
+                              elementname="addpd[currency]"
                             }
                         </td>
                     </tr>
@@ -289,7 +289,7 @@
 
     function clear_pd_form() {
         $("#addpd-form")[0].reset();
-        $("#dialog-id", "#dialog-typeid", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
+        $("#dialog-id", "#dialog-typeid", "#dialog-currency", "#dialog-vatplnvalue", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
 
         $("#dialog-iban").show();
         $("#bankaccounts-container").empty();
@@ -306,12 +306,12 @@
         document.querySelectorAll('div.fileupload-files').forEach(e => e.innerHTML = '');
         document.querySelectorAll('div#herewillbethepdf').forEach(e => e.innerHTML = '');
 
-        $("#dialog-currency").val(pd.currency);
-        $("#dialog-vatplnvalue").val(pd.vatplnvalue);
+        $("#dialog-currency option").removeAttr('selected');
+        $("#dialog-currency option[value='" + '{$default_currency}' + "']").attr("selected", "true");
         change_currency();
 
         $('#dialog-paytype option').removeAttr('selected');
-        $("#dialog-paytype option[value='" + {$default_paytype} + "']").attr("selected", "true");
+        $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");
         $('#dialog-paytype').val( {$default_paytype} );
         change_pay_type();
 
@@ -319,7 +319,7 @@
 
         //clear expences - start
         $(".cloned").remove();
-        $('#dialog-netcurrencyvalue0', '#dialog-description0').val('');
+        $('#dialog-netcurrencyvalue0', '#dialog-description0', '#dialog-amount0').val('');
 
         $('#dialog-taxid0 option').removeAttr('selected');
         $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
@@ -436,6 +436,7 @@
                 };
 
                 $("#dialog-netcurrencyvalue" + index).val(pd.expences[index].netcurrencyvalue);
+                $("#dialog-amount" + index).val(pd.expences[index].amount);
                 $("#dialog-taxid" + index).val(pd.expences[index].taxid);
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
                 $("#dialog-description" + index).val(pd.expences[index].description);
@@ -560,16 +561,15 @@
 
     function change_currency() {
         var elem = document.getElementById('dialog-currency');
-        var currency = elem.value;
-        var currencyinput = document.getElementById('dialog-vatplnvalue');
+        var vatplnvalue = document.getElementById('dialog-vatplnvalue');
 
-        if (currency == 'PLN') {
-            currencyinput.disabled=true;
-            currencyinput.removeAttribute('required');
-            currencyinput.value = '';
+        if (elem.value == 'PLN') {
+            vatplnvalue.value = '';
+            vatplnvalue.disabled=true;
+            vatplnvalue.removeAttribute('required');
         } else {
-            currencyinput.disabled=false;
-            currencyinput.setAttribute('required','');
+            vatplnvalue.disabled=false;
+            vatplnvalue.setAttribute('required', '');
         }
     }
 

@@ -379,7 +379,7 @@ class PURCHASES
     {
         $result = $this->db->GetAll(
             'SELECT pdid, pdc.id AS expenceid, pdc.netcurrencyvalue, pdc.taxid,
-                tx.value AS tax_value, pdc.description, currency
+                tx.value AS tax_value, pdc.description, pds.currency, pdc.amount
             FROM pdcontents pdc
                 LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
                 LEFT JOIN pds ON (pdc.pdid = pds.id)
@@ -420,14 +420,15 @@ class PURCHASES
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
             pds.paytype, pds.supplierid, pds.divisionid, pds.iban, cv.ten AS supplier_ten,'
             . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
-            SUM(pd.netcurrencyvalue) AS doc_netcurrencyvalue, (SUM(pd.netcurrencyvalue*tx.value/100)+SUM(pd.netcurrencyvalue)) AS doc_grossvalue,
+            SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue, 
+            SUM(pd.netcurrencyvalue*pd.amount)+(SUM(pd.netcurrencyvalue*pd.amount)*tx.value/100) AS doc_grosscurrencyvalue,
             COUNT(pd.pdid) AS expences_count
             FROM pds
                 LEFT JOIN customers cv ON (cv.id = pds.supplierid)
                 LEFT JOIN pdcontents pd ON (pd.pdid = pds.id)
                 LEFT JOIN taxes tx ON (tx.id = pd.taxid)
             WHERE pds.id = ?
-            GROUP BY pds.id, cv.lastname, cv.name, cv.ten',
+            GROUP BY pds.id, cv.lastname, cv.name, cv.ten, tx.value',
             array($id)
         );
         $result['iban'] = format_bankaccount($result['iban']);
@@ -485,7 +486,8 @@ class PURCHASES
                 }
 
                 $result = $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, fullpath, createtime, sender, sender_mail, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, fullpath, createtime, sender, sender_mail, comment)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     array(
                         empty($pdid) ? null : $pdid,
                         $file['name'],
@@ -538,8 +540,8 @@ class PURCHASES
         );
 
         $srcfile = $pd_dir . DIRECTORY_SEPARATOR . 'anteroom' . DIRECTORY_SEPARATOR . $filename;
-        $dstfile = $pd_dir . DIRECTORY_SEPARATOR . $pdid . DIRECTORY_SEPARATOR . preg_replace('/[^\w\.-_]/', '_', $filename);
-
+        $dstfile = $pd_dir . DIRECTORY_SEPARATOR . $pdid . DIRECTORY_SEPARATOR
+            . preg_replace('/[^\w\.-_]/', '_', $filename);
         @rename($srcfile, $dstfile);
         @chown($dstfile, $storage_dir_owneruid);
         @chgrp($dstfile, $storage_dir_ownergid);
@@ -597,15 +599,17 @@ class PURCHASES
         foreach ($args['expenses'] as $idx => $e) {
             $args['expenses'][$idx] = array(
                 'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
-                'taxid' => $e['taxid'],
+                'amount' => $e['amount'],
+                'taxid' => intval($e['taxid']),
                 'description' => empty($args['description']) ? null : $e['description'],
                 'invprojects' => empty($args['invprojects']) ? null : $e['invprojects'],
                 'categories' => empty($args['categories']) ? null : $e['categories'],
             );
 
             $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netcurrencyvalue, taxid, description) VALUES (?, ?, ?, ?)',
-                array($params['pdid'], $e['netcurrencyvalue'], $e['taxid'], $e['description'])
+                'INSERT INTO pdcontents (pdid, netcurrencyvalue, amount, taxid, description)
+                    VALUES (?, ?, ?, ?, ?)',
+                array($params['pdid'], $e['netcurrencyvalue'], $e['amount'], $e['taxid'], $e['description'])
             );
             $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
             if (!empty($e['invprojects'])) {
@@ -704,14 +708,15 @@ class PURCHASES
         foreach ($args['expenses'] as $e) {
             $expence = array(
                 'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
-                'taxid' => $e['taxid'],
+                'amount' => intval($e['amount']),
+                'taxid' => intval($e['taxid']),
                 'description' => empty($e['description']) ? null : $e['description'],
                 'invprojects' => !empty($e['invprojects']) ? $e['invprojects'] : null,
                 'categories' => !empty($e['categories']) ? $e['categories'] : null,
             );
             $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netcurrencyvalue, taxid, description) VALUES (?, ?, ?, ?)',
-                array($args['id'], $expence['netcurrencyvalue'], $expence['taxid'], $expence['description'])
+                'INSERT INTO pdcontents (pdid, netcurrencyvalue, amount, taxid, description) VALUES (?, ?, ?, ?, ?)',
+                array($args['id'], $expence['netcurrencyvalue'], $expence['amount'], $expence['taxid'], $expence['description'])
             );
             $contentid = $this->db->GetLastInsertID('pdcontents');
 
