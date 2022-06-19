@@ -166,7 +166,7 @@
             <td class="buttons">
                 {if isset($pd.files) && ConfigHelper::checkPrivilege('purchase_add_purchase')}
                     {foreach $pd.files as $file}
-                        {button type="link" icon="fileupload" tip=$file.filename href=$file.fullpath}
+                        {button type="link" icon="attachment" name="fileupload" tip=$file.filename href="?m=pdview&attid={$file.id}"}
                     {/foreach}
                 {/if}
                 {if !$pd.paydate && empty($params.expences) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')}

@@ -103,13 +103,13 @@ CREATE TABLE pdattachments (
         CONSTRAINT pdattachments_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     anteroom boolean NOT NULL,
     filename varchar(255) DEFAULT '' NOT NULL,
-    fullpath varchar(255) DEFAULT '' NOT NULL,
+    filepath varchar(255) DEFAULT '' NOT NULL,
     contenttype varchar(255) DEFAULT '' NOT NULL,
     createtime integer NOT NULL,
     sender varchar(255),
     sender_mail varchar(255),
     comment varchar(255),
-    CONSTRAINT pdattachments_fullpatch_ukey UNIQUE (fullpath)
+    CONSTRAINT pdattachments_fullpatch_ukey UNIQUE (filepath)
 );
 
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (1, 'faktura VAT', NULL, true);

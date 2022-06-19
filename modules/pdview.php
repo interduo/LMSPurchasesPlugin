@@ -21,7 +21,7 @@ if (!empty($files)) {
 
 if (!empty($firstfile)) {
     if (!empty($attid)) {
-        $content = file_get_contents($firstfile['fullpath']);
+        $content = file_get_contents(STORAGE_DIR . DIRECTORY_SEPARATOR . $firstfile['filepath'] . DIRECTORY_SEPARATOR . $firstfile['filename']);
         header('Content-Type: application/pdf');
         header('Content-Length: ' . strlen($content));
         header('Content-Disposition: inline; filename=' . $firstfile['name'] . '"');
@@ -30,7 +30,7 @@ if (!empty($firstfile)) {
         ini_set('zlib.output_compression', '0');
         die($content);
     } else {
-        $SESSION->redirect($firstfile['fullpath']);
+        $SESSION->redirect($firstfile['filepath']);
     }
 } else {
     die("No attachment for this purchase. Please go back.");

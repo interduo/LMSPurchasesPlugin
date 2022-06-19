@@ -360,7 +360,7 @@ class PURCHASES
         empty($attid) ? $attidfilter = '' : $attidfilter = ' AND id = ' . intval($attid);
 
         return $this->db->GetAllByKey(
-            'SELECT id, filename AS name, contenttype AS type, fullpath, createtime, sender, sender_mail, comment
+            'SELECT id, filename, filename AS name, contenttype AS type, filepath, createtime, sender, sender_mail, comment
                 FROM pdattachments
                 WHERE 1=1 '
             . $anteroomfilter
@@ -445,8 +445,15 @@ class PURCHASES
         $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
-        $pdid_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd') . DIRECTORY_SEPARATOR
+
+        $plugin_storage_dir = ConfigHelper::getConfig('pd.storage_dir', 'storage' . DIRECTORY_SEPARATOR . 'pd') . DIRECTORY_SEPARATOR
             . (empty($pdid) ? 'anteroom' : $pdid);
+
+        if (strpos($plugin_storage_dir, '/') == 0) {
+            $pdid_dir = $plugin_storage_dir;
+        } else {
+            $pdid_dir = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $plugin_storage_dir;
+        }
 
         if (!empty($files)) {
             @umask(0007);
@@ -463,8 +470,9 @@ class PURCHASES
             $sys_tmp_dir = sys_get_temp_dir();
             $tmp_dir = (empty($sys_tmp_dir) ? '/tmp' : $sys_tmp_dir) . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
 
-            foreach ($files['files'] as $file) {
-                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
+            foreach ($files as $file) {
+                $dstfilename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
+                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
 
                 if ($file['content']) {
                     $i = 1;
@@ -475,10 +483,9 @@ class PURCHASES
                     }
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
-                    $srcfile = $tmp_dir . DIRECTORY_SEPARATOR . $file['name'];
-                    rename($srcfile, $dstfile);
-                    chown($dstfile, $storage_dir_owneruid);
-                    chgrp($dstfile, $storage_dir_ownergid);
+                    rename($file['name'], $dstfile);
+                    @chown($dstfile, $storage_dir_owneruid);
+                    @chgrp($dstfile, $storage_dir_ownergid);
                 }
 
                 if (!empty($cleanup)) {
@@ -486,14 +493,14 @@ class PURCHASES
                 }
 
                 $result = $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, fullpath, createtime, sender, sender_mail, comment)
+                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath, createtime, sender, sender_mail, comment)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     array(
                         empty($pdid) ? null : $pdid,
-                        $file['name'],
+                        $dstfilename,
                         $file['type'],
                         empty($anteroom) ? 'false' : 'true',
-                        $dstfile,
+                        $plugin_storage_dir,
                         time(),
                         empty($sender) ? null : $sender,
                         empty($sender_mail) ? null : $sender_mail,
@@ -547,7 +554,7 @@ class PURCHASES
         @chgrp($dstfile, $storage_dir_ownergid);
 
         return $this->db->Execute(
-            'UPDATE pdattachments SET anteroom = ?, pdid = ?, fullpath = ? WHERE id = ?',
+            'UPDATE pdattachments SET anteroom = ?, pdid = ?, filepath = ? WHERE id = ?',
             array('false', $pdid, $dstfile, $attid)
         );
     }
@@ -555,7 +562,7 @@ class PURCHASES
     public function DeleteAttachementFile($attid)
     {
         $file = $this->db->GetOne(
-            'SELECT fullpath FROM pdattachments WHERE id = ?',
+            'SELECT filepath FROM pdattachments WHERE id = ?',
             array($attid)
         );
 
