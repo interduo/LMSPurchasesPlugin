@@ -109,7 +109,7 @@ CREATE TABLE pdattachments (
     sender varchar(255),
     sender_mail varchar(255),
     comment varchar(255),
-    CONSTRAINT pdattachments_fullpatch_ukey UNIQUE (filepath)
+    CONSTRAINT pdattachments_filename_filepath_ukey UNIQUE (filename, filepath)
 );
 
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (1, 'faktura VAT', NULL, true);
