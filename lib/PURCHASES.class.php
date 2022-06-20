@@ -356,11 +356,12 @@ class PURCHASES
             $anteroomfilter = '';
         }
 
-        empty($pdid) ? $pdidfilter = ' AND pdid IS NULL' : $pdidfilter = ' AND pdid = ' . intval($pdid);
-        empty($attid) ? $attidfilter = '' : $attidfilter = ' AND id = ' . intval($attid);
+        $pdidfilter = empty($pdid) ?  null : ' AND pdid = ' . intval($pdid);
+        $attidfilter = empty($attid) ?  null : ' AND id = ' . intval($attid);
 
         return $this->db->GetAllByKey(
-            'SELECT id, filename, filename AS name, contenttype AS type, filepath, createtime, sender, sender_mail, comment
+            'SELECT id, filename, contenttype AS type, filepath, createtime,
+                sender, sender_mail, comment 
                 FROM pdattachments
                 WHERE 1=1 '
             . $anteroomfilter
@@ -446,14 +447,8 @@ class PURCHASES
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
 
-        $plugin_storage_dir = ConfigHelper::getConfig('pd.storage_dir', 'storage' . DIRECTORY_SEPARATOR . 'pd') . DIRECTORY_SEPARATOR
-            . (empty($pdid) ? 'anteroom' : $pdid);
-
-        if (strpos($plugin_storage_dir, '/') == 0) {
-            $pdid_dir = $plugin_storage_dir;
-        } else {
-            $pdid_dir = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $plugin_storage_dir;
-        }
+        $attdir = empty($pdid) ? 'anteroom' : $pdid;
+        $pdid_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd') . DIRECTORY_SEPARATOR . $attdir;
 
         if (!empty($files)) {
             @umask(0007);
@@ -500,7 +495,7 @@ class PURCHASES
                         $dstfilename,
                         $file['type'],
                         empty($anteroom) ? 'false' : 'true',
-                        $plugin_storage_dir,
+                        $attdir,
                         time(),
                         empty($sender) ? null : $sender,
                         empty($sender_mail) ? null : $sender_mail,

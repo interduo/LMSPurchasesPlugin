@@ -664,6 +664,7 @@
             pdfcolumn.innerHTML = '';
         }
 
+        console.log(pdflink);
         pdfcolumn.innerHTML = '<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>';
         pdfcolumn.id = 'column1';
         pdfcolumn.classList.remove('hidden', 'herewillbethepdf');

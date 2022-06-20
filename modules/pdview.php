@@ -9,29 +9,25 @@ if (empty($attid) && empty($id)) {
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
-if (!empty($id)) {
-    $files = $PURCHASES->GetPurchaseFiles(array('pdid' => $id));
-} else {
-    $files = $PURCHASES->GetPurchaseFiles(array('attid' => $attid));
-}
+$files = $PURCHASES->GetPurchaseFiles((empty($id) ? array('attid' => $attid) : array('pdid' => $id)));
 
-if (!empty($files)) {
-    $firstfile = array_shift(array_values($files));
-}
-
-if (!empty($firstfile)) {
-    if (!empty($attid)) {
-        $content = file_get_contents(STORAGE_DIR . DIRECTORY_SEPARATOR . $firstfile['filepath'] . DIRECTORY_SEPARATOR . $firstfile['filename']);
-        header('Content-Type: application/pdf');
-        header('Content-Length: ' . strlen($content));
-        header('Content-Disposition: inline; filename=' . $firstfile['name'] . '"');
-        header('Cache-Control: private, max-age=0, must-revalidate');
-        header('Pragma: public');
-        ini_set('zlib.output_compression', '0');
-        die($content);
-    } else {
-        $SESSION->redirect($firstfile['filepath']);
-    }
-} else {
+if (empty($files)) {
     die("No attachment for this purchase. Please go back.");
+}
+
+$file = array_shift(array_values($files));
+
+$fullfilepath = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd') . DIRECTORY_SEPARATOR . $file['filepath'] . DIRECTORY_SEPARATOR . $file['filename'];
+
+if (file_exists($fullfilepath)) {
+    $file['content'] = file_get_contents($fullfilepath);
+
+    header('Content-Disposition: inline; filename=' . $file['filename']);
+    header('Content-Type: ' . $file['type']);
+    header('Content-Length: ' . filesize($fullfilepath));
+    header('Pragma: public');
+    header('Cache-Control: private, max-age=0, must-revalidate');
+    ini_set('zlib.output_compression', '0');
+
+    die($file['content']);
 }

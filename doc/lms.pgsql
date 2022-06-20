@@ -122,7 +122,7 @@ INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (7, 'proforma', 
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (8, 'nota księgowa', NULL, false);
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'filter_default_period', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'storage/pd', 'Katalog ze skanami dokumentów kosztowych', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'pd', 'Katalog ze skanami dokumentów kosztowych domyślnie podkatalog pd w zdefiniowanym w lms.ini, storage_dir', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_divisionid', '1', 'ID domyślnego oddziału', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_currency', 'PLN', 'domyślna waluta', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'pagelimit', '50', 'ilość pozycji na stronie', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
