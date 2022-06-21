@@ -359,8 +359,8 @@ class PURCHASES
         $pdidfilter = empty($pdid) ?  null : ' AND pdid = ' . intval($pdid);
         $attidfilter = empty($attid) ?  null : ' AND id = ' . intval($attid);
 
-        return $this->db->GetAllByKey(
-            'SELECT id, filename, contenttype AS type, filepath, createtime,
+        $result = $this->db->GetAllByKey(
+            'SELECT id, filename, filepath, contenttype AS type, createtime,
                 sender, sender_mail, comment 
                 FROM pdattachments
                 WHERE 1=1 '
@@ -369,6 +369,7 @@ class PURCHASES
             . $attidfilter,
             'id'
         );
+        return $result;
     }
 
     public function GetDefaultDocumentTypeid()
@@ -544,7 +545,7 @@ class PURCHASES
         $srcfile = $pd_dir . DIRECTORY_SEPARATOR . 'anteroom' . DIRECTORY_SEPARATOR . $filename;
         $dstfile = $pd_dir . DIRECTORY_SEPARATOR . $pdid . DIRECTORY_SEPARATOR
             . preg_replace('/[^\w\.-_]/', '_', $filename);
-        @rename($srcfile, $dstfile);
+        rename($srcfile, $dstfile);
         @chown($dstfile, $storage_dir_owneruid);
         @chgrp($dstfile, $storage_dir_ownergid);
 

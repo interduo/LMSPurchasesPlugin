@@ -8,6 +8,10 @@ if (ConfigHelper::checkPrivilege('purchases')) {
 
 check_file_uploads();
 
+$SMARTY->assign('allowed_mime_types',
+    ConfigHelper::getConfig('phpui.allowed_mime_types', 'application/pdf')
+);
+
 if (isset($_GET['ajax']) && isset($_GET['fileupload'])) {
     $result = handle_file_uploads('files', $error);
 
