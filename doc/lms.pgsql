@@ -59,7 +59,7 @@ CREATE TABLE pdcontents (
     pdid integer NOT NULL
         CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     netcurrencyvalue numeric(17,10) NOT NULL,
-    amount variable NOT NULL DEFAULT 1,
+    amount smallint NOT NULL DEFAULT 1,
     taxid integer NOT NULL
         CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     description varchar(254)
