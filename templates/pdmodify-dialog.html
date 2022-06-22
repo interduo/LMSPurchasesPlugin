@@ -329,7 +329,7 @@
         $('#dialog-taxid0 option').removeAttr('selected');
 
         var selectelem = document.querySelector('select#dialog-taxid0');
-        if ('{$default_taxid}' == 'undefined') {
+        if ('{$default_taxid}' == '') {
             selectelem.value = {$default_taxid};
         } else {
             var defaulttaxid = selectelem.getAttribute('data-default-taxid');
