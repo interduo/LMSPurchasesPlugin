@@ -359,7 +359,7 @@ class PURCHASES
         $pdidfilter = empty($pdid) ?  null : ' AND pdid = ' . intval($pdid);
         $attidfilter = empty($attid) ?  null : ' AND id = ' . intval($attid);
 
-        $result = $this->db->GetAllByKey(
+        return $this->db->GetAllByKey(
             'SELECT id, filename, filepath, contenttype AS type, createtime,
                 sender, sender_mail, comment 
                 FROM pdattachments
@@ -369,7 +369,6 @@ class PURCHASES
             . $attidfilter,
             'id'
         );
-        return $result;
     }
 
     public function GetDefaultDocumentTypeid()

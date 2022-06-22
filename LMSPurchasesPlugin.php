@@ -10,11 +10,11 @@
 class LMSPurchasesPlugin extends LMSPlugin
 {
     const PLUGIN_DIRECTORY_NAME = 'LMSPurchasesPlugin';
-    const PLUGIN_DB_VERSION = '2022041400';
+    const PLUGIN_DB_VERSION = '2022062200';
     const PLUGIN_SOFTWARE_VERSION = '1.0-beta';
     const PLUGIN_NAME = 'Purchase Documents';
     const PLUGIN_DESCRIPTION = 'Ewidencja dokumentów kosztowych.';
-    const PLUGIN_AUTHOR = 'Jarosław Kłopotek &lt;jkl@interduo.pl&gt;<br>Grzegorz Cichowski &lt;gc@ptlanet.pl&gt;';
+    const PLUGIN_AUTHOR = 'Jarosław Kłopotek &lt;jkl@interduo.pl&gt;<br>';
     const PLUGIN_DOC_URL = 'https://raw.githubusercontent.com/interduo/LMSPurchasesPlugin/main/README.md';
     const PLUGIN_REPO_URL = 'https://github.com/interduo/LMSPurchasesPlugin';
 

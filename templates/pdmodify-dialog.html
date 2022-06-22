@@ -60,9 +60,16 @@
                         </tr>
                     {/if}
                     <tr>
-                        <td>{icon name="division" label="Division"}
                         <td>
-                            {division_selection name="addpd[divisionid]" id="dialog-divisionid" selected=$default_divisionid required=true}
+                            {icon name="division" label="Division"}
+                        </td>
+                        <td>
+                            {division_selection
+                                id='dialog-divisionid'
+                                name='addpd[divisionid]'
+                                selected=$default_divisionid
+                                required=true
+                            }
                         </td>
                     </tr>
                     <tr>
@@ -97,7 +104,11 @@
                                 type="text" id="dialog-sdate" name="addpd[sdate]" placeholder="{trans('yyyy/mm/dd')}"
                                 value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required
                                 {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}>
-                            {day_selection elem='[name="addpd[sdate]"]' from_selector="#dialog-sdate" days="0,-1,-2,-3"}
+                            {day_selection
+                                elem='[name="addpd[sdate]"]'
+                                from_selector='#dialog-sdate'
+                                days='0, -1, -2, -3'
+                            }
                         </td>
                     </tr>
                     <tr>
@@ -108,10 +119,10 @@
                             {customerlist
                                 version=2
                                 required=true
-                                form="addpd-form"
-                                input_id="dialog-supplierid"
-                                inputname="addpd[supplierid]"
-                                selectname="customer-select"
+                                form='addpd-form'
+                                input_id='dialog-supplierid'
+                                inputname='addpd[supplierid]'
+                                selectname='customer-select'
                                 selected=$pdinfo.supplierid
                             }
                         </td>
@@ -123,8 +134,8 @@
                         <td>
                             {currency_selection
                               selected=$default_currency
-                              elemid="dialog-currency"
-                              elementname="addpd[currency]"
+                              elemid='dialog-currency'
+                              elementname='addpd[currency]'
                             }
                         </td>
                     </tr>
@@ -142,7 +153,12 @@
                             {icon name="paytype" label="Payment type"}
                         </td>
                         <td>
-                            {paytypes elemname="addpd[paytype]" id="dialog-paytype" selected=$default_paytype required="true"}
+                            {paytypes
+                                elemname='addpd[paytype]'
+                                id='dialog-paytype'
+                                selected=$default_paytype
+                                required=true
+                            }
                         </td>
                     </tr>
                     <tr id="dialog-iban-tr">
@@ -164,7 +180,11 @@
                             value="{if isset($pdinfo.deadline)}{$pdinfo.deadline|date_format:'%Y/%m/%d'}{/if}" required
                             size="20" placeholder="{trans('yyyy/mm/dd')}"
                             {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}>
-                            {day_selection elem='[name="addpd[deadline]"]' from_selector="#dialog-sdate" days="7,10,14,21"}
+                            {day_selection
+                                elem='[name="addpd[deadline]"]'
+                                from_selector="#dialog-sdate"
+                                days="7,10,14,21"
+                            }
                         </td>
                     </tr>
                     <tr>
@@ -187,7 +207,13 @@
                                 {icon name="upload" label="{$anteroom.$attid.name}"}
                                 <input type="hidden" name="addpd[attid]" value="{$anteroom.$attid.id}">
                             {else}
-                                {fileupload id="files" fileupload=$pdinfo.files form="addpd-form" multiple=false view_selector="herewillbethepdf"}
+                                {fileupload
+                                    id='files'
+                                    fileupload=$pdinfo.files
+                                    form='addpd-form'
+                                    view_selector='herewillbethepdf'
+                                    multiple=false
+                                }
                             {/if}
                         </td>
                     </tr>
@@ -202,18 +228,19 @@
                         <td>
                             <span class="nobr">
                                 {icon name="value" tip="Value"}
-                                <input class="netcurrencyvalue-input" onchange="convert_expence_values('netvalue')" step=".01" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]"
+                                <input class="netcurrencyvalue-input" onchange="convert_expence_values()" step=".01" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]"
                                     value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
-                                <input class="amount-input" onchange="convert_expence_values('amount')" step=".01" type="number" id="dialog-amount0" name="addpd[expenses][0][amount]"
+                                <input class="amount-input" onchange="convert_expence_values()" step=".01" type="number" id="dialog-amount0" name="addpd[expenses][0][amount]"
                                     value="{if isset($pdinfo)}{$pdinfo.amount}{else}1{/if}" placeholder="{trans('Amount')}" required {tip text="Amount"}>
-                                {icon name="value" tip="Tax rate"}
-                                <select id="dialog-taxid0" name="addpd[expenses][0][taxid]" onchange="convert_expence_values('taxid')" required>
-                                    {foreach $taxrates as $t}
-                                        <option value="{$t.id}" {if $t.value == $default_taxrate}selected{/if}>
-                                            {$t.label} ({$t.value|string_format:"%d"}%)
-                                       </option>
-                                   {/foreach}
-                                </select>
+                                {tax_rate_selection
+                                    id='dialog-taxid0'
+                                    name='addpd[expenses][0][taxid]'
+                                    data_default_taxid=$default_taxid
+                                    icon='value'
+                                    tip='Tax rate'
+                                    onchange='convert_expence_values()'
+                                    required=true
+                                }
                                 {icon name="description" tip="Description"}
                                 <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{if isset($pdinfo.description)}{$pdinfo.description|escape}{/if}" size="40" placeholder="{trans('Description')}">
                             </span>
@@ -300,8 +327,14 @@
         $('#dialog-netcurrencyvalue0', '#dialog-description0', '#dialog-amount0').val('');
 
         $('#dialog-taxid0 option').removeAttr('selected');
-        $("#dialog-taxid0 option[value='" + {$default_taxid} + "']").attr("selected", "true");
-        $("#dialog-taxid0").val( {$default_taxid} );
+
+        var selectelem = document.querySelector('select#dialog-taxid0');
+        if ('{$default_taxid}' == 'undefined') {
+            selectelem.value = {$default_taxid};
+        } else {
+            var defaulttaxid = selectelem.getAttribute('data-default-taxid');
+            selectelem.value = defaulttaxid;
+        }
 
         $('#dialog-invprojects0').val('');
         $('#dialog-invprojects0 option:selected').removeAttr('selected');
@@ -502,10 +535,16 @@
         row.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
         row.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
 
-        var elemX = row.querySelectorAll("select[id^='dialog-taxid'] option");
-        elemX.forEach(e => e.removeAttribute("selected"));
-        var selX = [...elemX].find( (b) => b.text.includes( "({$default_taxrate}%)" )).value;
-        row.querySelectorAll("select[id^='dialog-taxid']").forEach(e => e.value = selX);
+        var taxid_select = row.querySelector("select[id^='dialog-taxid']");
+        var defaulttaxid = taxid_select.getAttribute('data-default-taxid');
+        var taxid_options = row.querySelectorAll("select[id^='dialog-taxid'] option");
+
+        taxid_options.forEach(e => e.removeAttribute("selected"));
+        ///var selX = [...elemX].find( (b) => b.text.includes('data-taxrate_value={$default_taxrate}%')) ).value;
+
+        if (defaulttaxid != 'undefined') {
+            taxid_select.value = defaulttaxid;
+        }
 
         document.getElementById(tableid).lastElementChild.lastElementChild.after(row);
         reindexIdNameInAllElementsOfTable(tableid);
@@ -664,7 +703,6 @@
             pdfcolumn.innerHTML = '';
         }
 
-        console.log(pdflink);
         pdfcolumn.innerHTML = '<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>';
         pdfcolumn.id = 'column1';
         pdfcolumn.classList.remove('hidden', 'herewillbethepdf');
@@ -673,6 +711,8 @@
     }
 
     function convert_expence_values() {
+        return null;
+        //TODO: dokoncze przeliczanie jak bede robił statystyki ;-)
         var elemid = event.target.id;
         var expenceid = elemid.replace(/\D/g, "");
 
@@ -700,14 +740,16 @@
         }
     }
 
-    let elem = document.getElementsByClassName('fileupload-files');
-    for (let idx = 0, len = elem; idx < len; idx++) {
-        elem.addEventListener('lms:fileupload:complete', function(idx) { console.log('plik wrzucony' + idx); }, false);
-    }
+    /*
+        let elem = document.getElementsByClassName('fileupload-files');
+        for (let idx = 0, len = elem; idx < len; idx++) {
+            elem.addEventListener('lms:fileupload:complete', function(idx) { console.log('plik wrzucony' + idx); }, false);
+        }
+    */
 
     let elem2 = document.getElementById('dialog-paytype');
-     elem2.addEventListener("click", elem2=>change_pay_type(), false);
+     elem2.addEventListener("click", elem2 => change_pay_type(), false);
 
      let elem3 = document.getElementById('dialog-currency');
-     elem3.addEventListener("click", elem3=>change_currency(), false);
+     elem3.addEventListener("click", elem3 => change_currency(), false);
 </script>

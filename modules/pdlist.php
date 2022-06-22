@@ -5,6 +5,7 @@ if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('s
     access_denied();
 }
 
+$default_taxrate = ConfigHelper::getConfig('pd.default_taxrate', '23.00');
 $default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
 $default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
@@ -166,10 +167,6 @@ if (isset($_GET['export'])) {
 
 $pdlist = $PURCHASES->GetPurchaseList($params);
 
-if (!isset($pdinfo['taxid'])) {
-    $pdinfo['taxid'] = $default_taxid;
-}
-
 if (!empty($_GET['action'])) {
     $id = isset($_GET['id']) ? intval($_GET['id']) : '';
     $attid = isset($_GET['attid']) ? intval($_GET['attid']) : '';
@@ -230,7 +227,12 @@ $SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
 $SMARTY->assign('categorylist', $PURCHASES->GetPurchaseCategoryList());
 $SMARTY->assign('taxrates', $LMS->GetTaxes());
-$SMARTY->assign('default_taxid', $default_taxid);
+
+if (!empty($default_taxid)) {
+    $SMARTY->assign('default_taxid', $default_taxid);
+}
+
+$SMARTY->assign('default_taxrate', $default_taxrate);
 $SMARTY->assign('default_document_typeid', $PURCHASES->GetDefaultDocumentTypeid());
 
 $SMARTY->assign('params', $params);
