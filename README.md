@@ -33,6 +33,7 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 **TODO v2:**
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - płatności cykliczne,
+- automatyczne zaczytywanie faktur od kontrachentów, którzy udostępniają je w XML,
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 
 Jarosław Kłopotek <jkl@interduo.pl>,
