@@ -13,6 +13,11 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 **UWAGA:**
 - wsparcie tylko dla PostgreSQL,
 - wsparcie dla LMS > 28.x (obecna gałąź master),
+- żeby wszystko grało wtyczka wymaga dogrania do mastera:
+https://github.com/chilek/lms/pull/2263
+https://github.com/chilek/lms/pull/2258
+https://github.com/chilek/lms/pull/2276/commits/8d1663e037f1985901e3da99e9582a22eae00800
+https://github.com/chilek/lms/pull/2265/commits/14d0f383a48e164b7293e9b708f3c60174dd9c45
 
 **Instalacja wtyczki:**
 1. Przejdź do głównego katalogu LMS.
