@@ -457,7 +457,7 @@ class PURCHASES
                 @chown($pdid_dir, $storage_dir_owneruid);
                 @chgrp($pdid_dir, $storage_dir_ownergid);
             } else {
-                @mkdir($pdid_dir, $storage_dir_permission);
+                @mkdir($pdid_dir, $storage_dir_permission, true);
             }
 
             $dirs_to_be_deleted = array();
