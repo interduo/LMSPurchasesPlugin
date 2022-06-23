@@ -28,7 +28,7 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 
 **TODO: (dla wersji 1.0)**
 - testy i porządny review kodu przez kilku mądrzejszych,
-- usunięci klienci / zmiana danych nie generuje zmian płatności,
+- usunięci klienci / zmiana danych nie powinna generować zmian dokonanych płatności,
 
 **TODO v2:**
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
