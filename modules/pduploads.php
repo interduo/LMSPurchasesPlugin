@@ -8,7 +8,8 @@ if (ConfigHelper::checkPrivilege('purchases')) {
 
 check_file_uploads();
 
-$SMARTY->assign('allowed_mime_types',
+$SMARTY->assign(
+    'allowed_mime_types',
     ConfigHelper::getConfig('phpui.allowed_mime_types', 'application/pdf')
 );
 
