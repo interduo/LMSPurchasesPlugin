@@ -452,7 +452,6 @@ class PURCHASES
             . 'mkdir -p ' . STORAGE_DIR);
         }
 
-        /*
         if (fileperms(STORAGE_DIR) != $storage_dir_permission) {
             die('Bad permission for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
             . 'chmod ' . $storage_dir_permission . ' ' . STORAGE_DIR);
@@ -467,7 +466,6 @@ class PURCHASES
             die('Bad dir group owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
                 . 'chown ' . $storage_dir_ownergid . ' ' . STORAGE_DIR);
         }
-       */
 
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
         $pdid_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd') . DIRECTORY_SEPARATOR . $attdir;
