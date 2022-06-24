@@ -530,15 +530,14 @@
         row.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
 
         var taxid_select = row.querySelector("select[id^='dialog-taxid']");
-        var defaulttaxid = taxid_select.getAttribute('data-default-taxid');
         var taxid_options = row.querySelectorAll("select[id^='dialog-taxid'] option");
-
         taxid_options.forEach(e => e.removeAttribute("selected"));
-        var selX = [...elemX].find( (b) => b.text.includes('data-taxrate_value={$default_taxrate}%')) ).value;
-
+        var defaulttaxid = taxid_select.getAttribute('data-default-value');
         if (defaulttaxid != 'undefined') {
             taxid_select.value = defaulttaxid;
         }
+
+        row.querySelector("input[id^='dialog-amount']").value = 1;
 
         document.getElementById(tableid).lastElementChild.lastElementChild.after(row);
         reindexIdNameInAllElementsOfTable(tableid);
@@ -705,8 +704,9 @@
     }
 
     function convert_expence_values() {
-        return null;
         //TODO: dokoncze przeliczanie jak bede robił statystyki ;-)
+
+        return;
         var elemid = event.target.id;
         var expenceid = elemid.replace(/\D/g, "");
 
