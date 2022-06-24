@@ -443,21 +443,16 @@ class PURCHASES
     {
         extract($params);
 
-        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
+        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0770'), 8);
 
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
         $pdid_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd') . DIRECTORY_SEPARATOR . $attdir;
 
         if (!empty($files)) {
-            @umask(0007);
-
-            if (@is_dir($pdid_dir)) {
-                @chown($pdid_dir, $storage_dir_owneruid);
-                @chgrp($pdid_dir, $storage_dir_ownergid);
-            } else {
-                @mkdir($pdid_dir, $storage_dir_permission, true);
+            if (!is_dir($pdid_dir)) {
+                mkdir($pdid_dir, $storage_dir_permission, true);
             }
 
             $dirs_to_be_deleted = array();
@@ -479,9 +474,10 @@ class PURCHASES
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
                     rename($file['name'], $dstfile);
-                    @chown($dstfile, $storage_dir_owneruid);
-                    @chgrp($dstfile, $storage_dir_ownergid);
                 }
+
+                chown($dstfile, $storage_dir_owneruid);
+                chgrp($dstfile, $storage_dir_ownergid);
 
                 if (!empty($cleanup)) {
                     $dirs_to_be_deleted[] = dirname($file['name']);
