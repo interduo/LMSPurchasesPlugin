@@ -260,8 +260,8 @@
                                         {/foreach}
                                     {/if}
                                 </select>
-                                {button id="btnclone0" icon="clone" tip="Clone" class="clonebtn" onClick="clone_expence_row(this.id)"}
-                                {button id="btnremove0" icon="remove" tip="Remove" class="removebtn" onClick="delete_nearest_tr(this.id)"}
+                                {button id="btnclone0" icon="clone" tip="Clone" class="clonebtn" onClick="clone_expence_row()"}
+                                {button id="btnremove0" icon="remove" tip="Remove" class="removebtn" onClick="delete_nearest_tr()"}
                             </span>
                         </td>
                     </tr>
@@ -412,7 +412,7 @@
             $("#dialog-deadline").val(pd.deadline_formatted);
 
             $("#dialog-divisionid option").removeAttr('selected');
-            $("#dialog-divisionid").val( pd.divisionid );
+            $("#dialog-divisionid").val(pd.divisionid);
             $("#dialog-divisionid option[value='" + pd.paytype + "']").attr("selected", "true");
 
             $("#dialog-currency").val(pd.currency);
@@ -424,20 +424,20 @@
             $("#dialog-paydate").val(pd.paydate_formatted);
 
             $("#dialog-paytype option").removeAttr('selected');
-            $("#dialog-paytype").val( pd.paytype );
+            $("#dialog-paytype").val(pd.paytype);
             $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
             change_pay_type();
 
-            $("#dialog-iban").val( pd.iban );
+            $("#dialog-iban").val(pd.iban);
 
-            $("#dialog-supplierid").removeAttr('data-customer-name', 'data-prev-value').val( pd.supplierid );
+            $("#dialog-supplierid").removeAttr('data-customer-name', 'data-prev-value').val(pd.supplierid);
             $("#dialog-supplierid").trigger('input');
 
             $( ".cloned" ).remove();
 
             for (let index = 0; index < pd.expences_count; index++) {
                 if (index != 0) {
-                    clone_expence_row('expencestable');
+                    add_expence_row('expencestable');
                 };
 
                 $("#dialog-netcurrencyvalue" + index).val(pd.expences[index].netcurrencyvalue);
@@ -547,8 +547,10 @@
     function clone_expence_row(elem) {
         var kopia = document.getElementById(elem).parentElement.parentElement.parentElement.cloneNode(true);
         kopia.classList.add("cloned");
-        kopia.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
-        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
+        kopia.querySelectorAll('div.lms-ui-advanced-select').forEach((e) => e.remove());
+        kopia.querySelectorAll('select.lms-ui-advanced-select').forEach(
+            function(e) { e.style = null; initAdvancedSelects(e); }
+        );
 
         document.getElementById(elem).parentElement.parentElement.parentElement.after(kopia);
 
