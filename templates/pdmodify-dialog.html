@@ -235,7 +235,6 @@
                                 {tax_rate_selection
                                     id='dialog-taxid0'
                                     name='addpd[expenses][0][taxid]'
-                                    data_default_taxid=$default_taxid
                                     icon='value'
                                     tip='Tax rate'
                                     onchange='convert_expence_values()'
@@ -329,13 +328,7 @@
         $('#dialog-taxid0 option').removeAttr('selected');
 
         var selectelem = document.querySelector('select#dialog-taxid0');
-        var config_variable = '{$default_taxid}';
-        if (typeof(config_variable) == 'undefined') {
-            var defaulttaxid = selectelem.getAttribute('data-default-taxid');
-            selectelem.value = defaulttaxid;
-        } else {
-            selectelem.value = '{$default_taxid}';
-        }
+        selectelem.value = selectelem.getAttribute('data-default-value');
 
         $('#dialog-invprojects0').val('');
         $('#dialog-invprojects0 option:selected').removeAttr('selected');
@@ -541,7 +534,7 @@
         var taxid_options = row.querySelectorAll("select[id^='dialog-taxid'] option");
 
         taxid_options.forEach(e => e.removeAttribute("selected"));
-        ///var selX = [...elemX].find( (b) => b.text.includes('data-taxrate_value={$default_taxrate}%')) ).value;
+        var selX = [...elemX].find( (b) => b.text.includes('data-taxrate_value={$default_taxrate}%')) ).value;
 
         if (defaulttaxid != 'undefined') {
             taxid_select.value = defaulttaxid;

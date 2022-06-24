@@ -6,7 +6,6 @@ if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('s
 }
 
 $default_taxrate = ConfigHelper::getConfig('pd.default_taxrate', '23.00');
-$default_taxid = ConfigHelper::getConfig('pd.default_taxid');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
 $default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
@@ -227,10 +226,6 @@ $SMARTY->assign('projectslist', $LMS->GetProjects());
 $SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
 $SMARTY->assign('categorylist', $PURCHASES->GetPurchaseCategoryList());
 $SMARTY->assign('taxrates', $LMS->GetTaxes());
-
-if (!empty($default_taxid)) {
-    $SMARTY->assign('default_taxid', $default_taxid);
-}
 
 $SMARTY->assign('default_taxrate', $default_taxrate);
 $SMARTY->assign('default_document_typeid', $PURCHASES->GetDefaultDocumentTypeid());
