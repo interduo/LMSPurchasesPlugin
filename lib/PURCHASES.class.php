@@ -445,27 +445,28 @@ class PURCHASES
 
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', '33');
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', '33');
-        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '700'));
+        $storage_dir_permission = ConfigHelper::getConfig('storage.dir_permission', '0755');
 
         if (!is_dir(STORAGE_DIR)) {
             die('Not existing STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-            . 'mkdir -p ' . STORAGE_DIR);
+                . 'mkdir -p ' . STORAGE_DIR);
         }
 
-        if (fileperms(STORAGE_DIR) != $storage_dir_permission) {
-            die('Bad permission for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-            . 'chmod ' . $storage_dir_permission . ' ' . STORAGE_DIR);
+        if (substr(sprintf('%o', fileperms(STORAGE_DIR)), -4) !== $storage_dir_permission) {
+            die('Bad permission for STORAGE_DIR: ' . STORAGE_DIR . '<br>' . substr(sprintf('%o', fileperms(STORAGE_DIR)), -4)
+                . 'chmod ' . $storage_dir_permission . ' ' . STORAGE_DIR);
         }
+        /*
+                if (fileowner(STORAGE_DIR) != $storage_dirowneruid) {
+                    die('Bad dir owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
+                        . 'chown ' . $storage_dir_owneruid . ' ' . STORAGE_DIR);
+                }
 
-        if (fileowner(STORAGE_DIR) != $storage_dirowneruid) {
-            die('Bad dir owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-                . 'chown ' . $storage_dir_owneruid . ' ' . STORAGE_DIR);
-        }
-
-        if (filegroup(STORAGE_DIR) != $storage_dir_ownergid) {
-            die('Bad dir group owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-                . 'chown ' . $storage_dir_ownergid . ' ' . STORAGE_DIR);
-        }
+                if (filegroup(STORAGE_DIR) != $storage_dir_ownergid) {
+                    die('Bad dir group owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
+                        . 'chown ' . $storage_dir_ownergid . ' ' . STORAGE_DIR);
+                }
+        */
 
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
         $pdid_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd') . DIRECTORY_SEPARATOR . $attdir;
