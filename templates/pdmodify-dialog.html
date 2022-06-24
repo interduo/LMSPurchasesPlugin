@@ -260,8 +260,8 @@
                                         {/foreach}
                                     {/if}
                                 </select>
-                                {button id="btnclone0" icon="clone" tip="Clone" class="clonebtn" onClick="clone_expence_row()"}
-                                {button id="btnremove0" icon="remove" tip="Remove" class="removebtn" onClick="delete_nearest_tr()"}
+                                {button id="btnclone0" icon="clone" tip="Clone" class="clonebtn" onClick="clone_expence_row(this.id)"}
+                                {button id="btnremove0" icon="remove" tip="Remove" class="removebtn" onClick="delete_nearest_tr(this.id)"}
                             </span>
                         </td>
                     </tr>
@@ -529,11 +529,13 @@
         row.querySelectorAll('div.lms-ui-advanced-select').forEach(e => e.remove());
         row.querySelectorAll('select.lms-ui-advanced-select').forEach(function(e) { e.style = null; initAdvancedSelects(e); });
 
+        row.querySelectorAll("select[id^='dialog-taxid'] option").forEach(e => e.removeAttribute("selected"));
         var taxid_select = row.querySelector("select[id^='dialog-taxid']");
-        var taxid_options = row.querySelectorAll("select[id^='dialog-taxid'] option");
-        taxid_options.forEach(e => e.removeAttribute("selected"));
         var defaulttaxid = taxid_select.getAttribute('data-default-value');
-        if (defaulttaxid != 'undefined') {
+
+        if (typeof(defaulttaxid) == 'undefined') {
+            taxid_select.selectedIndex=0;
+        } else {
             taxid_select.value = defaulttaxid;
         }
 
