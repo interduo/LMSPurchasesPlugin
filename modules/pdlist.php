@@ -156,7 +156,7 @@ if (!empty($_GET['description'])) {
 }
 
 // filters: expences or documents
-if (isset($_GET['expences'])) {
+if (!empty($_GET['expences'])) {
     $params['expences'] = intval($_GET['expences']);
 }
 

@@ -1,0 +1,69 @@
+﻿<tr class="{if empty($pd.paydate) && $smarty.now > $pd.deadline+86399}red{elseif $pd.paydate}blend{/if} highlight">
+    <td data-target-url="?m=pdview&id={$pd.id}">
+            {$pd.id}
+    </td>
+    <td data-target-url="?m=pdview&id={$pd.id}">
+        {if isset($pd.typename)}{$pd.typename|escape}{/if}
+    </td>
+    <td>
+        {icon name="clipboard" class="lms-ui-button-clipboard nocolor" data_clipboard_text=$pd.fullnumber|escape label=$pd.fullnumber}
+    </td>
+    <td data-order="{$pd.netcurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
+        {$pd.netcurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
+    </td>
+    <td data-order="{$pd.grosscurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
+        {$pd.grosscurrencyvalue|rtrim:'0'|rtrim:'.'|escape}  {$pd.currency}
+    </td>
+    <td data-target-url="?m=pdview&id={$pd.id}">
+        {$pd.sdate|escape|date_format:"%Y/%m/%d"}
+    </td>
+    <td data-target-url="?m=pdview&id={$pd.id}">
+        {if isset($pd.deadline)}{$pd.deadline|escape|date_format:'%Y/%m/%d'}{/if}
+        <br>{trans("{$_PAYTYPES[{$pd.paytype}]}")}
+    </td>
+    <td data-target-url="?m=pdview&id={$pd.id}">
+        {if isset($pd.paydate)}{$pd.paydate|escape|date_format:'%Y/%m/%d'}{/if}
+    </td>
+    <td {tip text=$pd.supplier_name}>
+        {if isset($pd.supplier_name)}
+            <a href="?m=customerinfo&id={$pd.supplierid}">
+                {$pd.supplier_name|trunescape:25:"&hellip;":true}
+            </a>
+        {/if}
+    </td>
+    <td>
+        {if isset($pd.invprojects)}
+            {foreach $pd.invprojects as $p}
+                {$p.name|trunescape:25:"&hellip;":true}<br>
+            {/foreach}
+        {/if}
+    </td>
+    <td>
+        {if !empty($pd.categories)}
+            {foreach $pd.categories as $c}
+                {$c.name|trunescape:25:"&hellip;":true}<br>
+            {/foreach}
+        {/if}
+    </td>
+    <td>
+        {if isset($pd.userid)}
+            <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
+        {/if}
+    </td>
+    <td class="buttons">
+        {if isset($pd.files) && ConfigHelper::checkPrivilege('purchase_add_purchase')}
+            {foreach $pd.files as $file}
+                {button type="link" icon="attachment" name="fileupload" tip=$file.filename href="?m=pdview&attid={$file.id}"}
+            {/foreach}
+        {/if}
+        {if !$pd.paydate && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')}
+            {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
+        {/if}
+        {if ConfigHelper::checkPrivilege('purchases_modify_purchase')}
+            {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
+        {/if}
+        {if ConfigHelper::checkPrivilege('purchases_delete_purchase')}
+            {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
+        {/if}
+    </td>
+</tr>

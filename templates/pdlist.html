@@ -61,13 +61,10 @@
                 {icon name="timetable" label="Document date"}
             </td>
             <td>
-                {icon name="deadline" label="Deadline"}
+                {icon name="deadline" label="Payment type and deadline"}
             </td>
             <td>
                 {icon name="money" label="Pay date"}
-            </td>
-            <td>
-                {icon name="paytype" label="Payment type"}
             </td>
             {if !empty($params.expences)}
                 <td>
@@ -94,108 +91,20 @@
     <tbody>
     {if !empty($pdlist)}
         {foreach $pdlist as $pd}
-        <tr class="{if empty($pd.paydate) && $smarty.now > $pd.deadline+86399}red{elseif $pd.paydate}blend{/if} highlight">
-            <td data-target-url="?m=pdview&id={$pd.id}">
-                {if !empty($params.expences)}
-                    {$pd.expenceid}
-                {else}
-                    {$pd.id}
-                {/if}
-            </td>
-            <td data-target-url="?m=pdview&id={$pd.id}">
-                {if isset($pd.typename)}{$pd.typename|escape}{/if}
-            </td>
-            <td>
-                {icon name="clipboard" class="lms-ui-button-clipboard nocolor" data_clipboard_text=$pd.fullnumber|escape}
-                {if isset($pd.fullnumber)}{$pd.fullnumber|escape}{/if}
-            </td>
-            <td data-order="{$pd.netcurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.netcurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
-            </td>
-            {if !empty($params.expences)}
-                <td data-order="{$pd.tax_value}" data-target-url="?m=pdview&id={$pd.id}">
-                    {$pd.tax_value|escape} %
-                </td>
+            {if empty($params.expences)}
+                {include file="pdlist-docrow.html"}
+            {else}
+                {include file="pdlist-expencerow.html"}
             {/if}
-            <td data-order="{$pd.grossvalue}" data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.grossvalue|rtrim:'0'|rtrim:'.'|escape}  {$pd.currency}
-            </td>
-            <td data-target-url="?m=pdview&id={$pd.id}">
-                {$pd.sdate|escape|date_format:"%Y/%m/%d"}
-            </td>
-            <td data-target-url="?m=pdview&id={$pd.id}">
-                {if isset($pd.deadline)}{$pd.deadline|escape|date_format:'%Y/%m/%d'}{/if}
-            </td>
-            <td data-target-url="?m=pdview&id={$pd.id}">
-                {if isset($pd.paydate)}{$pd.paydate|escape|date_format:'%Y/%m/%d'}{/if}
-            </td>
-            <td data-target-url="?m=pdview&id={$pd.id}">
-                {trans("{$_PAYTYPES[{$pd.paytype}]}")}
-            </td>
-            {if !empty($params.expences)}
-            <td {tip text=$pd.description} data-target-url="?m=pdview&id={$pd.id}">
-                {if isset($pd.description)}{$pd.description|trunescape:40}{/if}
-            </td>
-            {/if}
-            <td {tip text=$pd.supplier_name}>
-                {if isset($pd.supplier_name)}
-                    <a href="?m=customerinfo&id={$pd.supplierid}">
-                        {$pd.supplier_name|trunescape:25:"&hellip;":true}
-                    </a>
-                {/if}
-            </td>
-            <td>
-                {if isset($pd.invprojects)}
-                    {foreach $pd.invprojects as $p}
-                        {$p.name|trunescape:25:"&hellip;":true}<br>
-                    {/foreach}
-                {/if}
-            </td>
-            <td>
-                {if !empty($pd.categories)}
-                    {foreach $pd.categories as $c}
-                        {$c.name|trunescape:25:"&hellip;":true}<br>
-                    {/foreach}
-                {/if}
-            </td>
-            <td>
-                {if isset($pd.userid)}
-                    <a href="?m=userinfo&id={$pd.userid}">{$pd.username|trunescape:25:"&hellip;":true}</a>
-                {/if}
-            </td>
-            <td class="buttons">
-                {if isset($pd.files) && ConfigHelper::checkPrivilege('purchase_add_purchase')}
-                    {foreach $pd.files as $file}
-                        {button type="link" icon="attachment" name="fileupload" tip=$file.filename href="?m=pdview&attid={$file.id}"}
-                    {/foreach}
-                {/if}
-                {if !$pd.paydate && empty($params.expences) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')}
-                    {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}"}
-                {/if}
-                {if ConfigHelper::checkPrivilege('purchases_modify_purchase')}
-                    {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}
-                {/if}
-                {if empty($params.expences) && ConfigHelper::checkPrivilege('purchases_delete_purchase')}
-                    {button type="link" icon="delete" href="?m=pdlist&action=delete&id={$pd.id}" tip="Delete" class="delete-pd"}
-                {/if}
-            </td>
-        </tr>
         {/foreach}
+    {else}
+        <tr>
+            <td colspan="8">{trans("No purchase documents in database")}</td>
+        </tr>
     {/if}
     </tbody>
 </table>
 
 {include file="pdmodify-dialog.html"}
-
-<script>
-    $(function() {
-        $( '.delete-pd' ).click(function() {
-            confirmDialog( $t("Are you sure you want to delete that purchase document?") , this).done(function() {
-                location.href = $(this).attr('href');
-            });
-            return false;
-        });
-    });
-</script>
 
 {/block}

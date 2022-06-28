@@ -197,23 +197,28 @@ class PURCHASES
         }
 
         if (!empty($description)) {
-            $expencedescriptionfilter = ' AND pdc.description LIKE \'%' . $description . '%\'';
+            $expencedescriptionfilter = ' AND pdc.description ILIKE \'%' . $description . '%\'';
         } else {
             $expencedescriptionfilter = '';
         }
 
         if (empty($expences)) {
-            $split = 'SUM(pdc.netcurrencyvalue) AS netcurrencyvalue, SUM(pdc.netcurrencyvalue*tx.value/100) AS vatvalue, ROUND(SUM(pdc.netcurrencyvalue*tx.value/100)+SUM(pdc.netcurrencyvalue), 2) AS grossvalue';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name';
+            $split = ' SUM(pdc.netcurrencyvalue) AS netcurrencyvalue,
+                SUM(pdc.netcurrencyvalue*tx.value/100) AS vatcurrencyvalue,
+                SUM(pdc.netcurrencyvalue*tx.value/100)+SUM(pdc.netcurrencyvalue) AS grosscurrencyvalue';
+            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id';
         } else {
-            $split = ' pdc.netcurrencyvalue, ROUND((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue, 2) AS grossvalue, pdc.description, pdc.id AS expenceid';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.netcurrencyvalue, pdc.id, pdc.description';
+            $split = ' pdc.netcurrencyvalue AS netcurrencyvalue,
+                pdc.netcurrencyvalue*tx.value/100 AS vatcurrencyvalue,
+                pdc.netcurrencyvalue*tx.value/100+pdc.netcurrencyvalue AS grosscurrencyvalue,
+                pdc.description, pdc.id AS expenceid';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id';
         }
 
-        $result = $this->db->GetAllByKey(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, pds.fullnumber, pds.currency, pds,vatplnvalue,
-                    pds.cdate, pds.sdate, pds.deadline, pds.paytype, pds.paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
-                    pds.supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
+        $result = $this->db->GetAll(
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue,
+                    cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
+                    supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,'
                     . $split
                     . ' FROM pds
@@ -237,30 +242,35 @@ class PURCHASES
             . $valuefromhavingfilter
             . ((!empty($valuefromhavingfilter) && !empty($valuetohavingfilter)) ? ' AND ' : '')
             . $valuetohavingfilter
-            . $orderby,
-            'id'
+            . $orderby
         );
 
         if (!empty($result)) {
-            if (empty($expences)) {
-                foreach ($result as $idx => $r) {
-                    $params['pdid'] = $r['id'];
-                    $docfiles = $this->GetPurchaseFiles($params);
-                    (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
-                    $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
-                    (!empty($docexpencecategory) ? $result[$idx]['categories'] = $docexpencecategory : '');
-                    $docexpenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
-                    (!empty($docexpenceinvprojects) ? $result[$idx]['invprojects'] = $docexpenceinvprojects : '');
+            foreach ($result as $idx => $r) {
+                $params['pdid'] = $r['id'];
+                $docfiles = $this->GetPurchaseFiles($params);
+                if (!empty($docfiles)) {
+                    $result[$idx]['files'] = $docfiles;
                 }
-            } else {
-                foreach ($result as $idx => $r) {
-                    $params['pdid'] = $r['id'];
-                    $docfiles = $this->GetPurchaseFiles($params);
-                    (!empty($docfiles) ? $result[$idx]['files'] = $docfiles : '');
+                if (empty($expences)) {
+                    $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
+                    if (!empty($docexpencecategory)) {
+                        $result[$idx]['categories'] = $docexpencecategory;
+                    }
+                    $docexpenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
+                    if (!empty($docexpenceinvprojects)) {
+                        $result[$idx]['invprojects'] = $docexpenceinvprojects;
+                    }
+                } else {
+                    $result[$idx]['expences'] = $this->GetPurchaseDocumentExpences($r['id']);
                     $expencecategories = $this->GetCategoriesUsingExpenceId($r['expenceid']);
-                    (!empty($expencecategories) ? $result[$idx]['categories'] = $expencecategories : '');
+                    if (!empty($expencecategories)) {
+                        $result[$idx]['categories'] = $expencecategories;
+                    }
                     $expenceinvprojects = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
-                    (!empty($expenceinvprojects) ? $result[$idx]['invprojects'] = $expenceinvprojects : '');
+                    if (!empty($expenceinvprojects)) {
+                        $result[$idx]['invprojects'] = $expenceinvprojects;
+                    }
                 }
             }
         }
@@ -277,7 +287,7 @@ class PURCHASES
             foreach ($result as $r) {
                 $title = $r['typename'] . $r['fullnumber'];
                 $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                    . $r['grossvalue'] . ';' . $title . ';;;' . date("Y-m-d");
+                    . $r['doc_grosscurrnecyvalue'] . ';' . $title . ';;;' . date("Y-m-d");
             }
             header('Content-Disposition: attachment; filename=' . $exportfilename);
             print_r($exported);
