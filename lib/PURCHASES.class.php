@@ -453,33 +453,33 @@ class PURCHASES
     {
         extract($params);
 
-        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', '33');
-        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', '33');
-        $storage_dir_permission = ConfigHelper::getConfig('storage.dir_permission', '0755');
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 33);
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 33);
+        $storage_dir_permission = ConfigHelper::getConfig('storage.dir_permission', '0750');
+        $plugin_storage_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd');
 
-        if (!is_dir(STORAGE_DIR)) {
-            die('Not existing STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-                . 'mkdir -p ' . STORAGE_DIR);
+        if (!is_dir($plugin_storage_dir)) {
+            die('Not existing plugin storage dir: ' . STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd<br>'
+                . 'mkdir -p ' . $plugin_storage_dir);
         }
 
-        if (substr(sprintf('%o', fileperms(STORAGE_DIR)), -4) !== $storage_dir_permission) {
-            die('Bad permission for STORAGE_DIR: ' . STORAGE_DIR . '<br>' . substr(sprintf('%o', fileperms(STORAGE_DIR)), -4)
-                . 'chmod ' . $storage_dir_permission . ' ' . STORAGE_DIR);
+        if (substr(sprintf('%o', fileperms($plugin_storage_dir)), -4) !== $storage_dir_permission) {
+            die('Bad permission for plugin storage dir: ' . $plugin_storage_dir . '<br>' . substr(sprintf('%o', fileperms($plugin_storage_dir)), -4)
+                . 'chmod ' . $storage_dir_permission . ' ' . $plugin_storage_dir);
         }
-        /*
-                if (fileowner(STORAGE_DIR) != $storage_dirowneruid) {
-                    die('Bad dir owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-                        . 'chown ' . $storage_dir_owneruid . ' ' . STORAGE_DIR);
-                }
 
-                if (filegroup(STORAGE_DIR) != $storage_dir_ownergid) {
-                    die('Bad dir group owner for STORAGE_DIR: ' . STORAGE_DIR . '<br>'
-                        . 'chown ' . $storage_dir_ownergid . ' ' . STORAGE_DIR);
-                }
-        */
+        if (fileowner($plugin_storage_dir) != $storage_dir_owneruid) {
+            die('Bad owner for plugin storage dir: ' . $plugin_storage_dir . '<br>'
+                . 'chown ' . $storage_dir_owneruid . ' ' . $plugin_storage_dir);
+        }
+
+        if (filegroup($plugin_storage_dir) != $storage_dir_ownergid) {
+            die('Bad group for plugin storage dir: ' . $plugin_storage_dir . '<br>'
+                . 'chgrp ' . $storage_dir_ownergid . ' ' . $plugin_storage_dir);
+        }
 
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
-        $pdid_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd') . DIRECTORY_SEPARATOR . $attdir;
+        $pdid_dir = $plugin_storage_dir . DIRECTORY_SEPARATOR . $attdir;
 
         if (!empty($files)) {
             if (!is_dir($pdid_dir)) {
