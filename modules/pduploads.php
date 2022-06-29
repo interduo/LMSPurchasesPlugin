@@ -21,7 +21,7 @@ if (isset($_GET['ajax']) && isset($_GET['fileupload'])) {
 
     $attachments = null;
 
-    //TODO: sprawdz czy są duplikaty w poczekalni - jeśli tak wyrzuć błąd lub nadpisz pliki,
+    //TODO: sprawdz czy są duplikaty w poczekalni - jeśli tak wyrzuć błąd lub zmien nazwe pliku,
 
     if (!empty($files)) {
         foreach ($files as &$file) {

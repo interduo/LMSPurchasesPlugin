@@ -457,29 +457,28 @@ class PURCHASES
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 33);
         $storage_dir_permission = ConfigHelper::getConfig('storage.dir_permission', '0750');
         $plugin_storage_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd');
+        $attdir = empty($pdid) ? 'anteroom' : $pdid;
+        $pdid_dir = $plugin_storage_dir . DIRECTORY_SEPARATOR . $attdir;
 
         if (!is_dir($plugin_storage_dir)) {
-            die('Not existing plugin storage dir: ' . STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd<br>'
-                . 'mkdir -p ' . $plugin_storage_dir);
+            die(trans("Not existing plugin storage dir") . ': ' . $plugin_storage_dir . '<br>' . 'mkdir -p ' . $plugin_storage_dir);
         }
 
         if (substr(sprintf('%o', fileperms($plugin_storage_dir)), -4) !== $storage_dir_permission) {
-            die('Bad permission for plugin storage dir: ' . $plugin_storage_dir . '<br>' . substr(sprintf('%o', fileperms($plugin_storage_dir)), -4)
+            die(trans("Bad permission for plugin storage dir") . ': ' . $plugin_storage_dir . '<br>'
+                . substr(sprintf('%o', fileperms($plugin_storage_dir)), -4)
                 . 'chmod ' . $storage_dir_permission . ' ' . $plugin_storage_dir);
         }
 
         if (fileowner($plugin_storage_dir) != $storage_dir_owneruid) {
-            die('Bad owner for plugin storage dir: ' . $plugin_storage_dir . '<br>'
+            die(trans("Bad owner for plugin storage dir") . ': ' . $plugin_storage_dir . '<br>'
                 . 'chown ' . $storage_dir_owneruid . ' ' . $plugin_storage_dir);
         }
 
         if (filegroup($plugin_storage_dir) != $storage_dir_ownergid) {
-            die('Bad group for plugin storage dir: ' . $plugin_storage_dir . '<br>'
+            die(trans("Bad group for plugin storage dir") . ': ' . $plugin_storage_dir . '<br>'
                 . 'chgrp ' . $storage_dir_ownergid . ' ' . $plugin_storage_dir);
         }
-
-        $attdir = empty($pdid) ? 'anteroom' : $pdid;
-        $pdid_dir = $plugin_storage_dir . DIRECTORY_SEPARATOR . $attdir;
 
         if (!empty($files)) {
             if (!is_dir($pdid_dir)) {
@@ -491,7 +490,7 @@ class PURCHASES
             $sys_tmp_dir = sys_get_temp_dir();
             $tmp_dir = (empty($sys_tmp_dir) ? '/tmp' : $sys_tmp_dir) . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
 
-            foreach ($files as $file) {
+            foreach ($files['files'] as $file) {
                 $dstfilename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
                 $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
 
@@ -504,13 +503,13 @@ class PURCHASES
                     }
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
-                    rename($file['name'], $dstfile);
+                    rename($tmp_dir . $files['tmpdir'] . DIRECTORY_SEPARATOR . $file['name'], $dstfile);
                 }
 
                 chown($dstfile, $storage_dir_owneruid);
                 chgrp($dstfile, $storage_dir_ownergid);
 
-                if (!empty($cleanup)) {
+                if (!empty($cleanup) && $attdir != 'anteroom') {
                     $dirs_to_be_deleted[] = dirname($file['name']);
                 }
 
