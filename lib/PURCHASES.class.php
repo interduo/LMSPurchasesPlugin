@@ -485,7 +485,6 @@ class PURCHASES
         */
 
         $dirs_to_be_deleted = array();
-        $tmp_dir = sys_get_temp_dir() ?? '/tmp';
 
         foreach ($files as $file) {
             $dstfilename = preg_replace('/[^\w\.-_]/', '_', $file['name']);
