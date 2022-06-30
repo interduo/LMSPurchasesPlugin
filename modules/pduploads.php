@@ -24,22 +24,27 @@ if (isset($_GET['ajax']) && isset($_GET['fileupload'])) {
     //TODO: sprawdz czy są duplikaty w poczekalni - jeśli tak wyrzuć błąd lub zmien nazwe pliku,
 
     if (!empty($files)) {
+        $SMARTY->assign('files', $files);
         foreach ($files as &$file) {
+            $file['fullpath'] = $_POST['fileupload']['files-tmpdir'] . DIRECTORY_SEPARATOR . $file['name'];
             $attachments[] = array(
                 'content_type' => $file['type'],
                 'filename' => $file['name'],
-                'data' => file_get_contents($_POST['fileupload']['pdfiles-tmpdir'] . DIRECTORY_SEPARATOR . $file['name']),
+                'data' => file_get_contents($file['fullpath']),
             );
-            $file['fullpath'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
         }
         unset($file);
     }
 }
 
 if (isset($_POST['pduploads'])) {
+    $tmp_dir = sys_get_temp_dir() ?? '/tmp';
+    foreach ($_POST['fileupload']['files'] as &$file) {
+        $file['fullpath'] = $tmp_dir . DIRECTORY_SEPARATOR . $_POST['fileupload']['files-tmpdir'] . DIRECTORY_SEPARATOR . $file['name'];
+    }
     $params = array(
         'pdid' => null,
-        'files' => $_POST['fileupload'],
+        'files' => $_POST['fileupload']['files'],
         'anteroom' => true,
         'cleanup' => false,
     );

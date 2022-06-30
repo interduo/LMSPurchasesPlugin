@@ -464,10 +464,12 @@ class PURCHASES
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
         $pdid_dir = $plugin_storage_dir . DIRECTORY_SEPARATOR . $attdir;
 
-        if (is_dir($pdid_dir) && (!is_readable($pdid_dir) || !is_writable($pdid_dir))) {
-                die(trans("Bad permissions for plugin storage dir") . ': ' . $pdid_dir);
-        } else {
+        if (!is_dir($pdid_dir)) {
             mkdir($pdid_dir, $storage_dir_permission, true);
+        }
+
+        if (!is_readable($pdid_dir) || !is_writable($pdid_dir)) {
+            die(trans("Bad permissions for plugin storage dir") . ': ' . $pdid_dir);
         }
 
         /*
