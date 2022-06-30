@@ -453,23 +453,24 @@ class PURCHASES
     {
         extract($params);
 
+        if (empty($files)) {
+            return;
+        }
+
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 33);
         $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 33);
-        $storage_dir_permission = ConfigHelper::getConfig('storage.dir_permission', '0750');
+        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0770'), 8);
         $plugin_storage_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd');
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
         $pdid_dir = $plugin_storage_dir . DIRECTORY_SEPARATOR . $attdir;
 
-        if (!is_dir($plugin_storage_dir)) {
-            die(trans("Not existing plugin storage dir") . ': ' . $plugin_storage_dir . '<br>' . 'mkdir -p ' . $plugin_storage_dir);
+        if (is_dir($pdid_dir) && (!is_readable($pdid_dir) || !is_writable($pdid_dir))) {
+                die(trans("Bad permissions for plugin storage dir") . ': ' . $pdid_dir);
+        } else {
+            mkdir($pdid_dir, $storage_dir_permission, true);
         }
 
-        if (substr(sprintf('%o', fileperms($plugin_storage_dir)), -4) !== $storage_dir_permission) {
-            die(trans("Bad permission for plugin storage dir") . ': ' . $plugin_storage_dir . '<br>'
-                . substr(sprintf('%o', fileperms($plugin_storage_dir)), -4)
-                . 'chmod ' . $storage_dir_permission . ' ' . $plugin_storage_dir);
-        }
-
+        /*
         if (fileowner($plugin_storage_dir) != $storage_dir_owneruid) {
             die(trans("Bad owner for plugin storage dir") . ': ' . $plugin_storage_dir . '<br>'
                 . 'chown ' . $storage_dir_owneruid . ' ' . $plugin_storage_dir);
@@ -479,63 +480,52 @@ class PURCHASES
             die(trans("Bad group for plugin storage dir") . ': ' . $plugin_storage_dir . '<br>'
                 . 'chgrp ' . $storage_dir_ownergid . ' ' . $plugin_storage_dir);
         }
+        */
 
-        if (!empty($files)) {
-            if (!is_dir($pdid_dir)) {
-                mkdir($pdid_dir, $storage_dir_permission, true);
+        $dirs_to_be_deleted = array();
+        $tmp_dir = sys_get_temp_dir() ?? '/tmp';
+
+        foreach ($files as $file) {
+            $dstfilename = preg_replace('/[^\w\.-_]/', '_', $file['name']);
+            $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
+
+            if ($file['content']) {
+                $i = 1;
+                while (file_exists($dstfile)) {
+                    $pathinfo = pathinfo($dstfile);
+                    $dstfile = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . '-' . $i . '.' . $pathinfo['extension'];
+                    $i++;
+                }
+                file_put_contents($dstfile, $file['content'], LOCK_EX);
+            } else {
+                rename($file['fullpath'], $dstfile);
             }
 
-            $dirs_to_be_deleted = array();
+            @chown($dstfile, $storage_dir_owneruid);
+            @chgrp($dstfile, $storage_dir_ownergid);
 
-            $tmp_dir = sys_get_temp_dir() ?? '/tmp';
+            $result = $this->db->Execute(
+                'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath, createtime, sender, sender_mail, comment)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                array(
+                    empty($pdid) ? null : $pdid,
+                    $dstfilename,
+                    $file['type'],
+                    empty($anteroom) ? 'false' : 'true',
+                    $attdir,
+                    time(),
+                    empty($sender) ? null : $sender,
+                    empty($sender_mail) ? null : $sender_mail,
+                    empty($comment) ? null : $comment,
+                )
+            );
+        }
 
-            foreach ($files as $file) {
-                $dstfilename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
-                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
-
-                if ($file['content']) {
-                    $i = 1;
-                    while (file_exists($dstfile)) {
-                        $pathinfo = pathinfo($dstfile);
-                        $dstfile = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . '-' . $i . '.' . $pathinfo['extension'];
-                        $i++;
-                    }
-                    file_put_contents($dstfile, $file['content'], LOCK_EX);
-                } else {
-                    rename($files['tmpdir'] . DIRECTORY_SEPARATOR . $file['name'], $dstfile);
-                }
-
-                chown($dstfile, $storage_dir_owneruid);
-                chgrp($dstfile, $storage_dir_ownergid);
-
-                if (!empty($cleanup) && $attdir != 'anteroom') {
-                    $dirs_to_be_deleted[] = dirname($file['name']);
-                }
-
-                $result = $this->db->Execute(
-                    'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath, createtime, sender, sender_mail, comment)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                    array(
-                        empty($pdid) ? null : $pdid,
-                        $dstfilename,
-                        $file['type'],
-                        empty($anteroom) ? 'false' : 'true',
-                        $attdir,
-                        time(),
-                        empty($sender) ? null : $sender,
-                        empty($sender_mail) ? null : $sender_mail,
-                        empty($comment) ? null : $comment,
-                    )
-                );
-            }
-
-            if (!empty($cleanup) && empty($anteroom)) {
-                if (!empty($dirs_to_be_deleted)) {
-                    $dirs_to_be_deleted = array_unique($dirs_to_be_deleted);
-                    foreach ($dirs_to_be_deleted as $dir) {
-                        rrmdir($dir);
-                    }
-                }
+        $dirs_to_be_deleted[] = dirname($file['fullpath']);
+        if (!empty($cleanup) && empty($anteroom) && !empty($dirs_to_be_deleted)) {
+            $dirs_to_be_deleted = array_unique($dirs_to_be_deleted);
+            foreach ($dirs_to_be_deleted as $dir) {
+                rrmdir($dir);
             }
         }
 
@@ -547,19 +537,19 @@ class PURCHASES
         extract($params);
 
         $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
-        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0700'), 8);
-        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
-        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
+        $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0770'), 8);
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', '33');
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', '33');
         $pdid_dir = $pd_dir . DIRECTORY_SEPARATOR . $pdid;
 
         @umask(0007);
-
-        if (@is_dir($pdid_dir)) {
-            @chown($pdid_dir, $storage_dir_owneruid);
-            @chgrp($pdid_dir, $storage_dir_ownergid);
-        } else {
-            @mkdir($pdid_dir, $storage_dir_permission);
+        if (!is_dir($pdid_dir)) {
+            @mkdir($pdid_dir, $storage_dir_permission, true);
         }
+
+        @chmod($pdid_dir, $storage_dir_permission);
+        @chown($pdid_dir, $storage_dir_owneruid);
+        @chgrp($pdid_dir, $storage_dir_ownergid);
 
         $filename = $this->db->GetOne(
             'SELECT filename FROM pdattachments WHERE id = ?',
@@ -588,6 +578,12 @@ class PURCHASES
 
         if (file_exists($file)) {
             unlink($file);
+        }
+
+        $attachment_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd')
+            . DIRECTORY_SEPARATOR . $file['filepath'];
+        if (is_dir($attachment_dir) && count(scandir($attachment_dir)) == 2) {
+            rmdir($attachment_dir);
         }
 
         return $this->db->Execute(

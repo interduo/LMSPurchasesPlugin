@@ -51,9 +51,9 @@
           '',
           array_filter(
               array_values($parameters),
-                function ($value) {
-                    return isset($value);
-                }
+              function ($value) {
+                  return isset($value);
+              }
           )
       ),
       array_keys($parameters)
@@ -345,19 +345,19 @@ EOF;
                             || $partdata['content-disposition'] == 'inline')) || isset($partdata['content-id'])) {
                         $file_content = substr($buffer, $partdata['starting-pos-body'], $partdata['ending-pos-body'] - $partdata['starting-pos-body']);
                         $transfer_encoding = $partdata['transfer-encoding'] ?? '';
-                        switch ($transfer_encoding) {
-                            case 'base64':
-                                $file_content = base64_decode($file_content);
-                                break;
-                            case 'quoted-printable':
-                                $file_content = quoted_printable_decode($file_content);
-                                break;
-                        }
+                      switch ($transfer_encoding) {
+                          case 'base64':
+                              $file_content = base64_decode($file_content);
+                              break;
+                          case 'quoted-printable':
+                              $file_content = quoted_printable_decode($file_content);
+                              break;
+                      }
                         $file_name = $partdata['content-name'] ?? ($partdata['disposition-filename'] ?? '');
-                        if (!$file_name) {
-                            unset($file_content);
-                            continue;
-                        }
+                      if (!$file_name) {
+                          unset($file_content);
+                          continue;
+                      }
                         $file_name = trim(iconv_mime_decode($file_name));
 
                         $files[] = array(

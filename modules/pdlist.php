@@ -42,7 +42,7 @@ if (isset($_POST['addpd'])) {
                 'filename' => $file['name'],
                 'data' => file_get_contents($tmppath . DIRECTORY_SEPARATOR . $file['name']),
             );
-            $file['name'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
+            $file['fullpath'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
         }
         unset($file);
     }

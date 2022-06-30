@@ -30,7 +30,7 @@ if (isset($_GET['ajax']) && isset($_GET['fileupload'])) {
                 'filename' => $file['name'],
                 'data' => file_get_contents($_POST['fileupload']['pdfiles-tmpdir'] . DIRECTORY_SEPARATOR . $file['name']),
             );
-            $file['name'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
+            $file['fullpath'] = $tmppath . DIRECTORY_SEPARATOR . $file['name'];
         }
         unset($file);
     }
