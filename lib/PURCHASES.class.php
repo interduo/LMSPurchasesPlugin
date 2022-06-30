@@ -487,8 +487,7 @@ class PURCHASES
 
             $dirs_to_be_deleted = array();
 
-            $sys_tmp_dir = sys_get_temp_dir();
-            $tmp_dir = (empty($sys_tmp_dir) ? '/tmp' : $sys_tmp_dir) . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
+            $tmp_dir = sys_get_temp_dir() ?? '/tmp';
 
             foreach ($files as $file) {
                 $dstfilename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
@@ -503,7 +502,7 @@ class PURCHASES
                     }
                     file_put_contents($dstfile, $file['content'], LOCK_EX);
                 } else {
-                    rename($tmp_dir . $files['tmpdir'] . DIRECTORY_SEPARATOR . $file['name'], $dstfile);
+                    rename($files['tmpdir'] . DIRECTORY_SEPARATOR . $file['name'], $dstfile);
                 }
 
                 chown($dstfile, $storage_dir_owneruid);
