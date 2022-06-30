@@ -490,7 +490,7 @@ class PURCHASES
             $sys_tmp_dir = sys_get_temp_dir();
             $tmp_dir = (empty($sys_tmp_dir) ? '/tmp' : $sys_tmp_dir) . DIRECTORY_SEPARATOR . $files['files-tmpdir'];
 
-            foreach ($files['files'] as $file) {
+            foreach ($files as $file) {
                 $dstfilename = preg_replace('/[^\w\.-_]/', '_', basename($file['name']));
                 $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
 
