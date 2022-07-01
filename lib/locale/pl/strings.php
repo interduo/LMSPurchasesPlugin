@@ -1,12 +1,14 @@
 <?php
 
 $_LANG['Delete from anteroom'] = 'Usuń z poczekalnii';
+$_LANG['Add Purchase'] = 'Dodaj wydatek';
 $_LANG['expence description'] = 'opis wydatku';
 $_LANG['Import box'] = 'Wrzutnia';
 $_LANG['View type'] = 'Typ widoku';
 $_LANG['Add many'] = 'Dodaj wiele';
 $_LANG['Document uploads'] = 'Wrzutnia dokumentów';
 $_LANG['Add empty row'] = 'Dodaj pusty wiersz';
+$_LANG['Payment export'] = 'Eksport płatności';
 $_LANG['expences'] = 'wydatki';
 $_LANG['Expences'] = 'Wydatki';
 $_LANG['Default'] = 'Domyślny';
