@@ -566,7 +566,7 @@ class PURCHASES
 
         return $this->db->Execute(
             'UPDATE pdattachments SET anteroom = ?, pdid = ?, filepath = ? WHERE id = ?',
-            array('false', $pdid, $dstfile, $attid)
+            array('false', $pdid, $pdid, $attid)
         );
     }
 
