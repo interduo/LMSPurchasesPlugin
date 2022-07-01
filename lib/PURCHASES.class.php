@@ -287,7 +287,7 @@ class PURCHASES
             foreach ($result as $r) {
                 $title = $r['typename'] . $r['fullnumber'];
                 $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                    . $r['doc_grosscurrnecyvalue'] . ';' . $title . ';;;' . date("Y-m-d");
+                    . $r['doc_grosscurrnecyvalue'] . ';' . $title . ';;;' . date("Y-m-d") . PHP_EOL;
             }
             header('Content-Disposition: attachment; filename=' . $exportfilename);
             print_r($exported);
