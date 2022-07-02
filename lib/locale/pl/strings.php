@@ -1,6 +1,6 @@
 <?php
 
-$_LANG['Clear form'] = 'Wyczyść formularz';
+$_LANG['Clear'] = 'Wyczyść';
 $_LANG['Delete from anteroom'] = 'Usuń z poczekalnii';
 $_LANG['Add Purchase'] = 'Dodaj wydatek';
 $_LANG['expence description'] = 'opis wydatku';

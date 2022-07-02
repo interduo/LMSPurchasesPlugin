@@ -231,6 +231,8 @@
         document.getElementById(tableid).lastElementChild.lastElementChild.after(row);
         reindexIdNameInAllElementsOfTable(tableid);
         delete row;
+
+        $('#addpdmodal').dialog('option', 'height', 'auto')
     }
 
     function clone_expence_row(elem) {
@@ -259,7 +261,7 @@
         if (rowscount > 1) {
             document.getElementById(rowid).remove();
         } else {
-            alert($t("Could not remove only row"));
+            alert("{trans('Could not remove only row')}");
         }
         reindexIdNameInAllElementsOfTable(tableid);
     }
@@ -425,7 +427,7 @@
 
      $(function() {
          $( '.delete-pd' ).click(function() {
-             confirmDialog( $t("Are you sure you want to delete that purchase document?") , this).done(function() {
+             confirmDialog( "{trans('Are you sure you want to delete that purchase document?')}" , this).done(function() {
                  location.href = $(this).attr('href');
              });
              return false;
