@@ -86,9 +86,9 @@
                 <input type="hidden" name="export" id="export-input" value="0">
                 {buttons}
                     {if ConfigHelper::checkPrivilege("purchase_add_purchase")}
-                        {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add" onclick="open_add_dialog()" tip="Add Purchase"}
+                        {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add Purchase" onclick="open_add_dialog()" tip="Add Purchase"}
                     {/if}
-                    {button id="massadbtn" icon="upload" accesskey="u" label="Add many" href="?m=pduploads" tip="Document uploads"}
+                    {button id="massadbtn" icon="upload" accesskey="u" label="Document uploads" href="?m=pduploads" tip="Document uploads"}
                     {if ConfigHelper::checkPrivilege("purchase_export_purchases")}
                         {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export" onclick="document.getElementById('export-input').value=1; document.filter.submit();" tip="Eksport przelewów"}
                     {/if}

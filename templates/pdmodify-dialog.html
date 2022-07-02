@@ -21,6 +21,11 @@
         width: 4em;
     }
 
+    select.tax_rate_selection {
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+    }
+
     input#dialog-iban {
         width: 20em;
     }
@@ -35,7 +40,6 @@
 
     #column1 {
         overflow: visible;
-        padding-right: 2em;
         flex: 0 0 50%;
     }
 
@@ -167,7 +171,7 @@
                         </td>
                         <td>
                             {button id="import_iban_button" icon="money" tip="import from MF whitelist" onclick="fill_iban()"}
-                            <input type="text" minlength="28" name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required><br>
+                            <input type="text" minlength="28" name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required data-default-value=''><br>
                             <span class="nobr" id="bankaccounts-container"></span>
                         </td>
                     </tr>
@@ -237,6 +241,7 @@
                                     name='addpd[expenses][0][taxid]'
                                     icon='value'
                                     tip='Tax rate'
+                                    class='tax_rate_selection'
                                     onchange='convert_expence_values()'
                                     required=true
                                 }
@@ -269,7 +274,8 @@
             </table>
             {button id="submit-modal-button" type="submit" label="Submit" icon="submit"}
             {button label="Cancel" icon="cancel" id="close"}
-            {button icon="add" tip="Add empty row" id="addrow" onClick="add_expence_row('expencestable')"}
+            {button icon="add" label="Add empty row" tip="Add empty row" id="addrow" onClick="add_expence_row('expencestable')"}
+            {button icon="clear" label="Clear form" id="clearform" onClick="clear_pd_form('addpd-form')"}
         </form>
     </div>
     <div id="herewillbethepdf" class="hidden"></div>

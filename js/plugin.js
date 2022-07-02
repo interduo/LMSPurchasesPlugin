@@ -5,7 +5,7 @@
         width: 'auto',
         height: 'auto',
         modal: true,
-        title: "{if !isset($action) || $action == 'add'}{trans("Add purchase document")}{else}{trans("Modify purchase document.")} {$pdinfo.id}{/if}"
+        title: "{if !isset($action) || $action == 'add'}{trans("Add purchase document")}{else}{trans("Modify purchase document")} {$pdinfo.id}{/if}"
     });
 
     $( "#close" ).click(function() {
@@ -14,58 +14,39 @@
 
     function clear_pd_form() {
         $("#addpd-form")[0].reset();
-        $("#dialog-id", "#dialog-typeid", "#dialog-currency", "#dialog-vatplnvalue", "#dialog-fullnumber", "#dialog-sdate", "#dialog-deadline", "#dialog-paydate", "#dialog-iban").val('');
+        $("input").val('');
+        $('option:selected').removeAttr('selected');
+        $( "#filecontainer").removeClass('hidden');
 
         $("#dialog-iban").show();
         $("#bankaccounts-container").empty();
 
-        $('#dialog-typeid option:selected').removeAttr('selected');
         $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
-        updateAdvancedSelects("#dialog-typeid");
 
-        $('#dialog-divisionid option').removeAttr('selected');
         $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
         $("#dialog-divisionid").val( {$default_divisionid} );
 
-        document.querySelectorAll('input.fileupload-tmpdir').forEach(e => e.value = '');
-        document.querySelectorAll('div.fileupload-files').forEach(e => e.innerHTML = '');
-        document.querySelectorAll('div#herewillbethepdf').forEach(e => e.innerHTML = '');
+        document.querySelectorAll('div.fileupload-files, div#herewillbethepdf').forEach(e => e.innerHTML = '');
 
-        $("#dialog-currency option").removeAttr('selected');
         $("#dialog-currency option[value='" + '{$default_currency}' + "']").attr("selected", "true");
         change_currency();
 
-        $('#dialog-paytype option').removeAttr('selected');
         $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");
-        $('#dialog-paytype').val( {$default_paytype} );
         change_pay_type();
 
-        $('#dialog-supplierid').val('').trigger('input');
+        $('#dialog-supplierid').trigger('input');
 
         //clear expences - start
         $(".cloned").remove();
-        $('#dialog-netcurrencyvalue0', '#dialog-description0', '#dialog-amount0').val('');
-
-        $('#dialog-taxid0 option').removeAttr('selected');
+        $('#dialog-amount0').val('1');
 
         var selectelem = document.querySelector('select#dialog-taxid0');
         selectelem.value = selectelem.getAttribute('data-default-value');
 
-        $('#dialog-invprojects0').val('');
-        $('#dialog-invprojects0 option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-invprojects0");
-
-        $('#dialog-categories0').val('');
-        $('#dialog-categories0 option:selected').removeAttr('selected');
-        updateAdvancedSelects("#dialog-categories0");
+        updateAdvancedSelects('#dialog-categories0, #dialog-invprojects0, #dialog-typeid');
         //clear expences - end
-    }
 
-    function open_add_dialog() {
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
-
-        clear_pd_form();
-
         $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
         var pdfview = document.getElementById('column1');
@@ -74,16 +55,18 @@
                 case 'object':
                     pdfview.innerHTML = '';
                     pdfview.id='herewillbethepdf';
-                    break;
+                break;
                 case 'null':
                 case 'undefined':
                 default:
                     pdfview.innerHTML = '';
                     pdfview.id='herewillbethepdf';
-                    break;
             }
         }
-        $( "#filecontainer").removeClass('hidden');
+    }
+
+    function open_add_dialog() {
+        clear_pd_form();
 
         $( "#addpdmodal" ).dialog({
           width: 'auto',
@@ -93,9 +76,7 @@
     };
 
     function open_add_anteroom_dialog(attid) {
-        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add' + '&attid=' + attid);
-
-        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+        clear_pd_form();
 
         $( "#filecontainer").addClass('hidden');
         show_inline_pdf_from_link('?m=pdview&attid=' + attid);
@@ -120,6 +101,7 @@
     };
 
     function open_modify_dialog (template_id) {
+        clear_pd_form();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
 
@@ -131,8 +113,6 @@
             updateAdvancedSelects("#dialog-typeid");
 
             $("#dialog-deadline").val(pd.deadline_formatted);
-
-            $("#dialog-divisionid option").removeAttr('selected');
             $("#dialog-divisionid").val(pd.divisionid);
             $("#dialog-divisionid option[value='" + pd.paytype + "']").attr("selected", "true");
 
@@ -144,15 +124,13 @@
             $("#dialog-sdate").val(pd.sdate_formatted);
             $("#dialog-paydate").val(pd.paydate_formatted);
 
-            $("#dialog-paytype option").removeAttr('selected');
             $("#dialog-paytype").val(pd.paytype);
             $("#dialog-paytype option[value='" + pd.paytype + "']").attr("selected", "true");
             change_pay_type();
 
             $("#dialog-iban").val(pd.iban);
 
-            $("#dialog-supplierid").removeAttr('data-customer-name', 'data-prev-value').val(pd.supplierid);
-            $("#dialog-supplierid").trigger('input');
+            $("#dialog-supplierid").val(pd.supplierid).trigger('input');
 
             $( ".cloned" ).remove();
 
@@ -168,16 +146,10 @@
                 $("#dialog-description" + index).val(pd.expences[index].description);
 
                 var invprojects_itemname = '#dialog-invprojects' + index;
-                $( invprojects_itemname + ' option:selected').removeAttr('selected');
                 if (pd.expences[index].invprojects) {
                     for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
                         makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
                     }
-                }
-                if (index == 0) {
-                    updateAdvancedSelects( invprojects_itemname );
-                } else {
-                    initAdvancedSelects( invprojects_itemname );
                 }
 
                 var categories_itemname = '#dialog-categories' + index;
@@ -186,15 +158,23 @@
                         makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
                     }
                 }
+
                 if (index == 0) {
+                    updateAdvancedSelects( invprojects_itemname );
                     updateAdvancedSelects( categories_itemname );
                 } else {
-                    initAdvancedSelects( categories_itemname );
+                    initAdvancedSelects( invprojects_itemname );
+                    initAdvancedSelects( categories_itemname )
                 }
             }
         }
 
-        $( "#addpdmodal" ).dialog( "option", "title", "{trans("Modify purchase document")} " + template_id).dialog( "open" );
+        $( "#addpdmodal" ).dialog({
+            width: 'auto',
+            height: 'auto',
+            title: "{trans("Modify purchase document")} " + template_id
+        }).dialog( "open" )
+
         show_inline_pdf_from_link('?m=pdview&id=' + template_id);
     };
 
