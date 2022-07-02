@@ -38,19 +38,14 @@
         display: none;
     }
 
-    #column1 {
-        overflow: visible;
-        flex: 0 0 50%;
-    }
-
-    #column2-pdf-loaded {
+    .pdf-loaded {
         padding-left: 2em;
         flex: 0 0 50%;
     }
 </style>
 
 <div id="addpdmodal" class="lms-ui-modal-dialog">
-    <div id="column2">
+    <div id="column1">
         <form method="POST" action="?m=pdlist&action={if !isset($action) || $action == 'add'}add{else}modify&id={$pdinfo.id}{/if}"
               name="addpd" id="addpd-form">
             <h2>{trans("Purchase Document")}</h2>
@@ -278,7 +273,7 @@
             {button icon="clear" label="Clear form" id="clearform" onClick="clear_pd_form('addpd-form')"}
         </form>
     </div>
-    <div id="herewillbethepdf" class="hidden"></div>
+    <div id="column2" class="hidden"></div>
 </div>
 
 {include file="../js/plugin.js"}

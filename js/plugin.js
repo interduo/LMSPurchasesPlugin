@@ -14,6 +14,7 @@
 
     function clear_pd_form() {
         $("#addpd-form")[0].reset();
+        $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
         $("input").val('');
         $('option:selected').removeAttr('selected');
         $( "#filecontainer").removeClass('hidden');
@@ -48,21 +49,6 @@
 
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
         $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-
-        var pdfview = document.getElementById('column1');
-        if (pdfview) {
-            switch (typeof(pdfview)) {
-                case 'object':
-                    pdfview.innerHTML = '';
-                    pdfview.id='herewillbethepdf';
-                break;
-                case 'null':
-                case 'undefined':
-                default:
-                    pdfview.innerHTML = '';
-                    pdfview.id='herewillbethepdf';
-            }
-        }
     }
 
     function open_add_dialog() {
@@ -384,27 +370,12 @@
     }
 
     function show_inline_pdf_from_link(pdflink) {
-        $( "#addpdmodal" ).dialog('option', 'width', 'auto').dialog('option', 'height', 'auto');
-
         if (!pdflink) {
-            alert("No pdf attached");
+            alert("No or bad pdf link attached");
             return;
         }
 
-        var column2 = document.getElementById('column2');
-        if (column2) {
-            column2.id = 'column2-pdf-loaded';
-        }
-        var pdfcolumn = document.getElementById("herewillbethepdf");
-        if (!pdfcolumn) {
-            pdfcolumn = document.getElementById("column1");
-            pdfcolumn.innerHTML = '';
-        }
-
-        pdfcolumn.innerHTML = '<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>';
-        pdfcolumn.id = 'column1';
-        pdfcolumn.classList.remove('hidden', 'herewillbethepdf');
-
+        $('#column2').addClass('pdf-loaded').html('<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>').removeClass('hidden');
         $( "#addpdmodal" ).dialog('option', 'width', window.innerWidth*0.9).dialog('option', 'height', window.innerHeight*0.9);
     }
 
