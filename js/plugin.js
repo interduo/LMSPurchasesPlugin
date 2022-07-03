@@ -86,6 +86,17 @@
         return response.responseJSON;
     };
 
+    function checkDocumentDuplicates(supplierid, fullnumber){
+        var response = $.get({
+        url: '?m=pdlist&checkpurchaseduplicates',
+        type: 'GET',
+        dataType: "json",
+        async: false,
+        data: { supplierid: supplierid, fullnumber: fullnumber },
+    });
+    return response.responseJSON;
+};
+
     function open_modify_dialog (template_id) {
         clear_pd_form();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
@@ -424,6 +435,9 @@
 
      let elem3 = document.getElementById('dialog-currency');
      elem3.addEventListener("click", elem3 => change_currency(), false);
+
+     let elem4 = document.getElementById('dialog-fullnumber');
+     elem4.addEventListener("change", elem4 => checkDocumentDuplicates(document.querySelector(".lms-ui-customer-select-name").innerHTML.match(/(\d+)/), elem4.value), false);
 
      $(function() {
          $( '.delete-pd' ).click(function() {

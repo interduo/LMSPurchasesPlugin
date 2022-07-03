@@ -88,14 +88,6 @@
                     </tr>
                     <tr>
                         <td>
-                            {icon name="summary" label="Document number"}
-                        </td>
-                        <td>
-                            <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]" value="{if isset($pdinfo.fullnumber)}{$pdinfo.fullnumber}{/if}" placeholder="{trans("Document number")}" required>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
                             {icon name="customer" label="Supplier"}
                         </td>
                         <td>
@@ -112,12 +104,22 @@
                     </tr>
                     <tr>
                         <td>
+                            {icon name="summary" label="Document number"}
+                        </td>
+                        <td>
+                            <input type="text" id="dialog-fullnumber" name="addpd[fullnumber]"
+                                value="{if isset($pdinfo.fullnumber)}{$pdinfo.fullnumber}{/if}"
+                                placeholder="{trans("Document number")}" required autocomplete="off">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             {icon name="timetable" label="Document date"}
                         </td>
                         <td>
                             <input
                                 type="text" id="dialog-sdate" name="addpd[sdate]" placeholder="{trans('yyyy/mm/dd')}"
-                                value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required
+                                value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required autocomplete="off"
                                 {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}>
                             {day_selection
                                 elem='[name="addpd[sdate]"]'
@@ -144,7 +146,7 @@
                         </td>
                         <td>
                             <input type="number" id="dialog-vatplnvalue" name="addpd[vatplnvalue]" value="{$pdinfo.plnvatvalue}"
-                                {tip text="Document VAT value in PLN"}>
+                                autocomplete="off" {tip text="Document VAT value in PLN"}>
                         </td>
                     </tr>
                     <tr>
@@ -166,7 +168,7 @@
                         </td>
                         <td>
                             {button id="import_iban_button" icon="money" tip="import from MF whitelist" onclick="fill_iban()"}
-                            <input type="text" minlength="28" name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required data-default-value=''><br>
+                            <input type="text" minlength="28" name="addpd[iban]" id="dialog-iban" value="{if isset($pdinfo.iban)}{$pdinfo.iban}{/if}" required data-default-value='' autocomplete="off"><br>
                             <span class="nobr" id="bankaccounts-container"></span>
                         </td>
                     </tr>
@@ -175,10 +177,10 @@
                             {icon name="deadline" label="Deadline"}
                         </td>
                         <td>
-                            <input id="dialog-deadline" type="text" name="addpd[deadline]"
-                            value="{if isset($pdinfo.deadline)}{$pdinfo.deadline|date_format:'%Y/%m/%d'}{/if}" required
-                            size="20" placeholder="{trans('yyyy/mm/dd')}"
-                            {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}>
+                            <input id="dialog-deadline" type="text" name="addpd[deadline]" autocomplete="off"
+                                value="{if isset($pdinfo.deadline)}{$pdinfo.deadline|date_format:'%Y/%m/%d'}{/if}" required
+                                size="20" placeholder="{trans('yyyy/mm/dd')}"
+                                {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}>
                             {day_selection
                                 elem='[name="addpd[deadline]"]'
                                 from_selector="#dialog-sdate"
@@ -193,7 +195,7 @@
                         <td>
                             <input
                                 type="text" id="dialog-paydate" name="addpd[paydate]" placeholder="{trans('yyyy/mm/dd')}"
-                                value="{if isset($pdinfo.paydate)}{$pdinfo.paydate|date_format:'%Y/%m/%d'}{/if}"
+                                value="{if isset($pdinfo.paydate)}{$pdinfo.paydate|date_format:'%Y/%m/%d'}{/if}" autocomplete="off"
                                 {tip class="lms-ui-date" text="Enter pay document date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
                         </td>
                     </tr>
@@ -227,9 +229,12 @@
                         <td>
                             <span class="nobr">
                                 {icon name="value" tip="Value"}
-                                <input class="netcurrencyvalue-input" onchange="convert_expence_values()" step=".01" type="number" id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]"
-                                    value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}" placeholder="{trans('Net value')}" required>
-                                <input class="amount-input" onchange="convert_expence_values()" step=".01" type="number" id="dialog-amount0" name="addpd[expenses][0][amount]"
+                                <input class="netcurrencyvalue-input" onchange="convert_expence_values()" step=".01" type="number"
+                                    id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" autocomplete="off"
+                                    value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}"
+                                    placeholder="{trans('Net value')}" required>
+                                <input class="amount-input" onchange="convert_expence_values()" step=".01" type="number"
+                                    id="dialog-amount0" name="addpd[expenses][0][amount]" autocomplete="off"
                                     value="{if isset($pdinfo)}{$pdinfo.amount}{else}1{/if}" placeholder="{trans('Amount')}" required {tip text="Amount"}>
                                 {tax_rate_selection
                                     id='dialog-taxid0'
@@ -241,7 +246,9 @@
                                     required=true
                                 }
                                 {icon name="description" tip="Description"}
-                                <input type="text" id="dialog-description0" name="addpd[expenses][0][description]" value="{if isset($pdinfo.description)}{$pdinfo.description|escape}{/if}" size="40" placeholder="{trans('Description')}">
+                                <input type="text" id="dialog-description0" name="addpd[expenses][0][description]"
+                                    value="{if isset($pdinfo.description)}{$pdinfo.description|escape}{/if}" size="40"
+                                    autocomplete="off" placeholder="{trans('Description')}">
                             </span>
                             <span class="nobr">
                                 {icon name="invproject" tip="Inv. Project"}

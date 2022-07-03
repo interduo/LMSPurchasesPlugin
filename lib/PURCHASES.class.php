@@ -620,7 +620,7 @@ class PURCHASES
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        $this->AddExpences($params['pdid'], $args['expenses']);
+        $this->AddExpense($params['pdid'], $args['expenses']);
 
         if (!empty($files)) {
             $argv = array(
@@ -697,7 +697,7 @@ class PURCHASES
             array($args['id'])
         );
 
-        $this->AddExpences($args['id'], $args['expenses']);
+        $this->AddExpense($args['id'], $args['expenses']);
 
         return null;
     }
@@ -871,7 +871,7 @@ class PURCHASES
         );
     }
 
-    public function AddExpences($pdid, $expenses)
+    public function AddExpense($pdid, $expenses)
     {
         foreach ($expenses as $idx => $e) {
             $expenses[$idx] = array(
