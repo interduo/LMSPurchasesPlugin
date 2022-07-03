@@ -96,22 +96,6 @@
                     </tr>
                     <tr>
                         <td>
-                            {icon name="timetable" label="Document date"}
-                        </td>
-                        <td>
-                            <input
-                                type="text" id="dialog-sdate" name="addpd[sdate]" placeholder="{trans('yyyy/mm/dd')}"
-                                value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required
-                                {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}>
-                            {day_selection
-                                elem='[name="addpd[sdate]"]'
-                                from_selector='#dialog-sdate'
-                                days='0, -1, -2, -3'
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
                             {icon name="customer" label="Supplier"}
                         </td>
                         <td>
@@ -123,6 +107,22 @@
                                 inputname='addpd[supplierid]'
                                 selectname='customer-select'
                                 selected=$pdinfo.supplierid
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {icon name="timetable" label="Document date"}
+                        </td>
+                        <td>
+                            <input
+                                type="text" id="dialog-sdate" name="addpd[sdate]" placeholder="{trans('yyyy/mm/dd')}"
+                                value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required
+                                {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}>
+                            {day_selection
+                                elem='[name="addpd[sdate]"]'
+                                from_selector='#dialog-sdate'
+                                days='0, -1, -2, -3'
                             }
                         </td>
                     </tr>

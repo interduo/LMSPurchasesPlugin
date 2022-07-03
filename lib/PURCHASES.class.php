@@ -620,39 +620,7 @@ class PURCHASES
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        foreach ($args['expenses'] as $idx => $e) {
-            $args['expenses'][$idx] = array(
-                'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
-                'amount' => $e['amount'],
-                'taxid' => intval($e['taxid']),
-                'description' => empty($args['description']) ? null : $e['description'],
-                'invprojects' => empty($args['invprojects']) ? null : $e['invprojects'],
-                'categories' => empty($args['categories']) ? null : $e['categories'],
-            );
-
-            $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netcurrencyvalue, amount, taxid, description)
-                    VALUES (?, ?, ?, ?, ?)',
-                array($params['pdid'], $e['netcurrencyvalue'], $e['amount'], $e['taxid'], $e['description'])
-            );
-            $args['contentid'] = $this->db->GetLastInsertID('pdcontents');
-            if (!empty($e['invprojects'])) {
-                foreach ($e['invprojects'] as $p) {
-                    $this->db->Execute(
-                        'INSERT INTO pdcontentinvprojects (contentid, invprojectid) VALUES (?, ?)',
-                        array($args['contentid'], $p)
-                    );
-                }
-            }
-            if (!empty($e['categories'])) {
-                foreach ($e['categories'] as $c) {
-                    $this->db->Execute(
-                        'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
-                        array($args['contentid'], $c)
-                    );
-                }
-            }
-        }
+        $this->AddExpences($params['pdid'], $args['expenses']);
 
         if (!empty($files)) {
             $argv = array(
@@ -935,169 +903,43 @@ class PURCHASES
         );
     }
 
-    public function PDStats()
+    public function AddExpences($pdid, $expenses)
     {
-        define('PD_PAID', 0);
-        define('PD_OVERDUE', 1);
-        define('PD_TODAY', 2);
-        define('PD_TOMORROW', 3);
-        define('PD_IN3DAYS', 4);
-        define('PD_IN7DAYS', 5);
-        define('PD_IN14DAYS', 6);
+        foreach ($expenses as $idx => $e) {
+            $expenses[$idx] = array(
+                'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
+                'amount' => $e['amount'],
+                'taxid' => intval($e['taxid']),
+                'description' => empty($args['description']) ? null : $e['description'],
+                'invprojects' => empty($args['invprojects']) ? null : $e['invprojects'],
+                'categories' => empty($args['categories']) ? null : $e['categories'],
+            );
 
+            $this->db->Execute(
+                'INSERT INTO pdcontents (pdid, netcurrencyvalue, amount, taxid, description)
+                    VALUES (?, ?, ?, ?, ?)',
+                array($pdid, $e['netcurrencyvalue'], $e['amount'], $e['taxid'], $e['description'])
+            );
 
-        $PDSTATS = array(
-            PD_PAID => array(
-                'summarylabel' => trans('Paid'),
-                'filter' => 'paydate IS NOT NULL',
-                'alias' => 'paid'
-            ),
-            PD_OVERDUE => array(
-                'summarylabel' => trans('Overdue'),
-                'filter' => 'paydate IS NULL AND (deadline+86399 < ?NOW?)',
-                'alias' => 'overdue'
-            ),
-            PD_TODAY => array(
-                'summarylabel' => trans('Today'),
-                'filter' => 'paydate IS NULL AND (deadline+86399 > ?NOW?) AND (deadline - ?NOW? < 86399)',
-                'alias' => 'today'
-            ),
-            PD_TOMORROW => array(
-                'summarylabel' => trans('Tomorrow'),
-                'filter' => 'paydate IS NULL AND (deadline+2*86399 > ?NOW?) AND (deadline - ?NOW? < 2*86399)',
-                'alias' => 'tomorrow'
-            ),
-            PD_IN3DAYS => array(
-                'summarylabel' => trans('In 3 days:'),
-                'filter' => 'paydate IS NULL AND deadline - ?NOW? < 3*86400',
-                'alias' => 'in3days'
-            ),
-            PD_IN7DAYS => array(
-                'summarylabel' => trans('In 7 days:'),
-                'filter' => 'paydate IS NULL AND deadline - ?NOW? < 7*86400',
-                'alias' => 'in7days'
-            ),
-            PD_IN14DAYS => array(
-                'summarylabel' => trans('In 14 days:'),
-                'filter' => 'paydate IS NULL AND deadline - ?NOW? < 14*86400',
-                'alias' => 'in14days'
-            ),
-        );
+            $contentid = $this->db->GetLastInsertID('pdcontents');
 
-        $sql = '';
-        foreach ($PDSTATS as $statusidx => $status) {
-            $sql .= ' COUNT(CASE WHEN ' . $status['filter'] . ' THEN 1 END) AS ' . $status['alias'] . ',
-            SUM(CASE WHEN ' . $status['filter'] . ' THEN grossvalue END) AS '.$status['alias'].'value,
-            ';
+            if (!empty($e['invprojects'])) {
+                foreach ($e['invprojects'] as $p) {
+                    $this->db->Execute(
+                        'INSERT INTO pdcontentinvprojects (contentid, invprojectid) VALUES (?, ?)',
+                        array($contentid, $p)
+                    );
+                }
+            }
+
+            if (!empty($e['categories'])) {
+                foreach ($e['categories'] as $c) {
+                    $this->db->Execute(
+                        'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
+                        array($contentid, $c)
+                    );
+                }
+            }
         }
-        return $this->db->GetRow(
-            'SELECT ' . $sql . ' COUNT(id) AS unpaid
-            FROM pds'
-        );
-    }
-
-    public function SupplierStats()
-    {
-        global $CSTATUSES;
-        $sql = '';
-        foreach ($CSTATUSES as $statusidx => $status) {
-            $sql .= ' COUNT(CASE WHEN status = ' . $statusidx . ' THEN 1 END) AS ' . $status['alias'] . ',';
-        }
-        $result = $this->db->GetRow(
-            'SELECT ' . $sql . ' COUNT(id) AS total
-            FROM customerview
-            WHERE deleted=0'
-        );
-
-        $tmp = $this->db->GetRow(
-            'SELECT
-                SUM(a.value) * -1 AS debtvalue,
-                COUNT(*) AS debt,
-                SUM(CASE WHEN a.status = ? THEN a.value ELSE 0 END) * -1 AS debtcollectionvalue
-            FROM (
-                SELECT c.status, b.balance AS value
-                FROM customerbalances b
-                LEFT JOIN customerview c ON (customerid = c.id)
-                WHERE c.deleted = 0 AND b.balance < 0
-            ) a',
-            array(
-                CSTATUS_DEBT_COLLECTION,
-            )
-        );
-
-        if (is_array($tmp)) {
-            $result = array_merge($result, $tmp);
-        }
-
-        return $result;
-    }
-
-// bazuje na https://github.com/kyob/LMSIncomePlugin
-    public function SalePerMonth($only_year)
-    {
-        return $this->db->GetAll(
-            'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
-                   FROM cash
-                   WHERE value<0
-                     AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
-                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time))
-                   ORDER BY month
-        '
-        );
-    }
-
-    public function SalePerMonthType($only_year, $servicetype = 'all')
-    {
-        switch ($servicetype) {
-            case '-1':
-                $inv = ' AND servicetype=-1 ';
-                break;
-            case '1':
-                $inv = ' AND servicetype=1 ';
-                break;
-            case '2':
-                $inv = ' AND servicetype=2 ';
-                break;
-            case '3':
-                $inv = ' AND servicetype=3 ';
-                break;
-            case '4':
-                $inv = ' AND servicetype=4 ';
-                break;
-            case '5':
-                $inv = ' AND servicetype=5 ';
-                break;
-            case '6':
-                $inv = ' AND servicetype=6 ';
-                break;
-            case 'all':
-            default:
-                break;
-        }
-        return $this->db->GetAll(
-            'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value)* (-1) AS suma
-                   FROM cash
-                   WHERE value<0
-                     AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
-                     ' . $inv . '
-                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time))
-                   ORDER BY month
-        '
-        );
-    }
-
-    // bazuje na https://github.com/kyob/LMSIncomePlugin
-    public function IncomePerMonth($only_year)
-    {
-        return $this->db->GetAll(
-            'SELECT EXTRACT(MONTH FROM to_timestamp(time)) AS month, SUM(value) AS suma
-                   FROM cash
-                   WHERE importid IS NOT NULL
-                     AND value>0
-                     AND EXTRACT(YEAR FROM to_timestamp(time))=' . $only_year . '
-                   GROUP BY EXTRACT(MONTH FROM to_timestamp(time))
-                   ORDER BY month
-        '
-        );
     }
 }
