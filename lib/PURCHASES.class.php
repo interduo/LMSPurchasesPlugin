@@ -697,39 +697,7 @@ class PURCHASES
             array($args['id'])
         );
 
-        foreach ($args['expenses'] as $e) {
-            $expence = array(
-                'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
-                'amount' => intval($e['amount']),
-                'taxid' => intval($e['taxid']),
-                'description' => empty($e['description']) ? null : $e['description'],
-                'invprojects' => !empty($e['invprojects']) ? $e['invprojects'] : null,
-                'categories' => !empty($e['categories']) ? $e['categories'] : null,
-            );
-            $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netcurrencyvalue, amount, taxid, description) VALUES (?, ?, ?, ?, ?)',
-                array($args['id'], $expence['netcurrencyvalue'], $expence['amount'], $expence['taxid'], $expence['description'])
-            );
-            $contentid = $this->db->GetLastInsertID('pdcontents');
-
-            if (!empty($expence['invprojects'])) {
-                foreach ($expence['invprojects'] as $ep) {
-                    $this->db->Execute(
-                        'INSERT INTO pdcontentinvprojects (contentid, invprojectid) VALUES (?, ?)',
-                        array($contentid, $ep)
-                    );
-                }
-            }
-
-            if (!empty($expence['categories'])) {
-                foreach ($expence['categories'] as $ec) {
-                    $this->db->Execute(
-                        'INSERT INTO pdcontentcat (contentid, categoryid) VALUES (?, ?)',
-                        array($contentid, $ec)
-                    );
-                }
-            }
-        }
+        $this->AddExpences($args['id'], $args['expenses']);
 
         return null;
     }
