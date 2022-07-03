@@ -5,6 +5,10 @@ if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('s
     access_denied();
 }
 
+//if (isset($_GET['checkpurchaseduplicates'])) {
+//    die('ajax działa');
+//}
+
 $default_taxrate = ConfigHelper::getConfig('pd.default_taxrate', '23.00');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
 $default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);

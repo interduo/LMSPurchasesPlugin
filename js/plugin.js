@@ -43,10 +43,9 @@
 
         var selectelem = document.querySelector('select#dialog-taxid0');
         selectelem.value = selectelem.getAttribute('data-default-value');
-
-        updateAdvancedSelects('#dialog-categories0, #dialog-invprojects0, #dialog-typeid');
         //clear expences - end
 
+        updateAdvancedSelects( "select[id^='dialog-']" );
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
         $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
     }
@@ -107,7 +106,6 @@
             if (pd.typeid) {
                 $("#dialog-typeid").val(pd.typeid).attr('data-template-typeid');
             }
-            updateAdvancedSelects("#dialog-typeid");
 
             $("#dialog-deadline").val(pd.deadline_formatted);
             $("#dialog-divisionid").val(pd.divisionid);
@@ -142,28 +140,14 @@
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
                 $("#dialog-description" + index).val(pd.expences[index].description);
 
-                var invprojects_itemname = '#dialog-invprojects' + index;
                 if (pd.expences[index].invprojects) {
-                    for (let idx = 0, len = pd.expences[index].invprojects.length; idx < len; idx++) {
-                        makeMultiselectOptionsSelectedUsingValue(invprojects_itemname, pd.expences[index].invprojects[idx].invprojectid);
-                    }
+                    pd.expences[index].invprojects.forEach(e => makeMultiselectOptionsSelectedUsingValue("#dialog-invprojects" + index, e.invprojectid))
                 }
-
-                var categories_itemname = '#dialog-categories' + index;
                 if (pd.expences[index].categories) {
-                    for (let idx = 0, len = pd.expences[index].categories.length; idx < len; idx++) {
-                        makeMultiselectOptionsSelectedUsingValue(categories_itemname, pd.expences[index].categories[idx].categoryid);
-                    }
-                }
-
-                if (index == 0) {
-                    updateAdvancedSelects( invprojects_itemname );
-                    updateAdvancedSelects( categories_itemname );
-                } else {
-                    initAdvancedSelects( invprojects_itemname );
-                    initAdvancedSelects( categories_itemname )
+                    pd.expences[index].invprojects.forEach(e => makeMultiselectOptionsSelectedUsingValue("#dialog-categories" + index, e.categoryid))
                 }
             }
+            updateAdvancedSelects( "select[id^='dialog-']" );
         }
 
         $( "#addpdmodal" ).dialog({
@@ -176,7 +160,7 @@
     };
 
     function makeMultiselectOptionsSelectedUsingValue(selectid, value) {
-      $( selectid + ' option[value="' + value + '"]').attr('selected','true');
+        $( selectid + ' option[value="' + value + '"]').attr('selected','true');
     }
 
     function increaseStringValue(str){
@@ -389,46 +373,44 @@
         }
 
         $('#column2').addClass('pdf-loaded').html('<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>').removeClass('hidden');
-        $( "#addpdmodal" ).dialog('option', 'width', window.innerWidth*0.9).dialog('option', 'height', window.innerHeight*0.9);
+        $( "#addpdmodal" ).dialog( { width: window.innerWidth*0.9, height: window.innerHeight*0.9 } );
     }
 
-    function convert_expence_values() {
-        //TODO: dokoncze przeliczanie jak bede robił statystyki ;-)
+    // function convert_expence_values() {
+    //     //TODO: dokoncze przeliczanie jak bede robił statystyki ;-)
+    //
+    //     return;
+    //     var elemid = event.target.id;
+    //     var expenceid = elemid.replace(/\D/g, "");
+    //
+    //     var elemnetto = document.getElementById('dialog-netcurrencyvalue' + expenceid);
+    //     var elemgross = document.getElementById('dialog-grosscurrencyvalue' + expenceid);
+    //     console.log("kliknięte pole: " + elemid + ' w wierszu: ' + expenceid);
+    //
+    //     var elemtax = document.getElementById("#dialog-taxid" + expenceid);
+    //     console.log(elemtax);
+    //     var selopt = elemtax.forEach(a => document.querySelectorAll('option[selected]'));
+    //     console.log(selopt);
+    //
+    //
+    //     switch(elemid) {
+    //         case 'dialog-grosscurrencyvalue' + expenceid:
+    //             console.log("wyliczam netto uzywając taxid");
+    //             break;
+    //         case 'dialog-taxid' + expenceid:
+    //         case 'dialog-netcurrencyvalue' + expenceid:
+    //         case 'dialog-amount' + expenceid:
+    //         default:
+    //             console.log("wyliczam brutto uzywając taxid");
+    //             ///elemgross.value = elemnetto.value * elemtax
+    //             break;
+    //     }
+    // }
 
-        return;
-        var elemid = event.target.id;
-        var expenceid = elemid.replace(/\D/g, "");
-
-        var elemnetto = document.getElementById('dialog-netcurrencyvalue' + expenceid);
-        var elemgross = document.getElementById('dialog-grosscurrencyvalue' + expenceid);
-        console.log("kliknięte pole: " + elemid + ' w wierszu: ' + expenceid);
-
-        var elemtax = document.getElementById("#dialog-taxid" + expenceid);
-        console.log(elemtax);
-        var selopt = elemtax.forEach(a => document.querySelectorAll('option[selected]'));
-        console.log(selopt);
-
-
-        switch(elemid) {
-            case 'dialog-grosscurrencyvalue' + expenceid:
-                console.log("wyliczam netto uzywając taxid");
-                break;
-            case 'dialog-taxid' + expenceid:
-            case 'dialog-netcurrencyvalue' + expenceid:
-            case 'dialog-amount' + expenceid:
-            default:
-                console.log("wyliczam brutto uzywając taxid");
-                ///elemgross.value = elemnetto.value * elemtax
-                break;
-        }
-    }
-
-    /*
-        let elem = document.getElementsByClassName('fileupload-files');
-        for (let idx = 0, len = elem; idx < len; idx++) {
-            elem.addEventListener('lms:fileupload:complete', function(idx) { console.log('plik wrzucony' + idx); }, false);
-        }
-    */
+    // $( '#files').on('lms:fileupload:complete',
+    //     function() {
+    //         console.log('pokazuje podglada pliku X');
+    //     }, false);
 
     let elem2 = document.getElementById('dialog-paytype');
      elem2.addEventListener("click", elem2 => change_pay_type(), false);
