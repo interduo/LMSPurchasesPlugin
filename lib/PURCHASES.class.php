@@ -625,15 +625,14 @@ class PURCHASES
         if (!empty($files)) {
             $argv = array(
                 'pdid' => $params['pdid'],
-                'files'=> $files
-            );
-            $this->AddPurchaseFiles($argv);
-        } elseif (!empty($attid)) {
-            $argv = array(
-                'pdid' => $params['pdid'],
                 'attid' => $params['attid'],
+                'files' => $files
             );
-            $this->MovePurchaseFileFromAnteroom($argv);
+            if ($params['attid']) {
+                $this->MovePurchaseFileFromAnteroom($argv);
+            } else {
+                $this->AddPurchaseFiles($argv);
+            }
         }
 
         return null;
