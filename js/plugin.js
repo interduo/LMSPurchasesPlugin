@@ -141,10 +141,11 @@
                 $("#dialog-description" + index).val(pd.expences[index].description);
 
                 if (pd.expences[index].invprojects) {
-                    pd.expences[index].invprojects.forEach(e => makeMultiselectOptionsSelectedUsingValue("#dialog-invprojects" + index, e.invprojectid))
+                    makeMultiselectOptionsSelectedUsingValues('dialog-invprojects' + index, getColumnFromArray(pd.expences[index].invprojects, "invprojectid"));
                 }
+
                 if (pd.expences[index].categories) {
-                    pd.expences[index].invprojects.forEach(e => makeMultiselectOptionsSelectedUsingValue("#dialog-categories" + index, e.categoryid))
+                    makeMultiselectOptionsSelectedUsingValues('dialog-categories' + index, getColumnFromArray(pd.expences[index].categories, "categoryid"));
                 }
             }
             updateAdvancedSelects( "select[id^='dialog-']" );
@@ -159,8 +160,16 @@
         show_inline_pdf_from_link('?m=pdview&id=' + template_id);
     };
 
-    function makeMultiselectOptionsSelectedUsingValue(selectid, value) {
-        $( selectid + ' option[value="' + value + '"]').attr('selected','true');
+    function getColumnFromArray(matrix, col) {
+        var column = [];
+        for(var i=0; i<matrix.length; i++) {
+            column.push(matrix[i][col]);
+        }
+        return column;
+    }
+
+    function makeMultiselectOptionsSelectedUsingValues(elem, values) {
+        $( "#" + elem).val(values);
     }
 
     function increaseStringValue(str){

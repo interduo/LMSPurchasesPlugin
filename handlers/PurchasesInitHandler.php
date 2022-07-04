@@ -47,18 +47,9 @@ class PurchasesInitHandler
             'purchases' => array(
                 'name' => trans('Purchases'),
                 'css' => 'lms-ui-icon-stats',
-                'link' => '?m=pddashboard',
                 'tip' => trans('Purchase Documents'),
                 'accesskey' => 'p',
                 'submenu' => array(
-                    /*
-                    array(
-                        'name' => trans('Dashboard'),
-                        'link' => '?m=pddashboard',
-                        'tip' => trans('Purchase documents dashboard'),
-                        'prio' => 180,
-                    ),
-                    */
                     'pdlist' => array(
                         'name' => trans('Purchase document list'),
                         'link' => '?m=pdlist',
