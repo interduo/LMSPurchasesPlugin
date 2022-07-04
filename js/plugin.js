@@ -300,10 +300,12 @@
             iban_button.disabled = true;
             ibaninput.removeAttribute('required');
             ibaninput.disabled = true;
-            if (paytype == 1) {
-                var paydate = document.getElementById("dialog-paydate");
-                var sdate = document.getElementById("dialog-sdate").value;
+            if (paytype == 1 || paytype == 8) {
+                let paydate = document.getElementById("dialog-paydate");
+                let deadline = document.getElementById("dialog-deadline");
+                let sdate = document.getElementById("dialog-sdate").value;
                 paydate.value = sdate;
+                deadline.value = sdate;
             }
         } else {
             iban.classList.remove("lms-ui-disabled");

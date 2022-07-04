@@ -121,11 +121,7 @@
                                 type="text" id="dialog-sdate" name="addpd[sdate]" placeholder="{trans('yyyy/mm/dd')}"
                                 value="{if isset($pdinfo.sdate)}{$pdinfo.sdate|date_format:'%Y/%m/%d'}{/if}" required autocomplete="off"
                                 {tip class="lms-ui-date" text="Enter document date in YYYY/MM/DD format or click to select it from calendar"}>
-                            {day_selection
-                                elem='[name="addpd[sdate]"]'
-                                from_selector='#dialog-sdate'
-                                days='0, -1, -2, -3'
-                            }
+                            {day_selection elem='#dialog-sdate' days='0,-1,-2,-3,-4,-5'}
                         </td>
                     </tr>
                     <tr>
@@ -181,11 +177,7 @@
                                 value="{if isset($pdinfo.deadline)}{$pdinfo.deadline|date_format:'%Y/%m/%d'}{/if}" required
                                 size="20" placeholder="{trans('yyyy/mm/dd')}"
                                 {tip class="lms-ui-date" text="Enter deadline in YYYY/MM/DD format or click to select it from calendar" trigger="deadline"}>
-                            {day_selection
-                                elem='[name="addpd[deadline]"]'
-                                from_selector="#dialog-sdate"
-                                days="7,10,14,21"
-                            }
+                            {day_selection elem="#dialog-deadline" days="0,3,7,10,14,21"}
                         </td>
                     </tr>
                     <tr>
