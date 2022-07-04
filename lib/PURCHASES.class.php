@@ -490,6 +490,16 @@ class PURCHASES
             $dstfilename = preg_replace('/[^\w\.-_]/', '_', $file['name']);
             $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
 
+            // check file exists - if found change name
+            $ix = 1;
+            while (file_exists($dstfile)) {
+                $oldname = pathinfo($file['name'], PATHINFO_FILENAME);
+                $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $dstfilename = $oldname . '_' . $ix . '.' . $extension;
+                $dstfile = $pdid_dir . DIRECTORY_SEPARATOR . $dstfilename;
+                $ix++;
+            }
+
             if ($file['content']) {
                 $i = 1;
                 while (file_exists($dstfile)) {
