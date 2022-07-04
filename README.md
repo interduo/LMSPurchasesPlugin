@@ -24,13 +24,15 @@ https://github.com/chilek/lms/pull/2265
 2. git clone https://github.com/interduo/LMSPurchasesPlugin/ plugins/LMSPurchasesPlugin.
 3. composer update --no-dev
 4. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
-6. Ustawić zmienne konfiguracyjne wtyczki.
-7. Utworzyć katalog zdefiniowany w pd.storage_dir i nadać mu uprawnienia
+5. Ustawić zmienne konfiguracyjne wtyczki.
+6. Utworzyć katalog zdefiniowany w pd.storage_dir i nadać mu uprawnienia
+
 np.
-mkdir storage/pd;
-chown 33:33 storage/pd;
-chmod 770 storage/pd;
-8. Nadaj uprawnienia użytkownikowi do wtyczki.
+mkdir -p storage/pd/anteroom;
+chown -R 33:33 storage/pd;
+chmod -R 750 storage/pd;
+
+8. Nadaj uprawnienia użytkownikom do wtyczki.
 9. (opcjonalnie) Dodaj do crontaba skrypt bin/lms-pdf-import-imap-parser.php zaciągający dokumenty kosztowe z maila
 
 **Aktualizacja wtyczki:**

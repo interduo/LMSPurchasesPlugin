@@ -287,6 +287,19 @@
         }
     }
 
+    function show_hide_customeraddbtn() {
+        let btn = document.getElementById('customeraddbtn');
+        let supplierid = document.getElementById('dialog-supplierid').value;
+
+        if (supplierid == '') {
+            console.log('pokazuje przycisk');
+            btn.classList.remove('hidden');
+        } else {
+            console.log('ukrywam przycisk');
+            btn.classList.add('hidden');
+        }
+    }
+
     function change_pay_type() {
         var elem = document.getElementById('dialog-paytype');
         var paytype = elem.value;

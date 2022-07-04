@@ -99,7 +99,11 @@
                                 inputname='addpd[supplierid]'
                                 selectname='customer-select'
                                 selected=$pdinfo.supplierid
+                                customOnChange='show_hide_customeraddbtn()'
                             }
+                            <div id="customeraddbtn">
+                                {button label='Add' icon='add' href='?m=customeradd' tip='Add customer' external=true}
+                            </div>
                         </td>
                     </tr>
                     <tr>
