@@ -35,6 +35,7 @@
         $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");
         change_pay_type();
 
+        $('.lms-ui-customer-select-name').html('<a href=""></a>');
         $('#dialog-supplierid').trigger('input');
 
         //clear expences - start
