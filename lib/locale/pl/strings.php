@@ -7,6 +7,7 @@ $_LANG['expence description'] = 'opis wydatku';
 $_LANG['Import box'] = 'Wrzutnia';
 $_LANG['View type'] = 'Typ widoku';
 $_LANG['Add many'] = 'Dodaj wiele';
+$_LANG['Add customer'] = 'Dodaj klienta';
 $_LANG['Document uploads'] = 'Wrzutnia dokumentów';
 $_LANG['Add empty row'] = 'Dodaj pusty wiersz';
 $_LANG['Payment export'] = 'Eksport płatności';
