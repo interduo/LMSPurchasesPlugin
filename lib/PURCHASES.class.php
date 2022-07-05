@@ -919,10 +919,13 @@ class PURCHASES
     public function documentExist($supplierid, $fullnumber)
     {
         $supplierid = intval($supplierid);
-        $fullnumber = htmlspecialchars($fullnumber);
+        $fullnumber = strtoupper(htmlspecialchars($fullnumber));
 
         return $this->db->GetOne(
-            'SELECT id FROM pds WHERE supplierid = ? AND fullnumber = ?', array($supplierid, $fullnumber)
+            'SELECT id 
+              FROM pds 
+              WHERE supplierid = ? AND UPPER(fullnumber) = ?',
+            array($supplierid, $fullnumber)
         );
     }
 }

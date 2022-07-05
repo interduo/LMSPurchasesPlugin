@@ -450,7 +450,7 @@
 
             if (duplicateid && (typeof(template_id) == 'undefined'
                 || (typeof(template_id) != 'undefined' && template_id != duplicateid))) {
-                duplicate_checker.classList.add('lms-ui-icon-critical');
+                duplicate_checker.classList.add('lms-ui-icon-warn');
                 alertDialog('{trans("There is the same full document number in database for this supplier - this is probably duplicate")}', this);
             } else {
                 duplicate_checker.classList.add('lms-ui-icon-check');
