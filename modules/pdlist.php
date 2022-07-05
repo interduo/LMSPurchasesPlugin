@@ -5,9 +5,22 @@ if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('s
     access_denied();
 }
 
-//if (isset($_GET['checkpurchaseduplicates'])) {
-//    die('ajax działa');
-//}
+if (isset($_GET['documentexist'])) {
+    $supplierid = intval($_POST['supplierid']);
+    $fullnumber = htmlspecialchars($_POST['fullnumber']);
+
+    if (empty($supplierid) || empty($fullnumber)) {
+        die();
+    }
+
+    $duplicate_found = $PURCHASES->documentExist($supplierid, $fullnumber);
+    if (empty($duplicate_found)) {
+        print_r(json_encode(false));
+    } else {
+        print_r(json_encode($duplicate_found));
+    }
+    die();
+}
 
 $default_taxrate = ConfigHelper::getConfig('pd.default_taxrate', '23.00');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');

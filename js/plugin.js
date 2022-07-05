@@ -85,10 +85,10 @@
         return response.responseJSON;
     };
 
-    function checkDocumentDuplicates(supplierid, fullnumber){
-        var response = $.get({
-            url: '?m=pdlist&checkpurchaseduplicates',
-            type: 'GET',
+    function documentExist(supplierid, fullnumber){
+        var response = $.post({
+            url: '?m=pdlist&documentexist',
+            type: 'POST',
             dataType: "json",
             async: false,
             data: { supplierid: supplierid, fullnumber: fullnumber },
@@ -100,6 +100,7 @@
         clear_pd_form();
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
+        $( "#addpd-form" ).attr('data-templateid-number', template_id);
 
         if (template_id) {
             var pd = get_ajax_pdinfo(template_id);
@@ -294,10 +295,8 @@
         let supplierid = document.getElementById('dialog-supplierid').value;
 
         if (supplierid == '') {
-            console.log('pokazuje przycisk');
             btn.classList.remove('hidden');
         } else {
-            console.log('ukrywam przycisk');
             btn.classList.add('hidden');
         }
     }
@@ -438,14 +437,26 @@
     //         console.log('pokazuje podglada pliku X');
     //     }, false);
 
-    let elem2 = document.getElementById('dialog-paytype');
-     elem2.addEventListener("click", elem2 => change_pay_type(), false);
+    document.getElementById('dialog-paytype').addEventListener("click", e => change_pay_type(), false);
+    document.getElementById('dialog-currency').addEventListener("click", e => change_currency(), false);
+    document.getElementById('dialog-fullnumber').addEventListener(
+        "change", e => {
+            let duplicateid = documentExist(document.getElementById('dialog-supplierid').value, document.getElementById('dialog-fullnumber').value);
+            let duplicate_checker = document.getElementById('dialog-duplicate-checker');
+            let template_id = document.getElementById('addpd-form').getAttribute('data-templateid-number');
 
-     let elem3 = document.getElementById('dialog-currency');
-     elem3.addEventListener("click", elem3 => change_currency(), false);
+            duplicate_checker.classList.remove('ui-icon-closethick', 'lms-ui-icon-check', 'hidden');
+            duplicate_checker.removeAttribute('title');
 
-     let elem4 = document.getElementById('dialog-fullnumber');
-     elem4.addEventListener("change", elem4 => checkDocumentDuplicates(document.querySelector(".lms-ui-customer-select-name").innerHTML.match(/(\d+)/), elem4.value), false);
+            if (duplicateid && (typeof(template_id) == 'undefined'
+                || (typeof(template_id) != 'undefined' && template_id != duplicateid))) {
+                duplicate_checker.classList.add('lms-ui-icon-critical');
+                alertDialog({trans('There is the same full document number in database for this supplier - this is probably duplicate')});
+            } else {
+                duplicate_checker.classList.add('lms-ui-icon-check');
+            }
+        }, false
+    );
 
      $(function() {
          $( '.delete-pd' ).click(function() {
