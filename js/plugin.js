@@ -87,14 +87,14 @@
 
     function checkDocumentDuplicates(supplierid, fullnumber){
         var response = $.get({
-        url: '?m=pdlist&checkpurchaseduplicates',
-        type: 'GET',
-        dataType: "json",
-        async: false,
-        data: { supplierid: supplierid, fullnumber: fullnumber },
-    });
-    return response.responseJSON;
-};
+            url: '?m=pdlist&checkpurchaseduplicates',
+            type: 'GET',
+            dataType: "json",
+            async: false,
+            data: { supplierid: supplierid, fullnumber: fullnumber },
+        });
+        return response.responseJSON;
+    };
 
     function open_modify_dialog (template_id) {
         clear_pd_form();
@@ -157,7 +157,9 @@
             title: "{trans("Modify purchase document")} " + template_id
         }).dialog( "open" )
 
-        show_inline_pdf_from_link('?m=pdview&id=' + template_id);
+        if (pd.fileupload !== null) {
+            show_inline_pdf_from_link('?m=pdview&id=' + template_id);
+        }
     };
 
     function getColumnFromArray(matrix, col) {

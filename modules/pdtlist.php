@@ -63,4 +63,5 @@ switch ($action) {
 $SMARTY->assign('action', $action);
 $SMARTY->assign('pdtlist', $pdtlist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
+
 $SMARTY->display('pdtlist.html');

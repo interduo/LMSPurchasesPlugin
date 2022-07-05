@@ -59,7 +59,9 @@ switch ($action) {
     default:
         break;
 }
+
 $SMARTY->assign('action', $action);
 $SMARTY->assign('pdclist', $pdclist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
+
 $SMARTY->display('pdcategorylist.html');
