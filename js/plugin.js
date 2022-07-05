@@ -447,7 +447,6 @@
             let template_id = document.getElementById('addpd-form').getAttribute('data-templateid-number');
 
             duplicate_checker.classList.remove('ui-icon-closethick', 'lms-ui-icon-check', 'hidden');
-            duplicate_checker.removeAttribute('title');
 
             if (duplicateid && (typeof(template_id) == 'undefined'
                 || (typeof(template_id) != 'undefined' && template_id != duplicateid))) {
