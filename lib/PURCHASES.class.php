@@ -281,7 +281,7 @@ class PURCHASES
             }
 
             $src_iban = ConfigHelper::getConfig('pd.source_iban');
-            $exportfilename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d')));
+            $exportfilename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d') . '.txt'));
 
             $exported = '';
             foreach ($result as $r) {
