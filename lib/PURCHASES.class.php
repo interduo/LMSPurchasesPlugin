@@ -11,9 +11,14 @@ class PURCHASES
 
     public function GetPurchaseList($params = array())
     {
+        $src_iban = ConfigHelper::getConfig('pd.source_iban');
+        $export_filename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d') . '.txt'));
+        $export_privileges = ConfigHelper::checkPrivilege('purchases_export_purchases');
+
         if (!empty($params)) {
             extract($params);
         }
+
         if (isset($orderby)) {
             switch ($orderby) {
                 case 'supplierid':
@@ -273,25 +278,16 @@ class PURCHASES
                     }
                 }
             }
-        }
 
-        if (isset($export) && $export == 1) {
-            if (!ConfigHelper::checkPrivilege('purchases_export_purchases')) {
-                die();
+            if (!empty($export) && $export_privileges) {
+                $exported = '';
+                foreach ($result as $r) {
+                    $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
+                        . $r['doc_grosscurrnecyvalue'] . ';' . $r['typename'] . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
+                }
+                header('Content-Disposition: attachment; filename=' . $export_filename);
+                die($exported);
             }
-
-            $src_iban = ConfigHelper::getConfig('pd.source_iban');
-            $exportfilename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d') . '.txt'));
-
-            $exported = '';
-            foreach ($result as $r) {
-                $title = $r['typename'] . $r['fullnumber'];
-                $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                    . $r['doc_grosscurrnecyvalue'] . ';' . $title . ';;;' . date("Y-m-d") . PHP_EOL;
-            }
-            header('Content-Disposition: attachment; filename=' . $exportfilename);
-            print_r($exported);
-            die();
         }
 
         return $result;
