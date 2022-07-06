@@ -22,7 +22,7 @@ if (isset($_GET['documentexist'])) {
     die();
 }
 
-$default_taxrate = ConfigHelper::getConfig('pd.default_taxrate', '23.00');
+$default_taxrate = ConfigHelper::getConfig('phpui.default_taxrate', '23.00');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
 $default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);

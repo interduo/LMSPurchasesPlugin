@@ -138,7 +138,6 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'replace_spaces_in_attachment_names', true, 'zamień spacje w nazwach plików', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'import_only_file_extensions', 'pdf', 'zaczytuj tylko załączniki z rozszerzenami zdefiniowanymi tą zmienną - rozszerzenia oddzielone przecinkami', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'allowed_sender_emails', 'mail1@domain.pl,mail2@domain.pl', 'zaczytuj tylko maile z podanych adresów zdefiniowanych tą zmienną - maile oddzielone przecinkami, pusta wartość lub wyłączona listę dostępu', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_taxid', 1, 'ID domyślnej stawki podatkowej', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('phpui', 'allowed_document_scan_mime_types', 'application/pdf', 'Pozwól dodawać jedynie zdefiniowane typy plików w tej zmiennej', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
