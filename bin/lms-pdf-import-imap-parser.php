@@ -190,7 +190,7 @@ EOF;
   $postid = null;
 
   if (!function_exists('imap_open')) {
-      fprintf($stderr, "Fatal error: PHP IMAP extension is required!" . PGP_EOL);
+      fprintf($stderr, "Fatal error: PHP IMAP extension is required!" . PHP_EOL);
       exit(5);
   }
 
@@ -361,18 +361,19 @@ EOF;
                         $file_name = trim(iconv_mime_decode($file_name));
 
                         $files[] = array(
-                        'name' => $file_name,
-                        'extension' => pathinfo($file_name, PATHINFO_EXTENSION),
-                        'type' => $partdata['content-type'],
-                        'content' => &$file_content,
-                        'content-id' => !$isAttachment && isset($partdata['content-id']) ? $partdata['content-id'] : null,
+                            'name' => $file_name,
+                            'anteroom' => true,
+                            'extension' => pathinfo($file_name, PATHINFO_EXTENSION),
+                            'type' => $partdata['content-type'],
+                            'content' => &$file_content,
+                            'content-id' => !$isAttachment && isset($partdata['content-id']) ? $partdata['content-id'] : null,
                         );
                         $attachments[] = array(
-                        'filename' => $file_name,
-                        'extension' => pathinfo($file_name, PATHINFO_EXTENSION),
-                        'content_type' => $partdata['content-type'],
-                        'data' => &$file_content,
-                        'content-id' => !$isAttachment && isset($partdata['content-id']) ? $partdata['content-id'] : null,
+                            'name' => $file_name,
+                            'extension' => pathinfo($file_name, PATHINFO_EXTENSION),
+                            'content_type' => $partdata['content-type'],
+                            'data' => &$file_content,
+                            'content-id' => !$isAttachment && isset($partdata['content-id']) ? $partdata['content-id'] : null,
                         );
                         unset($file_content);
                   }
@@ -423,22 +424,13 @@ EOF;
               }
           }
 
-          // change the spaces to underscores
-          if ($rtparser_replace_spaces_in_attachment_names) {
-              foreach ($files as $idx => $f) {
-                  if (strpos($f['name'], ' ') !== false) {
-                      $files[$idx]['name'] = str_replace(' ', '_', $f['name']);
-                  }
-              }
-          }
-
           if (empty($rtparser_allowed_sender_emails) || in_array($fromemail, explode(',', $rtparser_allowed_sender_emails))) {
               $params = array(
                 'createtime' => $timestamp,
                 'sender' => (empty($fromname) ? substr(trim($mh_from), 0, 254) : substr(trim($fromname), 0, 254)),
                 'sender_mail' => (empty($fromemail) ? null : substr(trim($fromemail), 0, 254)),
                 'comment' => substr(trim($mh_subject), 0, 254),
-                'files' => array('files' => $files),
+                'files' => $files,
                 'anteroom' => true,
               );
 
