@@ -57,7 +57,7 @@
         {/if}
     </td>
     <td class="buttons">
-        {if isset($pd.files) && ConfigHelper::checkPrivilege('purchase_add_purchase')}
+        {if isset($pd.files) && ConfigHelper::checkPrivilege('purchases_add_purchase')}
             {foreach $pd.files as $file}
                 {button type="link" icon="attachment" name="fileupload" tip=$file.filename href="?m=pdview&attid={$file.id}"}
             {/foreach}

@@ -190,7 +190,7 @@ if (!empty($_GET['action'])) {
     $action = $_GET['action'];
     switch ($action) {
         case 'add':
-            if (!empty($addpd) && ConfigHelper::checkPrivilege('purchase_add_purchase')) {
+            if (!empty($addpd) && ConfigHelper::checkPrivilege('purchases_add_purchase')) {
                 $PURCHASES->AddPurchase($addpd, $files);
                 $docid = $DB->GetLastInsertID('pds');
                 if (!empty($attid)) {
@@ -205,7 +205,7 @@ if (!empty($_GET['action'])) {
         case 'modify':
             $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
             $SMARTY->assign('pdinfo', $pdinfo);
-            if (isset($addpd) && ConfigHelper::checkPrivilege('purchase_modify_purchase')) {
+            if (isset($addpd) && ConfigHelper::checkPrivilege('purchases_modify_purchase')) {
                 $addpd['id'] = $id;
                 $PURCHASES->UpdatePurchaseDocument($addpd);
             }
@@ -235,6 +235,7 @@ if (!empty($_GET['action'])) {
 }
 
 $SMARTY->assign('anteroom', $PURCHASES->GetPurchaseFiles(array('anteroom' => true)));
+
 if (!empty($_GET['attid'])) {
     $SMARTY->assign('attid', intval($_GET['attid']));
 }

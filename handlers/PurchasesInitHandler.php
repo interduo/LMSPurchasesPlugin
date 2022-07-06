@@ -101,52 +101,65 @@ class PurchasesInitHandler
 
         $permission = new Permission(
             'purchases',
-            '(PURCHASES) Ewidencja dokumentów kosztowych',
-            '^pd(list|uploads|view).*$',
+            '[KOSZTY] Przeglądanie listy dokumentów kosztowych',
+            '^pd(list|view).*$',
             null,
-            array('purchases' => array('pdlist', 'pduploads'))
+            array('purchases' => array('pdlist'))
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchases_mark_purchase_as_paid',
-            '(PURCHASES) Oznaczanie dokumentów jako zapłacone'
+            '[KOSZTY] Oznaczanie dokumentów jako zapłacone'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchases_delete_purchase',
-            '(PURCHASES) Kasowanie dokumentów kosztowych'
+            '[KOSZTY] Kasowanie dokumentów kosztowych'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
-            'purchase_modify_purchase',
-            '(PURCHASES) Edycja zakupów/wydatków/dokumentów kosztowych'
+            'purchases_modify_purchase',
+            '[KOSZTY] Edycja dokumentów kosztowych'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
-            'purchase_add_purchase',
-            '(PURCHASES) Księgowanie zakupów/wydatków/dokumentów kosztowych'
+            'purchases_add_purchase_to_anteroom',
+            '[KOSZTY] Dodawanie dokumentów kosztowych do poczekalnii',
+            'pduploads',
+            null,
+            array('purchases' => array('pduploads'))
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
-            'purchase_export_purchases',
-            '(PURCHASES) Export zakupów CSV'
+            'purchases_add_purchase',
+            '[KOSZTY] Księgowanie dokumentów kosztowych',
+            'pduploads',
+            null,
+            array('purchases' => array('pduploads'))
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
-            'purchase_management_types',
-            '(PURCHASES) Zarządzanie typami dokumentów kosztowych',
+            'purchases_export_purchases',
+            '[KOSZTY] Export zakupów CSV'
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchases_management_types',
+            '[KOSZTY] Zarządzanie typami dokumentów kosztowych',
             '^pdtlist.*$',
             null,
             array('purchases' => array('pdtlist'))
@@ -155,8 +168,8 @@ class PurchasesInitHandler
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
-            'purchase_management_categories',
-            '(PURCHASES) Zarządzanie kategoriami wydatków',
+            'purchases_management_categories',
+            '[KOSZTY] Zarządzanie kategoriami wydatków',
             '^pdclist.*$',
             null,
             array('purchases' => array('pdcategorylist'))
