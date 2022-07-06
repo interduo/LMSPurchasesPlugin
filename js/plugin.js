@@ -15,8 +15,8 @@
     function clear_pd_form() {
         $("#addpd-form")[0].reset();
         $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
-        $("input").val('');
-        $('option:selected').removeAttr('selected');
+        $("input[form='addpd-form']").val('');
+        $("select[form='addpd-form'] option:selected").removeAttr('selected');
         $( "#filecontainer").removeClass('hidden');
 
         $("#dialog-iban").show();
