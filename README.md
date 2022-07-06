@@ -25,12 +25,12 @@ https://github.com/chilek/lms/pull/2265
 3. composer update --no-dev
 4. Uaktywnić wtyczkę z poziomu interfejsu użytkownika LMS.
 5. Ustawić zmienne konfiguracyjne wtyczki.
-6. Utworzyć katalog zdefiniowany w pd.storage_dir i nadać mu uprawnienia
+6. Utworzyć katalog zdefiniowany w pd.storage_dir i nadać mu uprawnienia (jeśli katalog storage_dir jest w katalogu aplikacji LMS należy dodać go do .gitignore) 
 
 np.
 mkdir -p storage/pd/anteroom;
-chown -R 33:33 storage/pd;
-chmod -R 750 storage/pd;
+chown -R 33:33 storage/pd/anteroom;
+chmod -R 750 storage/pd/anteroom;
 
 8. Nadaj uprawnienia użytkownikom do wtyczki.
 9. (opcjonalnie) Dodaj do crontaba skrypt bin/lms-pdf-import-imap-parser.php zaciągający dokumenty kosztowe z maila

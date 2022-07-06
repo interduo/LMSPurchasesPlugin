@@ -438,10 +438,9 @@
     //         console.log('pokazuje podglada pliku X');
     //     }, false);
 
-    document.getElementById('dialog-paytype').addEventListener("click", e => change_pay_type(), false);
-    document.getElementById('dialog-currency').addEventListener("click", e => change_currency(), false);
-    document.getElementById('dialog-fullnumber').addEventListener(
-        "change", e => {
+    document.getElementById('dialog-paytype').addEventListener("change", e => change_pay_type(), false);
+    document.getElementById('dialog-currency').addEventListener("change", e => change_currency(), false);
+    document.getElementById('dialog-fullnumber').addEventListener("change", e => {
             let duplicateid = documentExist(document.getElementById('dialog-supplierid').value, document.getElementById('dialog-fullnumber').value);
             let duplicate_checker = document.getElementById('dialog-duplicate-checker');
             let template_id = document.getElementById('addpd-form').getAttribute('data-templateid-number');
