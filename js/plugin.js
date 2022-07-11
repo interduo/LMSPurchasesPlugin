@@ -465,4 +465,13 @@
              return false;
          });
      });
+
+    $(function() {
+        $( '.payment-pd' ).click(function() {
+            confirmDialog( "{trans('Are you sure you want to mark this purchase document as paid?')}" , this).done(function() {
+                    location.href = $(this).attr('href');
+                });
+            return false;
+        });
+    });
 </script>
