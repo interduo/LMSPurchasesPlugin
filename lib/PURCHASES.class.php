@@ -902,22 +902,24 @@ class PURCHASES
         return null;
     }
 
-    private function ReplaceUserPdCategories($userids, $catid, $ommitdelete)
+    private function ReplaceUserPdCategories($userids, $categoryid, $nodelete)
     {
-        if (empty($ommitdelete)) {
+        if (!empty($nodelete)) {
             $this->db->Execute(
                 'DELETE FROM pdusercategories WHERE categoryid = ?',
-                array($catid)
+                array($categoryid)
             );
         }
 
-        if (!empty($userids)) {
-            foreach ($userids as $uid) {
-                $this->db->Execute(
-                    'INSERT INTO pdusercategories (userid, categoryid) VALUES (?, ?)',
-                    array($uid, $catid)
-                );
-            }
+        if (empty($userids)) {
+            return;
+        }
+
+        foreach ($userids as $uid) {
+            $this->db->Execute(
+                'INSERT INTO pdusercategories (userid, categoryid) VALUES (?, ?)',
+                array($uid, $categoryid)
+            );
         }
 
         return;
@@ -931,13 +933,16 @@ class PURCHASES
         );
     }
 
-    public function UpdatePurchaseCategory($args)
+    public function UpdatePurchaseCategory($params)
     {
+        if (empty($params['id'])) {
+            die();
+        }
+
         $args = array(
-            'name' => $args['name'],
-            'description' => empty($args['description']) ? null : $args['description'],
-            'id' => $args['id'],
-            'userids' => $args['userids'],
+            'name' => $params['name'],
+            'description' => empty($params['description']) ? null : $params['description'],
+            'id' => intval($params['id']),
         );
 
         $this->db->Execute(
@@ -945,7 +950,9 @@ class PURCHASES
             $args
         );
 
-        $this->ReplaceUserPdCategories($args['userids'], $args['id'], true);
+        if (isset($params['userids'])) {
+            $this->ReplaceUserPdCategories($params['userids'], $args['id'], true);
+        }
 
         return;
     }
