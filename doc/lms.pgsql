@@ -24,6 +24,21 @@ CREATE TABLE pdcategories (
 );
 
 /* --------------------------------------------------------
+Structure of table "pdusercategories"
+-------------------------------------------------------- */
+
+DROP TABLE IF EXISTS pdusercategories CASCADE;
+CREATE TABLE pdusercategories (
+    id serial PRIMARY KEY,
+    userid integer NOT NULL
+        CONSTRAINT pdusercategories_userid_fkey REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    categoryid integer NOT NULL
+        CONSTRAINT pdusercategories_categoryid_fkey REFERENCES pdcategories (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT pdusercategories_userid_categoryid_ukey UNIQUE (userid, categoryid)
+);
+
+
+/* --------------------------------------------------------
 Structure of table "pds"
 -------------------------------------------------------- */
 

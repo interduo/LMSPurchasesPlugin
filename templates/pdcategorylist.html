@@ -16,6 +16,9 @@
             <td>
                 {icon name="description" label="Description"}
             </td>
+            <td>
+                {icon name="user" label="User ID"}
+            </td>
             <td class="text-right" class="lms-ui-box-buttons">
                 {button name="addpdc" id="addpdcbtn" icon="add" accesskey="v" label="Add" onclick="open_add_dialog()"}
             </td>
@@ -33,6 +36,13 @@
             <td data-template-description="{$pdc.description}" {tip text=$pdc.description}>
                 {$pdc.description|trunescape:40}
             </td>
+            <td>
+                {if !empty($pdc.userids)}
+                    {foreach $pdc.userids as $u}
+                        {$u.username}<br>
+                    {/foreach}
+                {/if}
+            </td>
             <td class="buttons">
                 {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pdc.id})"}
                 {button type="link" icon="delete" href="?m=pdcategorylist&action=delete&id={$pdc.id}" tip="Delete" class="delete-pdc"}
@@ -45,14 +55,7 @@
 {include file="pdcmodify.html"}
 
 <script>
-    $(function() {
-        $( '.delete-pdc' ).click(function() {
-            confirmDialog( $t("Are you sure you want to delete that purchase category?") , this).done(function() {
-                location.href = $(this).attr('href');
-            });
-            return false;
-        });
-    });
+
 </script>
 
 {/block}

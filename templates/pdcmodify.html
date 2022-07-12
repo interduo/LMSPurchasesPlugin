@@ -39,6 +39,20 @@
                     </td>
                 </tr>
                 <tr>
+                    <td class="nobr">
+                        {icon name="permissions" label="Privileges"}
+                    </td>
+                    <td>
+                        <select id="dialog-userids" name="addpdc[userids][]" class="lms-ui-advanced-select" multiple
+                            placeholder='{trans("— Select user —")}' required>
+                            <option value='' disabled>{trans("— Select users —")}</option>
+                            {foreach $pluginusers as $user}
+                                <option value="{$user.id}">{$user.name} ({$user.login})</option>
+                            {/foreach}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2" class="button-bar text-center">
                         {button id="submit-modal-button" type="submit" label="{if $action == 'modify'}Submit{else}Add{/if}" icon="submit"}
                         {button label="Cancel" icon="cancel" id="close"}
@@ -49,35 +63,5 @@
         </form>
 </div>
 
-<script>
-    $( "#addpdcmodal" ).dialog( {
-        autoOpen: {if $action}true{else}false{/if},
-        resizable: false,
-        width: 'auto',
-        modal: true,
-        title: "{if $action == 'modify'}{trans("Modify purchase category")} {$pdcinfo.id}{else}{trans("Add purchase category")}{/if}"
-    });
-
-    $( "#close" ).click(function() {
-        $( "#addpdcmodal" ).dialog( "close" );
-    });
-
-    function open_add_dialog() {
-        $( "#addpdc-form" ).attr('action', '?m=pdcategorylist&action=add');
-        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-
-        $( "#dialog-id", "#dialog-name", "#dialog-description" ).val();
-        $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Add purchase document type")}").dialog( "open" );
-    };
-
-    function open_modify_dialog (template_id) {
-        $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
-        $( "#addpdc-form" ).attr('action', '?m=pdcategorylist&action=modify&id=' + template_id);
-        if (template_id) {
-            var row = $('[data-template-id=' + template_id + ']');
-            $("#dialog-name").val($(row).find("[data-template-name]").attr('data-template-name'));
-            $("#dialog-description").val($(row).find("[data-template-description]").attr('data-template-description'));
-        }
-        $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
-    };
-</script>
+{include file="../js/shared.js"}
+{include file="../js/pdcategories.js"}

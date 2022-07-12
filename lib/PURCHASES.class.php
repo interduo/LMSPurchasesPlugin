@@ -8,6 +8,17 @@ class PURCHASES
     {
         $this->db = LMSDB::getInstance();
     }
+/*
+    public function GetUserlistWithRight($right)
+    {
+        $right ? $right = '%' . $right . '%' : die();
+        return $this->db->GetAllByKey(
+            'SELECT id, login, ' . $this->db->Concat('lastname', "' '", 'firstname') . ' AS name FROM users'
+            . ' WHERE rights LIKE ?',
+            'id',
+            array($right)
+        );
+    }*/
 
     public function GetPurchaseList($params = array())
     {
@@ -812,54 +823,112 @@ class PURCHASES
         if (isset($orderby)) {
             switch ($orderby) {
                 case 'name':
-                    $orderby = ' ORDER BY pdcategories.name';
+                    $orderby = ' ORDER BY c.name';
                     break;
                 case 'description':
-                    $orderby = ' ORDER BY pdcategories.description';
+                    $orderby = ' ORDER BY c.description';
                     break;
                 case 'id':
                 default:
-                    $orderby = ' ORDER BY pdcategories.id';
+                    $orderby = ' ORDER BY c.id';
                     break;
             }
         } else {
-            $orderby = ' ORDER BY pdcategories.id';
+            $orderby = ' ORDER BY c.id';
         }
 
-        return $this->db->GetAllByKey(
-            'SELECT pdcategories.id, pdcategories.name, pdcategories.description
-                FROM pdcategories '
+        $results = $this->db->GetAllByKey(
+            'SELECT c.id, c.name, c.description
+            FROM pdcategories c
+                LEFT JOIN pdusercategories uc ON (uc.categoryid = c.id)
+            '
             . $orderby,
             'id'
         );
+
+        foreach ($results as &$r) {
+            $r['userids'] = $this->GetUsersForCategory($r['id']);
+        }
+
+        return $results;
     }
 
-    public function GetPurchaseCategoryInfo($id)
+    private function GetUsersForCategory($categoryid)
     {
-        return $this->db->GetAll(
-            'SELECT pdcategories.id, pdcategories.name, pdcategories.description
-            FROM pdcategories
-            WHERE pdcategories.id = ?',
-            array($id)
+        return $this->db->GetAllByKey(
+            'SELECT ' . $this->db->Concat('u.lastname', "' '", 'u.firstname')
+            . ' AS username, uc.id, u.id
+            FROM pdusercategories uc
+                LEFT JOIN users u ON (uc.userid = u.id)
+            WHERE uc.categoryid = ?',
+            'id',
+            array($categoryid)
         );
+    }
+
+    public function GetPurchaseCategoryInfo($categoryid)
+    {
+        $results = $this->db->GetRow('SELECT id, name, description FROM pdcategories WHERE id = ?', array($categoryid));
+
+        if (empty($results)) {
+            return;
+        }
+
+        foreach ($results as $r) {
+            $results['userids'] = $this->GetUsersForCategory($categoryid);
+        }
+
+        return $results;
     }
 
     public function AddPurchaseCategory($args)
     {
         $args = array(
             'name' => $args['name'],
-            'description' => empty($args['description']) ? null : $args['description']
+            'description' => empty($args['description']) ? null : $args['description'],
+            'userids' => empty($args['userids']) ? null : $args['userids'],
         );
 
-        return $this->db->Execute(
+        $this->db->Execute(
             'INSERT INTO pdcategories (name, description) VALUES (?, ?)',
             $args
         );
+
+        if ($args['userids']) {
+            $catid = $this->db->GetLastInsertID('pdcategories');
+            $this->ReplaceUserPdCategories($args['userids'], $catid, true);
+        }
+
+        return null;
+    }
+
+    private function ReplaceUserPdCategories($userids, $catid, $ommitdelete)
+    {
+        if (empty($ommitdelete)) {
+            $this->db->Execute(
+                'DELETE FROM pdusercategories WHERE categoryid = ?',
+                array($catid)
+            );
+        }
+
+        if (!empty($userids)) {
+            foreach ($userids as $uid) {
+                $this->db->Execute(
+                    'INSERT INTO pdusercategories (userid, categoryid) VALUES (?, ?)',
+                    array($uid, $catid)
+                );
+            }
+        }
+
+        return;
     }
 
     public function DeletePurchaseCategory($id)
     {
-        return $this->db->Execute('DELETE FROM pdcategories WHERE id = ?', array($id));
+        return $this->db->Execute(
+            'DELETE FROM pdcategories WHERE id = ?',
+            array($id)
+        );
     }
 
     public function UpdatePurchaseCategory($args)
@@ -868,12 +937,17 @@ class PURCHASES
             'name' => $args['name'],
             'description' => empty($args['description']) ? null : $args['description'],
             'id' => $args['id'],
+            'userids' => $args['userids'],
         );
 
-        return $this->db->Execute(
+        $this->db->Execute(
             'UPDATE pdcategories SET name = ?, description = ? WHERE id = ?',
             $args
         );
+
+        $this->ReplaceUserPdCategories($args['userids'], $args['id'], true);
+
+        return;
     }
 
     public function AddExpense($pdid, $expenses)

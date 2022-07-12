@@ -26,6 +26,11 @@
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
+if (!empty($_GET['catid'])) {
+    print_r(json_encode($PURCHASES->GetPurchaseCategoryInfo(intval($_GET['catid']))));
+    die();
+}
+
 $action = $_GET['action'];
 $id = $_GET['id'];
 
@@ -38,8 +43,8 @@ $pdclist = $PURCHASES->GetPurchaseCategoryList($params);
 
 switch ($action) {
     case 'add':
-            $PURCHASES->AddPurchaseCategory($addpdc);
-            $SESSION->redirect('?m=pdcategorylist');
+        $PURCHASES->AddPurchaseCategory($addpdc);
+        $SESSION->redirect('?m=pdcategorylist');
         break;
     case 'modify':
         $pdcinfo = $PURCHASES->GetPurchaseCategoryInfo($id);
@@ -63,5 +68,6 @@ switch ($action) {
 $SMARTY->assign('action', $action);
 $SMARTY->assign('pdclist', $pdclist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
+$SMARTY->assign('pluginusers', $LMS->GetUserList(array('short' => true)));
 
 $SMARTY->display('pdcategorylist.html');
