@@ -15,7 +15,12 @@
         $( "#addpdc-form" ).attr('action', '?m=pdcategorylist&action=add');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
 
+        clear_pd_form("addpdc-form");
+
         $( "#dialog-id", "#dialog-name", "#dialog-description", "#dialog-userids" ).val();
+        document.querySelectorAll("select[id^='dialog-userids'] option").forEach(e => e.removeAttribute("selected"));
+        updateAdvancedSelects( "select[id^='dialog-userids']" );
+
         $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Add purchase document type")}").dialog( "open" );
     };
 
@@ -23,18 +28,18 @@
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
         $( "#addpdc-form" ).attr('action', '?m=pdcategorylist&action=modify&id=' + template_id);
 
-    if (template_id) {
-        let pc = get_ajax_pdcategoryinfo(template_id);
-        $("#dialog-name").val(pc.name);
-        $("#dialog-description").val(pc.description);
-        if (pc.userids) {
-            let userids = Object.keys(pc.userids);
-            $( "#dialog-userids").val(userids);
+        clear_pd_form("addpdc-form");
+        if (template_id) {
+            let pc = get_ajax_pdcategoryinfo(template_id);
+            $("#dialog-name").val(pc.name);
+            $("#dialog-description").val(pc.description);
+            if (pc.userids) {
+                $( "#dialog-userids").val(Object.keys(pc.userids));
+            }
         }
-    }
-    updateAdvancedSelects( "select[id^='dialog-']" );
-    $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
-};
+        updateAdvancedSelects( "select[id^='dialog-']" );
+        $( "#addpdcmodal" ).dialog( "option", "title", "{trans("Modify purchase document type")} " + template_id).dialog( "open" );
+    };
 
     function get_ajax_pdcategoryinfo(id){
         var response = $.get({

@@ -12,47 +12,11 @@
         $( "#addpdmodal" ).dialog( "close" );
     });
 
-    function clear_pd_form() {
-        $("#addpd-form")[0].reset();
-        $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
-        $("input[form='addpd-form']").val('');
-        $("select[form='addpd-form'] option:selected").removeAttr('selected');
-        $( "#filecontainer").removeClass('hidden');
-
-        $("#dialog-iban").show();
-        $("#bankaccounts-container").empty();
-
-        $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
-
-        $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
-        $("#dialog-divisionid").val( {$default_divisionid} );
-
-        document.querySelectorAll('div.fileupload-files, div#herewillbethepdf').forEach(e => e.innerHTML = '');
-
-        $("#dialog-currency option[value='" + '{$default_currency}' + "']").attr("selected", "true");
-        change_currency();
-
-        $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");
-        change_pay_type();
-
-        $('.lms-ui-customer-select-name').html('<a href=""></a>');
-        $('#dialog-supplierid').trigger('input');
-
-        //clear expences - start
-        $(".cloned").remove();
-        $('#dialog-amount0').val('1');
-
-        var selectelem = document.querySelector('select#dialog-taxid0');
-        selectelem.value = selectelem.getAttribute('data-default-value');
-        //clear expences - end
-
-        updateAdvancedSelects( "select[id^='dialog-']" );
-        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
-        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-    }
-
     function open_add_dialog() {
-        clear_pd_form();
+        clear_pd_form("addpd-form");
+        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+        change_currency();
+        change_pay_type();
 
         $( "#addpdmodal" ).dialog({
           width: 'auto',
@@ -62,7 +26,10 @@
     };
 
     function open_add_anteroom_dialog(attid) {
-        clear_pd_form();
+        clear_pd_form("addpd-form");
+        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+        change_currency();
+        change_pay_type();
 
         $( "#filecontainer").addClass('hidden');
         show_inline_pdf_from_link('?m=pdview&attid=' + attid);
@@ -98,10 +65,12 @@
     };
 
     function open_modify_dialog (template_id) {
-        clear_pd_form();
+        clear_pd_form("addpd-form");
+        $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id).attr('data-templateid-number', template_id);
+        change_currency();
+        change_pay_type();
+
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
-        $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id);
-        $( "#addpd-form" ).attr('data-templateid-number', template_id);
 
         if (template_id) {
             var pd = get_ajax_pdinfo(template_id);
