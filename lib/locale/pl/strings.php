@@ -30,6 +30,7 @@ $_LANG['Suppliers'] = 'Dostawcy';
 $_LANG['Select supplier'] = 'Wybierz dostawcę';
 $_LANG['— Select users —'] = 'Wybierz użytkowników';
 $_LANG['Privileges'] = 'Uprawnienia';
+$_LANG['No access - check privileges for categories'] = 'Brak dostępu - sprawdź uprawnienia do kategorie';
 $_LANG['Document date'] = 'Data dokumentu';
 $_LANG['No purchase documents in database'] = 'Brak dokumentów sprzedaży w bazie danych';
 $_LANG['Document upload date'] = 'Data wgrania dokumentu';

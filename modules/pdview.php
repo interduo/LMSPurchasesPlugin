@@ -1,13 +1,22 @@
 ﻿<?php
 
-$id = intval($_GET['id']) ?? '';
-$attid = intval($_GET['attid']) ?? '';
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+}
+
+if (isset($_GET['attid'])) {
+    intval($_GET['attid']);
+}
 
 if (empty($attid) && empty($id)) {
     access_denied();
 }
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
+
+if (empty($id) || !$PURCHASES->IsThisUserAllowedToViewThisPurchase(Auth::GetCurrentUser(), $id)) {
+    die(trans('No access - check privileges for categories'));
+}
 
 $files = $PURCHASES->GetPurchaseFiles((empty($id) ? array('attid' => $attid) : array('pdid' => $id)));
 

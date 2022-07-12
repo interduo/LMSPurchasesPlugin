@@ -35,7 +35,7 @@
         $('#dialog-supplierid').trigger('input');
         //clear expences - start
 
-        if (formid == 'addpd-form') {
+        if (formid == '#addpd-form') {
             $(".cloned").remove();
             $('#dialog-amount0').val('1');
             var selectelem = document.querySelectorAll('select#dialog-taxid0');

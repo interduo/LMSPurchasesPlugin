@@ -306,13 +306,14 @@ class PURCHASES
 
     public function GetCategoriesUsingDocumentId($id)
     {
-        return $this->db->GetAll(
+        return $this->db->GetAllByKey(
             'SELECT DISTINCT pcc.categoryid, pdc.name
                 FROM pdcontentcat pcc
                     LEFT JOIN pdcategories pdc ON (pdc.id = pcc.categoryid)
                     LEFT JOIN pdcontents pc ON (pc.id = pcc.contentid)
                     LEFT JOIN pds pd ON (pd.id = pc.pdid)
                 WHERE pd.id = ?',
+            'categoryid',
             array($id)
         );
     }
@@ -923,6 +924,45 @@ class PURCHASES
         }
 
         return;
+    }
+
+    private function GetUserPurchaseCategories($userid)
+    {
+        return $this->db->GetCol(
+            'SELECT DISTINCT categoryid
+            FROM pdusercategories
+            WHERE userid = ?',
+            array($userid)
+        );
+    }
+
+    public function IsThisUserAllowedToViewThisPurchase($userid, $docid)
+    {
+        $userid = intval($userid) ?? Auth::GetCurrentUser();
+        if (empty($docid)) {
+            return false;
+        }
+
+        ///dostep gdy faktura nie ma kategorii
+        ///użytkownik musi mieć uprawnienia do co najmniej jednej kategorii z wydatku faktury
+        $doccategories = $this->GetCategoriesUsingDocumentId($docid);
+        $usercategories = $this->GetUserPurchaseCategories($userid);
+
+        if (empty($doccategories) || ConfigHelper::checkPrivilege('superuser')) {
+            return true;
+        }
+
+        if (empty($usercategories)) {
+            return false;
+        } else {
+            if (!empty(array_intersect(
+                $doccategories,
+                is_array($usercategories) ? $usercategories : array($usercategories)
+            ))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function DeletePurchaseCategory($id)
