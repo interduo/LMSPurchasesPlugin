@@ -31,33 +31,16 @@ class PURCHASES
         }
 
         if (isset($orderby)) {
-            switch ($orderby) {
-                case 'supplierid':
-                    $orderby = ' ORDER BY pds.supplierid';
-                    break;
-                case 'cdate':
-                    $orderby = ' ORDER BY pds.cdate';
-                    break;
-                case 'sdate':
-                    $orderby = ' ORDER BY pds.sdate';
-                    break;
-                case 'fullnumber':
-                    $orderby = ' ORDER BY pds.fullnumber';
-                    break;
-                case 'netcurrencyvalue':
-                    $orderby = ' ORDER BY pds.netcurrencyvalue';
-                    break;
-                case 'grosscurrencyvalue':
-                    $orderby = ' ORDER BY pds.netcurrencyvalue';
-                    break;
-                case 'description':
-                    $orderby = ' ORDER BY pdc.description';
-                    break;
-                case 'id':
-                default:
-                    $orderby = ' ORDER BY pds.id';
-                    break;
-            }
+            $orderby = ' ORDER BY ' . match ($orderby) {
+                'supplierid' => 'pds.supplierid',
+                'cdate' => 'pds.cdate',
+                'sdate' => 'pds.sdate',
+                'fullnumber' => 'pds.fullnumber',
+                'netcurrencyvalue' => 'pds.netcurrencyvalue',
+                'grosscurrencyvalue' => 'pds.netcurrencyvalue',
+                'description' => 'pdc.description',
+                default => 'pds.id',
+            };
         } else {
             $orderby = '';
         }
@@ -605,19 +588,26 @@ class PURCHASES
 
     public function DeleteAttachementFile($attid)
     {
-        $file = $this->db->GetOne(
-            'SELECT filepath FROM pdattachments WHERE id = ?',
+        if (empty($attid) || !ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
+            die();
+        }
+
+        $file = $this->db->GetRow(
+            'SELECT filename, filepath FROM pdattachments WHERE id = ?',
             array($attid)
         );
 
-        if (file_exists($file)) {
-            unlink($file);
-        }
-
         $attachment_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd')
             . DIRECTORY_SEPARATOR . $file['filepath'];
+
+        $fullpath = $attachment_dir . DIRECTORY_SEPARATOR . $file['name'];
+
         if (is_dir($attachment_dir) && count(scandir($attachment_dir)) == 2) {
             rmdir($attachment_dir);
+        } else {
+            if (file_exists($fullpath)) {
+                unlink($fullpath);
+            }
         }
 
         return $this->db->Execute(
@@ -673,12 +663,14 @@ class PURCHASES
 
     public function DeletePurchaseDocument($id)
     {
-        if (empty($id)) {
-            exit;
+        if (empty($id) || !ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
+            die();
         }
 
-        $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
-        @rrmdir($pd_dir . DIRECTORY_SEPARATOR . $id);
+        $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd' . DIRECTORY_SEPARATOR . $id);
+        if (file_exists($pd_dir)) {
+            @rrmdir($pd_dir);
+        }
 
         return $this->db->Execute(
             'DELETE FROM pds WHERE id = ?',
@@ -688,7 +680,7 @@ class PURCHASES
 
     public function MarkAsPaid($id)
     {
-        if (empty($id)) {
+        if (empty($id) || !ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')) {
             exit;
         }
 
