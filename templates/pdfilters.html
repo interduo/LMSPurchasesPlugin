@@ -56,9 +56,9 @@
                 {icon name="timetable" tip="Document date"}
                 {date_period_preset from='[name="datefrom"]' to='[name="dateto"]'
                     periods="previous-year,previous-month,current-year,current-month,next-month,next-year" onchange="document.filter.submit();"}<br>
-                <input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}"
+                <input type="text" size="10" name="datefrom" value="{if $params.datefrom}{$params.datefrom|date_format:"Y/m/d"|escape}{/if}" placeholder="{trans("yyyy/mm/dd")}"
                     {tip class="lms-ui-date" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>
-                <input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}"
+                <input type="text" size="10" name="dateto" value="{if $params.dateto}{$params.dateto|date_format:"Y/m/d"|escape}{/if}" placeholder="{trans("yyyy/mm/dd")}"
                     {tip class="lms-ui-date" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>
             </td>
             <td class="nobr">
