@@ -600,14 +600,14 @@ class PURCHASES
         $attachment_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd')
             . DIRECTORY_SEPARATOR . $file['filepath'];
 
-        $fullpath = $attachment_dir . DIRECTORY_SEPARATOR . $file['name'];
+        $fullpath = $attachment_dir . DIRECTORY_SEPARATOR . $file['filename'];
+
+        if (file_exists($fullpath)) {
+            unlink($fullpath);
+        }
 
         if (is_dir($attachment_dir) && count(scandir($attachment_dir)) == 2) {
             rmdir($attachment_dir);
-        } else {
-            if (file_exists($fullpath)) {
-                unlink($fullpath);
-            }
         }
 
         return $this->db->Execute(
