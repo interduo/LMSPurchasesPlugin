@@ -1,5 +1,9 @@
 <?php
 
+$_LANG['net from'] = 'netto od';
+$_LANG['net to'] = 'netto do';
+$_LANG['gross from'] = 'brutto od';
+$_LANG['gross to'] = 'brutto do';
 $_LANG['Clear'] = 'Wyczyść';
 $_LANG['Delete from anteroom'] = 'Usuń z poczekalnii';
 $_LANG['Add Purchase'] = 'Dodaj wydatek';
@@ -30,6 +34,7 @@ $_LANG['Suppliers'] = 'Dostawcy';
 $_LANG['Select supplier'] = 'Wybierz dostawcę';
 $_LANG['— Select users —'] = 'Wybierz użytkowników';
 $_LANG['Privileges'] = 'Uprawnienia';
+$_LANG['User ID'] = 'ID użytkownika';
 $_LANG['No access - check privileges for categories'] = 'Brak dostępu - sprawdź uprawnienia do kategorie';
 $_LANG['Document date'] = 'Data dokumentu';
 $_LANG['No purchase documents in database'] = 'Brak dokumentów sprzedaży w bazie danych';

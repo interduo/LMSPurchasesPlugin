@@ -117,34 +117,64 @@ if (!empty($_GET['period'])) {
     $params['period'] = $default_period_filter;
 }
 
-// valuefrom filter
-if (isset($_GET['valuefrom'])) {
-    if (empty($_GET['valuefrom'])) {
-        $params['valuefrom'] = '';
+// net currency valuefrom filter
+if (isset($_GET['netcurrencyvaluefrom'])) {
+    if (empty($_GET['netcurrencyvaluefrom'])) {
+        $params['netcurrencyvaluefrom'] = '';
     } else {
-        if ($_GET['valuefrom'] == 'all') {
-            $params['valuefrom'] = array();
+        if ($_GET['netcurrencyvaluefrom'] == 'all') {
+            $params['netcurrencyvaluefrom'] = array();
         } else {
-            $params['valuefrom'] = intval($_GET['valuefrom']);
+            $params['netcurrencyvaluefrom'] = intval($_GET['netcurrencyvaluefrom']);
         }
     }
 } else {
-    $params['valuefrom'] = null;
+    $params['netcurrencyvaluefrom'] = null;
 }
 
-// valueto filter
-if (isset($_GET['valueto'])) {
-    if (empty($_GET['valueto'])) {
-        $params['valueto'] = '';
+// net currency valueto filter
+if (isset($_GET['netcurrencyvalueto'])) {
+    if (empty($_GET['netcurrencyvalueto'])) {
+        $params['netcurrencyvalueto'] = '';
     } else {
-        if ($_GET['valueto'] == 'all') {
-            $params['valueto'] = null;
+        if ($_GET['netcurrencyvalueto'] == 'all') {
+            $params['netcurrencyvalueto'] = null;
         } else {
-            $params['valueto'] = intval($_GET['valueto']);
+            $params['netcurrencyvalueto'] = intval($_GET['netcurrencyvalueto']);
         }
     }
 } else {
-    $params['valueto'] = null;
+    $params['netcurrencyvalueto'] = null;
+}
+
+// gross currency valuefrom filter
+if (isset($_GET['grosscurrencyvaluefrom'])) {
+    if (empty($_GET['grosscurrencyvaluefrom'])) {
+        $params['grosscurrencyvaluefrom'] = '';
+    } else {
+        if ($_GET['grosscurrencyvaluefrom'] == 'all') {
+            $params['grosscurrencyvaluefrom'] = array();
+        } else {
+            $params['grosscurrencyvaluefrom'] = intval($_GET['grosscurrencyvaluefrom']);
+        }
+    }
+} else {
+    $params['grosscurrencyvaluefrom'] = null;
+}
+
+// gross currency valueto filter
+if (isset($_GET['grosscurrencyvalueto'])) {
+    if (empty($_GET['grosscurrencyvalueto'])) {
+        $params['grosscurrencyvalueto'] = '';
+    } else {
+        if ($_GET['grosscurrencyvalueto'] == 'all') {
+            $params['grosscurrencyvalueto'] = null;
+        } else {
+            $params['grosscurrencyvalueto'] = intval($_GET['grosscurrencyvalueto']);
+        }
+    }
+} else {
+    $params['grosscurrencyvalueto'] = null;
 }
 
 // document number filter

@@ -35,9 +35,13 @@
                 </select>
             </td>
             <td class="nobr">
+                {icon name="money" tip="Net value"}
+                <input type="text" size="8" name="netcurrencyvaluefrom" placeholder="{trans("net from")}" value="{if $params.netcurrencyvaluefrom}{$params.netcurrencyvaluefrom}{/if}" onchange="document.filter.submit();" class="filters">
+                <input type="text" size="8" name="netcurrencyvalueto" placeholder="{trans("net to")}" value="{if $params.netcurrencyvalueto}{$params.netcurrencyvalueto}{/if}" onchange="document.filter.submit();" class="filters">
+                <br>
                 {icon name="money" tip="Gross value"}
-                <input type="text" size="8" name="valuefrom" placeholder="{trans("from")}" value="{if $params.valuefrom}{$params.valuefrom}{/if}" onchange="document.filter.submit();" class="filters">
-                <input type="text" size="8" name="valueto" placeholder="{trans("to")}" value="{if $params.valueto}{$params.valueto}{/if}" onchange="document.filter.submit();" class="filters">
+                <input type="text" size="8" name="grosscurrencyvaluefrom" placeholder="{trans("gross from")}" value="{if $params.grosscurrencyvaluefrom}{$params.grosscurrencyvaluefrom}{/if}" onchange="document.filter.submit();" class="filters">
+                <input type="text" size="8" name="grosscurrencyvalueto" placeholder="{trans("gross to")}" value="{if $params.grosscurrencyvalueto}{$params.grosscurrencyvalueto}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td class="nobr">
                 {icon name="type" tip="View type"}
@@ -67,7 +71,7 @@
             </td>
             <td class="nobr">
                 {icon name="categories" tip="Categories"}
-                <select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-multiselect" multiple>
+                <select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-advanced-select" multiple>
                     {if !empty($categorylist)}
                         {foreach $categorylist as $c}
                             <option value="{$c.id}" {if !empty($params.catids) && in_array($c.id, $params.catids)} selected{/if}>{$c.name}</option>
@@ -80,7 +84,7 @@
             </td>
             <td class="nobr">
                 {icon name="summary" tip="Document number"}
-                <input type="text" size="10" name="docnumber" placeholder="{trans("document number")}" value="{if isset($params.docnumber)}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
+                <input type="text" size="12" name="docnumber" placeholder="{trans("document number")}" value="{if isset($params.docnumber)}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td class="nobr">
                 <input type="hidden" name="export" id="export-input" value="0">

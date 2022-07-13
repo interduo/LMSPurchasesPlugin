@@ -47,6 +47,9 @@ class PURCHASES
                 case 'netcurrencyvalue':
                     $orderby = ' ORDER BY pds.netcurrencyvalue';
                     break;
+                case 'grosscurrencyvalue':
+                    $orderby = ' ORDER BY pds.netcurrencyvalue';
+                    break;
                 case 'description':
                     $orderby = ' ORDER BY pdc.description';
                     break;
@@ -188,28 +191,36 @@ class PURCHASES
             $periodfilter = '';
         }
 
-        // VALUE FROM FILTER
-        if (isset($valuefrom)) {
-            $valuefrom = intval($valuefrom);
-            if (!empty($valuefrom)) {
-                $valuefromhavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) >= ' . $valuefrom;
-            } else {
-                $valuefromhavingfilter = '';
-            }
+        // NET CURRENCY VALUE FROM FILTER
+        $netcurrencyvaluefrom = intval($netcurrencyvaluefrom);
+        if (empty($netcurrencyvaluefrom)) {
+            $netcurrencyvaluefromhavingfilter = '';
         } else {
-            $valuefromhavingfilter = '';
+            $netcurrencyvaluefromhavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvaluefrom;
         }
 
-        // VALUE TO FILTER
-        if (isset($valueto)) {
-            $valueto = intval($valueto);
-            if (!empty($valueto)) {
-                $valuetohavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) <= ' . $valueto;
-            } else {
-                $valuetohavingfilter = '';
-            }
+        // NET CURRENCY VALUE TO FILTER
+        $netcurrencyvalueto = intval($netcurrencyvalueto);
+        if (empty($netcurrencyvalueto)) {
+            $netcurrencyvaluetohavingfilter = '';
         } else {
-            $valuetohavingfilter = '';
+            $netcurrencyvaluetohavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvalueto;
+        }
+
+        // GROSS CURRENCY VALUE FROM FILTER
+        $grosscurrencyvaluefrom = intval($grosscurrencyvaluefrom);
+        if (empty($grosscurrencyvaluefrom)) {
+            $grosscurrencyvaluefromhavingfilter = '';
+        } else {
+            $grosscurrencyvaluefromhavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) >= ' . $grosscurrencyvaluefrom;
+        }
+
+        // GROSS CURRENCY VALUE TO FILTER
+        $grosscurrencyvalueto = intval($grosscurrencyvalueto);
+        if (empty($grosscurrencyvalueto)) {
+            $grosscurrencyvaluetohavingfilter = '';
+        } else {
+            $grosscurrencyvaluetohavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) >= ' . $grosscurrencyvalueto;
         }
 
         if (!empty($description)) {
@@ -254,10 +265,14 @@ class PURCHASES
             . $paymentsfilter
             . $periodfilter
             . $groupby
-            . ((!empty($valuefromhavingfilter) || !empty($valuetohavingfilter)) ? ' HAVING' : '' )
-            . $valuefromhavingfilter
-            . ((!empty($valuefromhavingfilter) && !empty($valuetohavingfilter)) ? ' AND ' : '')
-            . $valuetohavingfilter
+            . ((!empty($grosscurrencyvaluefromhavingfilter) || !empty($grosscurrencyvaluetohavingfilter)) ? ' HAVING' : '' )
+            . $grosscurrencyvaluefromhavingfilter
+            . ((!empty($grosscurrencyvaluefromhavingfilter) && !empty($grosscurrencyvaluetohavingfilter)) ? ' AND ' : '')
+            . $grosscurrencyvaluetohavingfilter
+            . ((!empty($netcurrencyvaluefromhavingfilter) || !empty($netcurrencyvaluetohavingfilter)) ? ' HAVING' : '' )
+            . $netcurrencyvaluefromhavingfilter
+            . ((!empty($netcurrencyvaluefromhavingfilter) && !empty($netcurrencyvaluetohavingfilter)) ? ' AND ' : '')
+            . $netcurrencyvaluetohavingfilter
             . $orderby
         );
 
