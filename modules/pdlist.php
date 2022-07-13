@@ -193,6 +193,19 @@ if (!empty($_GET['catid'])) {
     }
 }
 
+// invproject filter
+if (!empty($_GET['invprojectids'])) {
+    if (!is_array($_GET['invprojectids'])) {
+        $_GET['invprojectids'] = array($_GET['invprojectids']);
+    }
+
+    if (in_array('all', $_GET['invprojectids'])) {
+        $params['invprojectids'] = null;
+    } else {
+        $params['invprojectids'] = Utils::filterIntegers($_GET['invprojectids']);
+    }
+}
+
 // filters: expence description
 if (!empty($_GET['description'])) {
     $params['description'] = htmlspecialchars($_GET['description']);

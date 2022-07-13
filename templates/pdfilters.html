@@ -68,7 +68,7 @@
             </td>
             <td class="nobr">
                 {icon name="categories" tip="Categories"}
-                <select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-advanced-select" multiple>
+                <select size=1 name="catid[]" onchange="document.filter.submit();" class="lms-ui-multiselect" multiple>
                     {if !empty($categorylist)}
                         {foreach $categorylist as $c}
                             <option value="{$c.id}" {if !empty($params.catids) && in_array($c.id, $params.catids)} selected{/if}>{$c.name}</option>
@@ -77,6 +77,19 @@
                     <option value="-1" {if !empty($params.catids) && in_array(-1, $params.catids)} selected{/if} data-exclusive>{trans("with category")}</option>
                     <option value="-2" {if !empty($params.catids) && in_array(-2, $params.catids)} selected{/if} data-exclusive>{trans("without category")}</option>
                     <option value="" {if empty($params.catids)}selected{/if} data-exclusive>{trans("filter off")}</option>
+                </select>
+            </td>
+            <td class="nobr">
+                {icon name="invproject" tip="Investment Project"}
+                <select size=1 name="invprojectids[]" onchange="document.filter.submit();" class="lms-ui-multiselect" multiple>
+                    {if !empty($projectslist)}
+                        {foreach $projectslist as $p}
+                            <option value="{$p.id}" {if !empty($params.invprojectids) && in_array($p.id, $params.invprojectids)} selected{/if}>{$p.name}</option>
+                        {/foreach}
+                    {/if}
+                    <option value="-1" {if !empty($params.invprojectids) && in_array(-1, $params.invprojectids)} selected{/if} data-exclusive>{trans("with invproject")}</option>
+                    <option value="-2" {if !empty($params.invprojectids) && in_array(-2, $params.invprojectids)} selected{/if} data-exclusive>{trans("without invproject")}</option>
+                    <option value="" {if empty($params.invprojectids)}selected{/if} data-exclusive>{trans("filter off")}</option>
                 </select>
             </td>
             <td class="nobr">

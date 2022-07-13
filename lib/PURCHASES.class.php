@@ -107,6 +107,13 @@ class PURCHASES
             $categoriesfilter = '';
         }
 
+        // CATEGORY FILTER
+        if (!empty($invprojectids)) {
+            $invprojectsfilter = ' AND pdci.invprojectid IN (' . implode(',', $invprojectids) . ')';
+        } else {
+            $invprojectsfilter = '';
+        }
+
         // DATE FROM FILTER
         $datefrom = intval($datefrom);
         $datefromfilter = !empty($datefrom) ? ' AND sdate >= ' . $datefrom : null;
@@ -176,6 +183,7 @@ class PURCHASES
                     . ' FROM pds
                     LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
                     LEFT JOIN pdcontentcat pdcc ON (pdcc.contentid = pdc.id)
+                    LEFT JOIN pdcontentinvprojects pdci ON (pdci.contentid = pdc.id)
                     LEFT JOIN customers cv ON (cv.id = pds.supplierid)
                     LEFT JOIN taxes tx ON (tx.id = pdc.taxid)
                     LEFT JOIN pdtypes pt ON (pt.id = pds.typeid)
@@ -185,6 +193,7 @@ class PURCHASES
             . $divisionfilter
             . $docnumberfilter
             . $categoriesfilter
+            . $invprojectsfilter
             . $supplierfilter
             . $expencedescriptionfilter
             . $paymentsfilter
