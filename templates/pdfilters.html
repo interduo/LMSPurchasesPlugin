@@ -54,20 +54,17 @@
         <tr>
             <td class="nobr">
                 {icon name="timetable" tip="Document date"}
-                <select size="1" name="period" onchange="document.filter.submit();">
-                    <option value="-1" {if $params.period=='-1'} selected{/if}>{trans("filter off")}</option>
-                    <option value="1" {if !empty($params.period) && $params.period=='1'} selected{/if}>{trans("current week")}</option>
-                    <option value="2" {if !empty($params.period) && $params.period=='2'} selected{/if}>{trans("previous week")}</option>
-                    <option value="3" {if !empty($params.period) && $params.period=='3'} selected{/if}>{trans("current month")}</option>
-                    <option value="4" {if !empty($params.period) && $params.period=='4'} selected{/if}>{trans("previous month")}</option>
-                    <option value="5" {if !empty($params.period) && $params.period=='5'} selected{/if}>{trans("current quarter")}</option>
-                    <option value="6" {if !empty($params.period) && $params.period=='6'} selected{/if}>{trans("current year")}</option>
-                </select>
+                {date_period_preset from='[name="datefrom"]' to='[name="dateto"]'
+                    periods="previous-year,previous-month,current-year,current-month,next-month,next-year" onchange="document.filter.submit();"}<br>
+                <input type="text" size="10" name="datefrom" value="" placeholder="{trans("yyyy/mm/dd")}"
+                    {tip class="lms-ui-date" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="datefrom"}>
+                <input type="text" size="10" name="dateto" value="" placeholder="{trans("yyyy/mm/dd")}"
+                    {tip class="lms-ui-date" text="Enter date in 'yyyy/mm/dd' format (empty field means current date) or click to choose it from calendar" trigger="dateto"}>
             </td>
             <td class="nobr">
                 {icon name="description" tip="expence description"}
                 <input type="text" name="description" placeholder="{trans('expence description')}"
-                        onchange="document.filter.submit();" value="{if $params.description}{$params.description|escape}{/if}">
+                    onchange="document.filter.submit();" value="{if $params.description}{$params.description|escape}{/if}">
             </td>
             <td class="nobr">
                 {icon name="categories" tip="Categories"}

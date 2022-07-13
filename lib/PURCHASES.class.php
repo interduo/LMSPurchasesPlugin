@@ -107,72 +107,14 @@ class PURCHASES
             $categoriesfilter = '';
         }
 
-        // PERIOD FILTER
-        if ($period) {
-            switch ($period) {
-                case '1':
-                    $currentweek_firstday = strtotime("monday");
-                    $currentweek_lastday = strtotime("monday")+604799;
-                    $periodfilter = ' AND (sdate BETWEEN ' . $currentweek_firstday . ' AND ' . $currentweek_lastday . ')';
-                    break;
-                case '2':
-                    $previousweek_firstday = strtotime("last week monday");
-                    $previousweek_lastday = strtotime("last week sunday")+604799;
-                    $periodfilter = ' AND (sdate BETWEEN ' . $previousweek_firstday . ' AND ' . $previousweek_lastday . ')';
-                    break;
-                case '3':
-                    $currentmonth_firstday = date_to_timestamp(date('Y/m/01', strtotime("now")));
-                    $currentmonth_lastday = date_to_timestamp(date('Y/m/t', strtotime("now")));
-                    $periodfilter = ' AND (sdate BETWEEN ' . $currentmonth_firstday . ' AND ' . $currentmonth_lastday . ')';
-                    break;
-                case '4':
-                    $previousmonth_firstday = date_to_timestamp(date('Y/m/01', strtotime("last month")));
-                    $previousmonth_lastday = date_to_timestamp(date('Y/m/t', strtotime("last month")));
-                    $periodfilter = ' AND (sdate BETWEEN ' . $previousmonth_firstday . ' AND ' . $previousmonth_lastday . ')';
-                    break;
-                case '5':
-                    $currentmonth = date('n');
-                    switch ($currentmonth) {
-                        case 1:
-                        case 2:
-                        case 3:
-                            $startq = 1;
-                            break;
-                        case 4:
-                        case 5:
-                        case 6:
-                            $startq = 4;
-                            break;
-                        case 7:
-                        case 8:
-                        case 9:
-                            $startq = 7;
-                            break;
-                        case 10:
-                        case 11:
-                        case 12:
-                            $startq = 10;
-                            break;
-                        default:
-                            break;
-                    }
-                    $quarter_start = mktime(0, 0, 0, $startq, 1, date('Y'));
-                    $quarter_end = mktime(0, 0, 0, $startq + 3, 1, date('Y'))-1;
-                    $periodfilter = ' AND (sdate BETWEEN ' . $quarter_start . ' AND ' . $quarter_end . ')';
-                    break;
-                case '6':
-                    $currentyear_firstday = date_to_timestamp(date('Y/01/01', strtotime("now")));
-                    $currentyear_lastday = date_to_timestamp(date('Y/12/31', strtotime("now")));
-                    $periodfilter = ' AND (sdate BETWEEN ' . $currentyear_firstday . ' AND ' . $currentyear_lastday . ')';
-                    break;
-                case 'all':
-                default:
-                    $periodfilter = '';
-                    break;
-            }
-        } else {
-            $periodfilter = '';
-        }
+        // DATE FROM FILTER
+        $datefrom = intval($datefrom);
+        $datefromfilter = !empty($datefrom) ? ' AND sdate >= ' . $datefrom : null;
+
+        // DATE TO FILTER
+        $dateto = intval($dateto);
+        $datetofilter = !empty($dateto) ? ' AND sdate <= ' . $dateto : null;
+
 
         // NET CURRENCY VALUE FROM FILTER
         $netcurrencyvaluefrom = intval($netcurrencyvaluefrom);
@@ -246,7 +188,8 @@ class PURCHASES
             . $supplierfilter
             . $expencedescriptionfilter
             . $paymentsfilter
-            . $periodfilter
+            . $datefromfilter
+            . $datetofilter
             . $groupby
             . ((!empty($grosscurrencyvaluefromhavingfilter) || !empty($grosscurrencyvaluetohavingfilter)) ? ' HAVING' : '' )
             . $grosscurrencyvaluefromhavingfilter

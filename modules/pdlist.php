@@ -24,7 +24,6 @@ if (isset($_GET['documentexist'])) {
 
 $default_taxrate = ConfigHelper::getConfig('phpui.default_taxrate', '23.00');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
-$default_period_filter = ConfigHelper::getConfig('pd.filter_default_period', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
 $force_global_division_context = ConfigHelper::getConfig('phpui.force_global_division_context', false);
 
@@ -106,15 +105,14 @@ if (!empty($_GET['payments'])) {
     $params['payments'] = null;
 }
 
-// period filter
-if (!empty($_GET['period'])) {
-    if ($_GET['period'] == 'all') {
-        unset($params['period']);
-    } else {
-        $params['period'] = intval($_GET['period']);
-    }
-} else {
-    $params['period'] = $default_period_filter;
+// datefrom filter
+if (!empty($_GET['datefrom'])) {
+    $params['datefrom'] = intval(date_to_timestamp($_GET['datefrom']));
+}
+
+// dateto filter
+if (!empty($_GET['dateto'])) {
+    $params['dateto'] = intval(date_to_timestamp($_GET['dateto']));
 }
 
 // net currency valuefrom filter
