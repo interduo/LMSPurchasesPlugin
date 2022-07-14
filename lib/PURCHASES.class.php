@@ -115,12 +115,10 @@ class PURCHASES
         }
 
         // DATE FROM FILTER
-        $datefrom = intval($datefrom);
-        $datefromfilter = !empty($datefrom) ? ' AND sdate >= ' . $datefrom : null;
+        $datefromfilter = !empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null;
 
         // DATE TO FILTER
-        $dateto = intval($dateto);
-        $datetofilter = !empty($dateto) ? ' AND sdate <= ' . $dateto : null;
+        $datetofilter = !empty(intval($dateto)) ? ' AND sdate <= ' . intval($dateto) : null;
 
 
         // NET CURRENCY VALUE FROM FILTER
