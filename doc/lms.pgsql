@@ -46,6 +46,7 @@ DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
     id serial PRIMARY KEY,
     currency varchar(3) NOT NULL DEFAULT 'PLN',
+    currency varchar(3) NOT NULL DEFAULT 'PLN',
     vatplnvalue integer,
     fullnumber varchar(50) NOT NULL,
     cdate integer NOT NULL,
@@ -75,6 +76,7 @@ CREATE TABLE pdcontents (
     pdid integer NOT NULL
         CONSTRAINT pdcontents_pdid_fkey REFERENCES pds (id) ON DELETE CASCADE ON UPDATE CASCADE,
     netcurrencyvalue numeric(17,10) NOT NULL,
+    grosscurrencyvalue numeric(17,10) NOT NULL,
     amount smallint NOT NULL DEFAULT 1,
     taxid integer NOT NULL
         CONSTRAINT pds_taxid_fkey REFERENCES taxes (id) ON DELETE SET NULL ON UPDATE CASCADE,

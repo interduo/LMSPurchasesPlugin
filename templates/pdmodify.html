@@ -3,6 +3,7 @@
     display: flex;
     padding-left: 10px;
     overflow: visible;
+    overflow: visible;
     }
 
     table#documentaddtable input {
@@ -231,9 +232,6 @@
                                     id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" autocomplete="off"
                                     value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}"
                                     placeholder="{trans('Net value')}" required>
-                                <input class="amount-input" onchange="convert_expence_values()" step=".01" type="number"
-                                    id="dialog-amount0" name="addpd[expenses][0][amount]" autocomplete="off"
-                                    value="{if isset($pdinfo)}{$pdinfo.amount}{else}1{/if}" placeholder="{trans('Amount')}" required {tip text="Amount"}>
                                 {tax_rate_selection
                                     id='dialog-taxid0'
                                     name='addpd[expenses][0][taxid]'
@@ -243,6 +241,13 @@
                                     onchange='convert_expence_values()'
                                     required=true
                                 }
+                                <input class="grosscurrencyvalue-input" onchange="convert_expence_values()" step=".01" type="number"
+                                    id="dialog-grosscurrencyvalue0" name="addpd[expenses][0][grosscurrencyvalue]" autocomplete="off"
+                                    value="{if isset($pdinfo) && $pdinfo.grosscurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}"
+                                    placeholder="{trans('Gross value')}" required>
+                                <input class="amount-input" onchange="convert_expence_values()" step=".01" type="number"
+                                    id="dialog-amount0" name="addpd[expenses][0][amount]" autocomplete="off"
+                                    value="{if isset($pdinfo)}{$pdinfo.amount}{else}1{/if}" placeholder="{trans('Amount')}" required {tip text="Amount"}>
                                 {icon name="description" tip="Description"}
                                 <input type="text" id="dialog-description0" name="addpd[expenses][0][description]"
                                     value="{if isset($pdinfo.description)}{$pdinfo.description|escape}{/if}" size="40"

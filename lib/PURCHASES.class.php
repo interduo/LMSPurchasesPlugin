@@ -54,7 +54,7 @@ class PURCHASES
                 'sdate' => 'pds.sdate',
                 'fullnumber' => 'pds.fullnumber',
                 'netcurrencyvalue' => 'pds.netcurrencyvalue',
-                'grosscurrencyvalue' => 'pds.netcurrencyvalue',
+                'grosscurrencyvalue' => 'pds.grosscurrencyvalue',
                 'description' => 'pdc.description',
                 default => 'pds.id',
             };
@@ -161,7 +161,11 @@ class PURCHASES
         if (empty($netcurrencyvaluefrom)) {
             $netcurrencyvaluefromhavingfilter = '';
         } else {
-            $netcurrencyvaluefromhavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvaluefrom;
+            if ($expences) {
+                $netcurrencyvaluefromhavingfilter = ' pdc.netcurrencyvalue >= ' . $netcurrencyvaluefrom;
+            } else {
+                $netcurrencyvaluefromhavingfilter = ' doc_netcurrencyvalue >= ' . $netcurrencyvaluefrom;
+            }
         }
 
         // NET CURRENCY VALUE TO FILTER
@@ -169,7 +173,11 @@ class PURCHASES
         if (empty($netcurrencyvalueto)) {
             $netcurrencyvaluetohavingfilter = '';
         } else {
-            $netcurrencyvaluetohavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvalueto;
+            if ($expences) {
+                $netcurrencyvaluetohavingfilter = ' pdc.netcurrencyvalue >= ' . $netcurrencyvalueto;
+            } else {
+                $netcurrencyvaluetohavingfilter = ' doc_netcurrencyvalue >= ' . $netcurrencyvalueto;
+            }
         }
 
         // GROSS CURRENCY VALUE FROM FILTER
@@ -177,7 +185,11 @@ class PURCHASES
         if (empty($grosscurrencyvaluefrom)) {
             $grosscurrencyvaluefromhavingfilter = '';
         } else {
-            $grosscurrencyvaluefromhavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) >= ' . $grosscurrencyvaluefrom;
+            if ($expences) {
+                $grosscurrencyvaluefromhavingfilter = ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvaluefrom;
+            } else {
+                $grosscurrencyvaluefromhavingfilter = ' doc_grosscurrencyvalue >= ' . $grosscurrencyvaluefrom;
+            }
         }
 
         // GROSS CURRENCY VALUE TO FILTER
@@ -185,7 +197,11 @@ class PURCHASES
         if (empty($grosscurrencyvalueto)) {
             $grosscurrencyvaluetohavingfilter = '';
         } else {
-            $grosscurrencyvaluetohavingfilter = ' SUM((pdc.netcurrencyvalue*tx.value/100)+pdc.netcurrencyvalue) >= ' . $grosscurrencyvalueto;
+            if ($expences) {
+                $grosscurrencyvaluetohavingfilter = ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvalueto;
+            } else {
+                $grosscurrencyvaluetohavingfilter = ' doc_grosscurrencyvalue >= ' . $grosscurrencyvalueto;
+            }
         }
 
         if (!empty($description)) {
@@ -195,14 +211,12 @@ class PURCHASES
         }
 
         if (empty($expences)) {
-            $split = ' SUM(pdc.netcurrencyvalue) AS netcurrencyvalue,
-                SUM(pdc.netcurrencyvalue*tx.value/100) AS vatcurrencyvalue,
-                SUM(pdc.netcurrencyvalue*tx.value/100)+SUM(pdc.netcurrencyvalue) AS grosscurrencyvalue';
+            $split = ' SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
+                SUM(pdc.grosscurrencyvalue-pdc.netcurrencyvalue) AS doc_vatcurrencyvalue,
+                SUM(pdc.grosscurrencyvalue) AS doc_grosscurrencyvalue';
             $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id';
         } else {
-            $split = ' pdc.netcurrencyvalue AS netcurrencyvalue,
-                pdc.netcurrencyvalue*tx.value/100 AS vatcurrencyvalue,
-                pdc.netcurrencyvalue*tx.value/100+pdc.netcurrencyvalue AS grosscurrencyvalue,
+            $split = 'pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue, pdc.grosscurrencyvalue,
                 pdc.description, pdc.id AS expenceid';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id';
         }
@@ -381,7 +395,7 @@ class PURCHASES
     public function GetPurchaseDocumentExpences($pdid)
     {
         $result = $this->db->GetAll(
-            'SELECT pdid, pdc.id AS expenceid, pdc.netcurrencyvalue, pdc.taxid,
+            'SELECT pdid, pdc.id AS expenceid, pdc.netcurrencyvalue, pdc.grosscurrencyvalue, pdc.taxid,
                 tx.value AS tax_value, pdc.description, pds.currency, pdc.amount
             FROM pdcontents pdc
                 LEFT JOIN taxes tx ON (pdc.taxid = tx.id)
@@ -402,6 +416,7 @@ class PURCHASES
                     break;
             }
             $result[$idx]['netcurrencyvalue'] = round($result[$idx]['netcurrencyvalue'], $precision);
+            $result[$idx]['grosscurrencyvalue'] = round($result[$idx]['grosscurrencyvalue'], $precision);
         }
 
         return $result;
@@ -424,7 +439,7 @@ class PURCHASES
             pds.paytype, pds.supplierid, pds.divisionid, pds.iban, cv.ten AS supplier_ten,'
             . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
             SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue, 
-            SUM(pd.netcurrencyvalue*pd.amount)+(SUM(pd.netcurrencyvalue*pd.amount)*tx.value/100) AS doc_grosscurrencyvalue,
+            SUM(pd.grosscurrencyvalue*pd.amount) AS doc_grosscurrencyvalue,
             COUNT(pd.pdid) AS expences_count
             FROM pds
                 LEFT JOIN customers cv ON (cv.id = pds.supplierid)
@@ -995,6 +1010,7 @@ class PURCHASES
         foreach ($expenses as $idx => $e) {
             $expenses[$idx] = array(
                 'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
+                'grosscurrencyvalue' => str_replace(",", ".", $e['grosscurrencyvalue']),
                 'amount' => $e['amount'],
                 'taxid' => intval($e['taxid']),
                 'description' => empty($args['description']) ? null : $e['description'],
@@ -1003,9 +1019,9 @@ class PURCHASES
             );
 
             $this->db->Execute(
-                'INSERT INTO pdcontents (pdid, netcurrencyvalue, amount, taxid, description)
-                    VALUES (?, ?, ?, ?, ?)',
-                array($pdid, $e['netcurrencyvalue'], $e['amount'], $e['taxid'], $e['description'])
+                'INSERT INTO pdcontents (pdid, netcurrencyvalue, grosscurrencyvalue, amount, taxid, description)
+                    VALUES (?, ?, ?, ?, ?, ?)',
+                array($pdid, $e['netcurrencyvalue'], $e['grosscurrencyvalue'], $e['amount'], $e['taxid'], $e['description'])
             );
 
             $contentid = $this->db->GetLastInsertID('pdcontents');

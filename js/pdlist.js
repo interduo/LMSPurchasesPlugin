@@ -106,6 +106,7 @@
                 };
 
                 $("#dialog-netcurrencyvalue" + index).val(pd.expences[index].netcurrencyvalue);
+                $("#dialog-grosscurrencyvalue" + index).val(pd.expences[index].grosscurrencyvalue);
                 $("#dialog-amount" + index).val(pd.expences[index].amount);
                 $("#dialog-taxid" + index).val(pd.expences[index].taxid);
                 $("#dialog-taxid" + index + " option[value='" + pd.expences[index].taxid + "']").attr("selected", "true");
