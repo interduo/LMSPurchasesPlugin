@@ -1,5 +1,9 @@
 <?php
 
+$_LANG['confirmed'] = 'zatwierdzony';
+$_LANG['unconfirmed'] = 'niezatwierdzony';
+$_LANG['with invproject'] = 'z przypisanym projektem';
+$_LANG['without invproject'] = 'bez przypisanego projektu';
 $_LANG['net from'] = 'netto od';
 $_LANG['net to'] = 'netto do';
 $_LANG['gross from'] = 'brutto od';
