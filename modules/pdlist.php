@@ -180,6 +180,20 @@ if (!empty($_GET['docnumber'])) {
     $params['docnumber'] = htmlspecialchars($_GET['docnumber']);
 }
 
+// confirmation flag filter
+if (isset($_GET['confirm'])) {
+    switch ($_GET['confirm']) {
+        case "0":
+        case "1":
+            $params['confirm'] = $_GET['confirm'];
+            break;
+        default:
+            break;
+    }
+} else {
+    $params['confirm'] = null;
+}
+
 // categories filter
 if (!empty($_GET['catid'])) {
     if (!is_array($_GET['catid'])) {
@@ -264,6 +278,11 @@ if (!empty($_GET['action'])) {
         case 'markaspaid':
             if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')) {
                 $PURCHASES->MarkAsPaid($id);
+            }
+            break;
+        case 'markasconfirmed':
+            if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
+                $PURCHASES->MarkAsConfirmed($id);
             }
             break;
         default:

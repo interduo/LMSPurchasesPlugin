@@ -44,13 +44,20 @@
                 <input type="text" size="8" name="grosscurrencyvalueto" placeholder="{trans("gross to")}" value="{if $params.grosscurrencyvalueto}{$params.grosscurrencyvalueto}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td class="nobr">
+                {icon name="confirm" tip="Confirm flag"}
+                <select size="1" name="confirm" onchange="document.filter.submit();">
+                    <option value="-1"{if !isset($params.confirm)} selected{/if} >{trans("all")}</option>
+                    <option value="0"{if isset($params.confirm) && $params.confirm == 0} selected{/if}>{trans("unaccepted")}</option>
+                    <option value="1"{if isset($params.confirm) && $params.confirm == 1} selected{/if}>{trans("accepted")}</option>
+                </select>
+            </td>
+            <td class="nobr">
                 {icon name="type" tip="View type"}
                 <select name="expences" onchange="document.filter.submit();">
                     <option value="0">{trans("documents")}</option>
                     <option value="1"{if isset($params.expences) && $params.expences=='1'} selected{/if}>{trans("expences")}</option>
                 </select>
             </td>
-            <td></td>
         </tr>
         <tr>
             <td class="nobr">

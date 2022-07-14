@@ -431,4 +431,13 @@
             return false;
         });
     });
+
+    $(function() {
+        $( '.confirm-pd' ).click(function() {
+        confirmDialog( "{trans('Are you sure you want to confirm this purchase?')}" , this).done(function() {
+        location.href = $(this).attr('href');
+    });
+    return false;
+    });
+});
 </script>

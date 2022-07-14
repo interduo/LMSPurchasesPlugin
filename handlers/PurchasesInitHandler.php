@@ -101,7 +101,7 @@ class PurchasesInitHandler
 
         $permission = new Permission(
             'purchases',
-            '[KOSZTY] Przeglądanie listy dokumentów kosztowych',
+            '[KOSZTY] Przeglądanie listy wydatków',
             '^pd(list|view).*$',
             null,
             array('purchases' => array('pdlist'))
@@ -111,21 +111,28 @@ class PurchasesInitHandler
 
         $permission = new Permission(
             'purchases_mark_purchase_as_paid',
-            '[KOSZTY] Oznaczanie dokumentów jako zapłacone'
+            '[KOSZTY] Oznaczanie wydatków jako zapłacone'
+        );
+
+        $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
+
+        $permission = new Permission(
+            'purchases_mark_purchase_as_confirmed',
+            '[KOSZTY] Oznaczanie wydatków jako zatwierdzone'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchases_delete_purchase',
-            '[KOSZTY] Kasowanie dokumentów kosztowych'
+            '[KOSZTY] Kasowanie wydatków'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
 
         $permission = new Permission(
             'purchases_modify_purchase',
-            '[KOSZTY] Edycja dokumentów kosztowych'
+            '[KOSZTY] Edycja wydatków'
         );
 
         $access->insertPermission($permission, AccessRights::FIRST_FORBIDDEN_PERMISSION);
@@ -142,7 +149,7 @@ class PurchasesInitHandler
 
         $permission = new Permission(
             'purchases_add_purchase',
-            '[KOSZTY] Księgowanie dokumentów kosztowych',
+            '[KOSZTY] Dodawanie wydatków',
             'pduploads',
             null,
             array('purchases' => array('pduploads'))
@@ -159,7 +166,7 @@ class PurchasesInitHandler
 
         $permission = new Permission(
             'purchases_management_types',
-            '[KOSZTY] Zarządzanie typami dokumentów kosztowych',
+            '[KOSZTY] Zarządzanie typami wydatków',
             '^pdtlist.*$',
             null,
             array('purchases' => array('pdtlist'))

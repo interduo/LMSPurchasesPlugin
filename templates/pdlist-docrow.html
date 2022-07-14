@@ -51,13 +51,16 @@
         {/if}
     </td>
     <td class="buttons">
-        {if isset($pd.files) && ConfigHelper::checkPrivilege('purchases_add_purchase')}
+        {if isset($pd.files) && ConfigHelper::checkPrivilege('purchases')}
             {foreach $pd.files as $file}
                 {button type="link" icon="attachment" name="fileupload" tip=$file.filename href="?m=pdview&attid={$file.id}"}
             {/foreach}
         {/if}
         {if !$pd.paydate && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')}
-            {button type="link" icon="money" tip="Mark invoice as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}" class="payment-pd"}
+            {button type="link" icon="money" tip="Mark purchase as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}" class="payment-pd"}
+        {/if}
+        {if !$pd.confirmflag && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')}
+            {button type="link" icon="confirm" tip="Mark purchase as confirmed" href="?m=pdlist&action=markasconfirmed&id={$pd.id}" class="confirm-pd"}
         {/if}
         {if ConfigHelper::checkPrivilege('purchases_modify_purchase')}
             {button type="link" icon="edit" tip="Edit" onclick="open_modify_dialog({$pd.id})"}

@@ -61,6 +61,7 @@ CREATE TABLE pds (
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     userid integer
         CONSTRAINT pds_userid_fkey REFERENCES users (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    confirmflag smallint DEFAULT 0 NOT NULL,
     CONSTRAINT pds_supplierid_fullnumber_ukey UNIQUE (supplierid, fullnumber)
 );
 

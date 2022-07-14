@@ -20,6 +20,23 @@ class PURCHASES
         );
     }*/
 
+    public function MarkAsConfirmed($ids)
+    {
+        if (!ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
+            die("You don't have permission to confirm purchases");
+        };
+
+        if (is_array($ids)) {
+            $ids = implode(",", $ids);
+        }
+
+        if (!empty($ids)) {
+            $this->db->Execute('UPDATE pds SET confirmflag = 1 WHERE id IN ( ? )', array($ids));
+        }
+
+        return true;
+    }
+
     public function GetPurchaseList($params = array())
     {
         $src_iban = ConfigHelper::getConfig('pd.source_iban');
@@ -100,6 +117,24 @@ class PURCHASES
             $docnumberfilter = '';
         }
 
+        // CONFIRM FLAG FILTER
+        if (isset($confirm)) {
+            switch ($confirm) {
+                case '1':
+                    $confirmfilter = ' AND confirmflag = 1';
+                    break;
+                case '0':
+                    $confirmfilter = ' AND confirmflag = 0';
+                    break;
+                case '-1':
+                default:
+                    $confirmfilter = null;
+                    break;
+            }
+        } else {
+            $confirmfilter = null;
+        }
+
         // CATEGORY FILTER
         if (!empty($catids)) {
             $categoriesfilter = ' AND pdcc.categoryid IN (' . implode(',', $catids) . ')';
@@ -115,10 +150,10 @@ class PURCHASES
         }
 
         // DATE FROM FILTER
-        $datefromfilter = !empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null;
+        $params['datefrom'] ? ($datefromfilter = !empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
 
         // DATE TO FILTER
-        $datetofilter = !empty(intval($dateto)) ? ' AND sdate <= ' . intval($dateto) : null;
+        $params['dateto'] ? ($datetofilter = !empty(intval($dateto)) ? ' AND sdate >= ' . intval($dateto) : null) : null;
 
 
         // NET CURRENCY VALUE FROM FILTER
@@ -173,7 +208,7 @@ class PURCHASES
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag,
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,'
@@ -190,6 +225,7 @@ class PURCHASES
                 WHERE 1=1'
             . $divisionfilter
             . $docnumberfilter
+            . $confirmfilter
             . $categoriesfilter
             . $invprojectsfilter
             . $supplierfilter
