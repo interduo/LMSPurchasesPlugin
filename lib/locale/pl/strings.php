@@ -50,6 +50,7 @@ $_LANG['Payment date'] = 'Termin płatności';
 $_LANG['Enter deadline in YYYY/MM/DD format or click to select it from calendar'] = 'Wpisz termin płatności w formacie YYYY/MM/DD lub kliknij, by wybrać ją z kalendarza';
 $_LANG['Enter document date in YYYY/MM/DD format or click to select it from calendar'] = 'Wpisz datę dokumentu w formacie YYYY/MM/DD lub kliknij, by wybrać ją z kalendarza';
 $_LANG['Enter document deadline date in YYYY/MM/DD format or click to select it from calendar'] = 'Wprowadź termin płatności dokumentu w formacie YYYY/MM/DD lub kliknij, by wybrać ją z kalendarza';
+$_LANG['Enter the payment date in YYYY/MM/DD format or click to select it from calendar'] = 'Wprowadź datę zapłaty w formacie YYYY/MM/DD lub kliknij, by wybrać ją z kalendarza';
 
 $_LANG['Add purchase document'] = 'Dodaj dokument zakupu';
 $_LANG['Add purchase document from anteroom'] = 'Dodaj dokument zakupu z wrzutni';
