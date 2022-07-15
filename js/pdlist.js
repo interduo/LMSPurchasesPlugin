@@ -360,41 +360,11 @@
         $( "#addpdmodal" ).dialog( { width: window.innerWidth*0.9, height: window.innerHeight*0.9 } );
     }
 
-    // function convert_expence_values() {
-    //     //TODO: dokoncze przeliczanie jak bede robił statystyki ;-)
-    //
-    //     return;
-    //     var elemid = event.target.id;
-    //     var expenceid = elemid.replace(/\D/g, "");
-    //
-    //     var elemnetto = document.getElementById('dialog-netcurrencyvalue' + expenceid);
-    //     var elemgross = document.getElementById('dialog-grosscurrencyvalue' + expenceid);
-    //     console.log("kliknięte pole: " + elemid + ' w wierszu: ' + expenceid);
-    //
-    //     var elemtax = document.getElementById("#dialog-taxid" + expenceid);
-    //     console.log(elemtax);
-    //     var selopt = elemtax.forEach(a => document.querySelectorAll('option[selected]'));
-    //     console.log(selopt);
-    //
-    //
-    //     switch(elemid) {
-    //         case 'dialog-grosscurrencyvalue' + expenceid:
-    //             console.log("wyliczam netto uzywając taxid");
-    //             break;
-    //         case 'dialog-taxid' + expenceid:
-    //         case 'dialog-netcurrencyvalue' + expenceid:
-    //         case 'dialog-amount' + expenceid:
-    //         default:
-    //             console.log("wyliczam brutto uzywając taxid");
-    //             ///elemgross.value = elemnetto.value * elemtax
-    //             break;
-    //     }
-    // }
-
-    // $( '#files').on('lms:fileupload:complete',
-    //     function() {
-    //         console.log('pokazuje podglada pliku X');
-    //     }, false);
+    $( '#files').on('lms:fileupload:complete',
+        function() {
+            console.log('pokazuje podglada pliku X');
+        }, false
+    );
 
     document.getElementById('dialog-paytype').addEventListener("change", e => change_pay_type(), false);
     document.getElementById('dialog-currency').addEventListener("change", e => change_currency(), false);

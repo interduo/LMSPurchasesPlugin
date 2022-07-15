@@ -1,4 +1,25 @@
 ﻿<script>
+    function convert_expence_values(elem_netvalue, elem_taxid, elem_grossvalue) {
+        let elemid = event.target.id;
+        let expenceid = elemid.replace(/\D/g, "");
+        console.log("kliknięte pole: " + elemid + ' w wierszu: ' + expenceid);
+
+        let elemtax = document.getElementById("#dialog-taxid" + expenceid);
+        console.log(elemtax);
+
+        switch(elemid) {
+            case 'dialog-grosscurrencyvalue' + expenceid:
+                console.log("wyliczam netto uzywając taxid");
+                break;
+            case 'dialog-taxid' + expenceid:
+            case 'dialog-netcurrencyvalue' + expenceid:
+            case 'dialog-amount' + expenceid:
+            default:
+                console.log("wyliczam brutto uzywając taxid");
+                break;
+        }
+    }
+
     function makeMultiselectOptionsSelectedUsingValues(elem, values) {
         $( "#" + elem).val(values);
     }
@@ -33,15 +54,7 @@
 
         $('.lms-ui-customer-select-name').html('<a href=""></a>');
         $('#dialog-supplierid').trigger('input');
-        //clear expences - start
-
-        if (formid == '#addpd-form') {
-            $(".cloned").remove();
-            $('#dialog-amount0').val('1');
-            var selectelem = document.querySelectorAll('select#dialog-taxid0');
-            selectelem.value = selectelem.getAttribute('data-default-value');
-        }
-        //clear expences - end
+        $(".cloned").remove();
 
         updateAdvancedSelects( "select[id^='dialog-']" );
 
