@@ -8,6 +8,7 @@ $_LANG['net from'] = 'netto od';
 $_LANG['net to'] = 'netto do';
 $_LANG['gross from'] = 'brutto od';
 $_LANG['gross to'] = 'brutto do';
+$_LANG['Unit net price'] = 'Cena jednostkowa netto';
 $_LANG['Clear'] = 'Wyczyść';
 $_LANG['Delete from anteroom'] = 'Usuń z poczekalnii';
 $_LANG['Add Purchase'] = 'Dodaj wydatek';

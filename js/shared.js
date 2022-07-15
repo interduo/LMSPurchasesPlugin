@@ -1,63 +1,76 @@
 ﻿<script>
-    function convert_expence_values(elem_netvalue, elem_taxid, elem_grossvalue) {
-        let elemid = event.target.id;
-        let expenceid = elemid.replace(/\D/g, "");
-        console.log("kliknięte pole: " + elemid + ' w wierszu: ' + expenceid);
 
-        let elemtax = document.getElementById("#dialog-taxid" + expenceid);
-        console.log(elemtax);
+function convert_expence_values(changedel) {
+    let expenceid = changedel.replace(/\D/g, "");
+    let netid = document.getElementById("dialog-netcurrencyvalue" + expenceid);
+    let amountid = document.getElementById("dialog-amount" + expenceid);
+    let taxid = document.getElementById("dialog-taxid" + expenceid);
+    let grossid = document.getElementById("dialog-grosscurrencyvalue" + expenceid);
 
-        switch(elemid) {
-            case 'dialog-grosscurrencyvalue' + expenceid:
-                console.log("wyliczam netto uzywając taxid");
-                break;
-            case 'dialog-taxid' + expenceid:
-            case 'dialog-netcurrencyvalue' + expenceid:
-            case 'dialog-amount' + expenceid:
-            default:
-                console.log("wyliczam brutto uzywając taxid");
-                break;
-        }
+    let netvalue = netid.value;
+    let amountvalue = amountid.value;
+    let netsumvalue = netvalue*amountvalue;
+    let grossvalue = grossid.value;
+    let taxvalue = taxid.options[taxid.selectedIndex].getAttribute('data-taxrate-value');
+    let vatsumvalue = netsumvalue*taxvalue/100;
+
+    console.log('changedel: ' + changedel + 'wiersz: ' + expenceid + 'netto: ' + netvalue + 'brutto ' + grossvalue);
+
+    switch(changedel) {
+        case 'dialog-grosscurrencyvalue' + expenceid:
+            console.log("wyliczam cene jednostkowa netto uzywając gross, taxid, amount");
+            netid.value = Math.round((grossvalue-(grossvalue*taxvalue/100))/amountvalue);
+            break;
+        case 'dialog-taxid' + expenceid:
+        case 'dialog-netcurrencyvalue' + expenceid:
+        case 'dialog-amount' + expenceid:
+        default:
+            console.log("wyliczam brutto uzywając taxid i amount");
+            let calculatedgrossvalue = netsumvalue+vatsumvalue;
+            grossid.value = Math.round(calculatedgrossvalue*100)/100;
+            break;
     }
+}
 
-    function makeMultiselectOptionsSelectedUsingValues(elem, values) {
-        $( "#" + elem).val(values);
+function makeMultiselectOptionsSelectedUsingValues(elem, values) {
+    $( "#" + elem).val(values);
+}
+
+function getColumnFromArray(matrix, col) {
+    var column = [];
+    for (var i=0; i<matrix.length; i++) {
+        column.push(matrix[i][col]);
     }
+    return column;
+}
 
-    function getColumnFromArray(matrix, col) {
-        var column = [];
-        for (var i=0; i<matrix.length; i++) {
-            column.push(matrix[i][col]);
-        }
-        return column;
-    }
+function clear_pd_form(formid) {
+    $("#" + formid)[0].reset();
+    $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
+    $("input[form='" + formid + "']").val('');
+    $("select[form='" + formid + "'] option:selected").removeAttr('selected');
+    $( "#filecontainer").removeClass('hidden');
 
-    function clear_pd_form(formid) {
-        $("#" + formid)[0].reset();
-        $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
-        $("input[form='" + formid + "']").val('');
-        $("select[form='" + formid + "'] option:selected").removeAttr('selected');
-        $( "#filecontainer").removeClass('hidden');
+    $("#dialog-iban").show();
+    $("#bankaccounts-container").empty();
 
-        $("#dialog-iban").show();
-        $("#bankaccounts-container").empty();
+    $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
 
-        $('#dialog-typeid option[value="{$default_document_typeid}"]').attr("selected", "selected");
+    $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
+    $("#dialog-divisionid").val( {$default_divisionid} );
 
-        $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
-        $("#dialog-divisionid").val( {$default_divisionid} );
+    document.querySelectorAll('div.fileupload-files, div#herewillbethepdf').forEach(e => e.innerHTML = '');
 
-        document.querySelectorAll('div.fileupload-files, div#herewillbethepdf').forEach(e => e.innerHTML = '');
+    $("#dialog-currency option[value='" + '{$default_currency}' + "']").attr("selected", "true");
+    $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");
 
-        $("#dialog-currency option[value='" + '{$default_currency}' + "']").attr("selected", "true");
-        $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");
+    $('.lms-ui-customer-select-name').html('<a href=""></a>');
+    $('#dialog-supplierid').trigger('input');
+    $(".cloned").remove();
 
-        $('.lms-ui-customer-select-name').html('<a href=""></a>');
-        $('#dialog-supplierid').trigger('input');
-        $(".cloned").remove();
+    updateAdvancedSelects( "select[id^='dialog-']" );
 
-        updateAdvancedSelects( "select[id^='dialog-']" );
+    $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
+}
 
-        $("#submit-modal-button").html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Add")}</span>');
-    }
 </script>

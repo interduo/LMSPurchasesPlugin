@@ -228,24 +228,24 @@
                         <td>
                             <span class="nobr">
                                 {icon name="value" tip="Value"}
-                                <input class="netcurrencyvalue-input" onchange="convert_expence_values()" step=".01" type="number"
+                                <input class="netcurrencyvalue-input" onchange="convert_expence_values(this.id)" step=".01" type="number"
                                     id="dialog-netcurrencyvalue0" name="addpd[expenses][0][netcurrencyvalue]" autocomplete="off"
                                     value="{if isset($pdinfo) && $pdinfo.netcurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}"
-                                    placeholder="{trans('Net value')}" required>
+                                    placeholder="{trans('Unit net price')}" required>
                                 {tax_rate_selection
                                     id='dialog-taxid0'
                                     name='addpd[expenses][0][taxid]'
-                                    icon='value'
+                                    icon="empty"
                                     tip='Tax rate'
                                     class='tax_rate_selection'
-                                    onchange='convert_expence_values()'
+                                    customonchange="convert_expence_values(this.id)"
                                     required=true
                                 }
-                                <input class="grosscurrencyvalue-input" onchange="convert_expence_values()" step=".01" type="number"
+                                <input class="grosscurrencyvalue-input" onchange="convert_expence_values(this.id)" step=".01" type="number"
                                     id="dialog-grosscurrencyvalue0" name="addpd[expenses][0][grosscurrencyvalue]" autocomplete="off"
                                     value="{if isset($pdinfo) && $pdinfo.grosscurrencyvalue|rtrim:'0'|rtrim:'.'}{/if}"
                                     placeholder="{trans('Gross value')}" required>
-                                <input class="amount-input" onchange="convert_expence_values()" step=".01" type="number"
+                                <input class="amount-input" onchange="convert_expence_values(this.id)" step=".01" type="number"
                                     id="dialog-amount0" name="addpd[expenses][0][amount]" autocomplete="off"
                                     value="{if isset($pdinfo)}{$pdinfo.amount}{else}1{/if}" placeholder="{trans('Amount')}" required {tip text="Amount"}>
                                 {icon name="description" tip="Description"}
