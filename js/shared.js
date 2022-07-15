@@ -14,18 +14,14 @@ function convert_expence_values(changedel) {
     let taxvalue = taxid.options[taxid.selectedIndex].getAttribute('data-taxrate-value');
     let vatsumvalue = netsumvalue*taxvalue/100;
 
-    console.log('changedel: ' + changedel + 'wiersz: ' + expenceid + 'netto: ' + netvalue + 'brutto ' + grossvalue);
-
     switch(changedel) {
         case 'dialog-grosscurrencyvalue' + expenceid:
-            console.log("wyliczam cene jednostkowa netto uzywając gross, taxid, amount");
             netid.value = Math.round((grossvalue-(grossvalue*taxvalue/100))/amountvalue);
             break;
         case 'dialog-taxid' + expenceid:
         case 'dialog-netcurrencyvalue' + expenceid:
         case 'dialog-amount' + expenceid:
         default:
-            console.log("wyliczam brutto uzywając taxid i amount");
             let calculatedgrossvalue = netsumvalue+vatsumvalue;
             grossid.value = Math.round(calculatedgrossvalue*100)/100;
             break;
