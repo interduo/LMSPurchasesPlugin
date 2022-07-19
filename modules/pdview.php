@@ -14,7 +14,7 @@ if (empty($attid) && empty($id)) {
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
-if ((empty($id) || !$PURCHASES->IsThisUserAllowedToViewThisPurchase(Auth::GetCurrentUser(), $id)) || !empty($attid)) {
+if (!empty($id) && $PURCHASES->IsThisUserAllowedToViewThisPurchase(Auth::GetCurrentUser(), $id)) {
     die(trans('No access - check privileges for categories'));
 }
 
