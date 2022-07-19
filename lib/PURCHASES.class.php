@@ -650,17 +650,12 @@ class PURCHASES
         if (!empty($files)) {
             $argv = array(
                 'pdid' => $params['pdid'],
-                'attid' => $params['attid'],
                 'files' => $files
             );
-            if ($params['attid']) {
-                $this->MovePurchaseFileFromAnteroom($argv);
-            } else {
-                $this->AddPurchaseFiles($argv);
-            }
+            $this->AddPurchaseFiles($argv);
         }
 
-        return null;
+        return $params['pdid'];
     }
 
     public function DeletePurchaseDocument($id)

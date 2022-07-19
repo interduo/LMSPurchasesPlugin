@@ -46,7 +46,8 @@ function clear_pd_form(formid) {
     $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
     $("input[form='" + formid + "']").val('');
     $("select[form='" + formid + "'] option:selected").removeAttr('selected');
-    $( "#filecontainer").removeClass('hidden');
+    $( "#files").removeClass('hidden');
+    $( "#fileanteroom" ).addClass('hidden');
 
     $("#dialog-iban").show();
     $("#bankaccounts-container").empty();
@@ -56,7 +57,7 @@ function clear_pd_form(formid) {
     $("#dialog-divisionid option[value='" + {$default_divisionid} + "']").attr("selected", "true");
     $("#dialog-divisionid").val( {$default_divisionid} );
 
-    document.querySelectorAll('div.fileupload-files, div#herewillbethepdf').forEach(e => e.innerHTML = '');
+    document.querySelectorAll('div.fileupload-files, div#column2').forEach(e => e.innerHTML = '');
 
     $("#dialog-currency option[value='" + '{$default_currency}' + "']").attr("selected", "true");
     $("#dialog-paytype option[value='" + '{$default_paytype}' + "']").attr("selected", "true");

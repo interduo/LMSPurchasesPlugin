@@ -81,7 +81,7 @@
                                 <option {if empty($default_document_typeid)}selected{/if}>{trans("undefined")}</option>
                                 {if !empty($typeslist)}
                                     {foreach $typeslist as $type}
-                                    <option value="{$type.id}" {if $type.id == $default_document_typeid}selected{/if}>{$type.name|trunescape:"25"}</option>
+                                    <option value="{$type.id}"{if $type.id == $default_document_typeid} selected{/if}>{$type.name|trunescape:"25"}</option>
                                     {/foreach}
                                 {/if}
                             </select>
@@ -198,20 +198,20 @@
                                 {tip class="lms-ui-date" text="Enter the payment date in YYYY/MM/DD format or click to select it from calendar" trigger="paydate"}>
                         </td>
                     </tr>
-                    <tr id="filecontainer">
+                    <tr>
                         <td class="nobr">
                             {icon name="attachment" label="Attachments"}
                         </td>
                         <td>
-                            {if isset($attid)}
-                                {icon name="upload" label="{$anteroom.$attid.name}"}
+                            <span id="fileanteroom">
                                 <input type="hidden" name="addpd[attid]" value="{$anteroom.$attid.id}">
-                            {else}
+                            </span>
+                            {if !isset($pdinfo.files)}
                                 {fileupload
                                     id='files'
                                     fileupload=$pdinfo.files
                                     form='addpd-form'
-                                    view_selector='herewillbethepdf'
+                                    view_selector='column2'
                                     multiple=false
                                 }
                             {/if}

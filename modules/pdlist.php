@@ -247,14 +247,12 @@ if (!empty($_GET['action'])) {
         case 'add':
             if (!empty($addpd) && ConfigHelper::checkPrivilege('purchases_add_purchase')) {
                 $PURCHASES->AddPurchase($addpd, $files);
-                $docid = $DB->GetLastInsertID('pds');
-                if (!empty($attid)) {
-                    $argv = array(
-                        'attid' => $attid,
-                        'pdid' => $docid
-                    );
-                    $PURCHASES->MovePurchaseFileFromAnteroom($argv);
-                }
+            }
+            break;
+        case 'acceptfile':
+            if (!empty($addpd) && ConfigHelper::checkPrivilege('purchases_add_purchase')) {
+                $addedid = $PURCHASES->AddPurchase($addpd, $files);
+                $PURCHASES->MovePurchaseFileFromAnteroom(array('attid' => $attid, 'pdid' => $addedid));
             }
             break;
         case 'modify':

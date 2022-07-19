@@ -25,13 +25,17 @@
         }).dialog( "open" );
     };
 
-    function open_add_anteroom_dialog(attid) {
+    function open_add_anteroom_dialog(attid, filename) {
         clear_pd_form("addpd-form");
-        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
+        document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=acceptfile&attid=' + attid);
         change_currency();
         change_pay_type();
 
-        $( "#filecontainer").addClass('hidden');
+        $( "#files" ).addClass('hidden');
+        $( "#fileanteroom" ).val(attid);
+        $( "#fileanteroom" ).removeClass('hidden');
+        $( "#fileanteroom" ).html(filename);
+
         show_inline_pdf_from_link('?m=pdview&attid=' + attid);
 
         $( "#addpdmodal" ).dialog({

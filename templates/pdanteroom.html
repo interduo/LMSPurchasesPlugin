@@ -27,7 +27,7 @@
                 <td class="text-right nobr">
                     {if ConfigHelper::checkPrivilege("purchases_add_purchase")}
                         {button type="link" icon="add" tip="Zaksięguj jako wydatek"
-                            href="javascript:open_add_anteroom_dialog({$att.id})"}
+                            onclick="open_add_anteroom_dialog('{$att.id}', '{$att.filename}')"}
                     {/if}
                     {button type="link" icon="print" href="?m=pdview&attid={$att.id}" tip="Show uploaded document"}
                     {if ConfigHelper::checkPrivilege("purchases_delete_purchase")}
