@@ -23,8 +23,8 @@ function convert_expence_values(changedel) {
         case 'dialog-netcurrencyvalue' + expenceid:
         case 'dialog-amount' + expenceid:
         default:
-            let calculatedgrossvalue = netsumvalue+vatsumvalue;
-            grossid.value = Math.round(calculatedgrossvalue*100)/100;
+            let sumnetvalue
+            grossid.value = Math.round(netsumvalue*(1+taxvalue));
             break;
     }
 }
