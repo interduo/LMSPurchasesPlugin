@@ -46,7 +46,6 @@ DROP TABLE IF EXISTS pds CASCADE;
 CREATE TABLE pds (
     id serial PRIMARY KEY,
     currency varchar(3) NOT NULL DEFAULT 'PLN',
-    currency varchar(3) NOT NULL DEFAULT 'PLN',
     vatplnvalue integer,
     fullnumber varchar(50) NOT NULL,
     cdate integer NOT NULL,
