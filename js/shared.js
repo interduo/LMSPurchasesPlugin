@@ -11,12 +11,13 @@ function convert_expence_values(changedel) {
     let amountvalue = amountid.value;
     let netsumvalue = netvalue*amountvalue;
     let grossvalue = grossid.value;
-    let taxvalue = taxid.options[taxid.selectedIndex].getAttribute('data-taxrate-value');
+    let taxrate = taxid.options[taxid.selectedIndex].getAttribute('data-taxrate-value');
+    let taxvalue = taxrate/100;
     let vatsumvalue = netsumvalue*taxvalue/100;
 
     switch(changedel) {
         case 'dialog-grosscurrencyvalue' + expenceid:
-            netid.value = Math.round((grossvalue-(grossvalue*taxvalue/100))/amountvalue);
+            netid.value = Math.round(grossvalue/(1+taxvalue)/amountvalue);
             break;
         case 'dialog-taxid' + expenceid:
         case 'dialog-netcurrencyvalue' + expenceid:
