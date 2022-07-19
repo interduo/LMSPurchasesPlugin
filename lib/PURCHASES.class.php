@@ -48,16 +48,17 @@ class PURCHASES
         }
 
         if (isset($orderby)) {
-            $orderby = ' ORDER BY ' . match ($orderby) {
-                'supplierid' => 'pds.supplierid',
-                'cdate' => 'pds.cdate',
-                'sdate' => 'pds.sdate',
-                'fullnumber' => 'pds.fullnumber',
-                'netcurrencyvalue' => 'pds.netcurrencyvalue',
-                'grosscurrencyvalue' => 'pds.grosscurrencyvalue',
-                'description' => 'pdc.description',
-                default => 'pds.id',
-            };
+            $orderby = ' ORDER BY '
+                . match ($orderby) {
+                    'supplierid' => 'pds.supplierid',
+                    'cdate' => 'pds.cdate',
+                    'sdate' => 'pds.sdate',
+                    'fullnumber' => 'pds.fullnumber',
+                    'netcurrencyvalue' => 'pds.netcurrencyvalue',
+                    'grosscurrencyvalue' => 'pds.grosscurrencyvalue',
+                    'description' => 'pdc.description',
+                    default => 'pds.id',
+                };
         } else {
             $orderby = '';
         }

@@ -5,7 +5,7 @@ if (isset($_GET['id'])) {
 }
 
 if (isset($_GET['attid'])) {
-    intval($_GET['attid']);
+    $attid = intval($_GET['attid']);
 }
 
 if (empty($attid) && empty($id)) {
@@ -14,7 +14,7 @@ if (empty($attid) && empty($id)) {
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
-if (empty($id) || !$PURCHASES->IsThisUserAllowedToViewThisPurchase(Auth::GetCurrentUser(), $id)) {
+if ((empty($id) || !$PURCHASES->IsThisUserAllowedToViewThisPurchase(Auth::GetCurrentUser(), $id)) || !empty($attid)) {
     die(trans('No access - check privileges for categories'));
 }
 
