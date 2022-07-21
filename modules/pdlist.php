@@ -108,11 +108,15 @@ if (!empty($_GET['payments'])) {
 // datefrom filter
 if (!empty($_GET['datefrom'])) {
     $params['datefrom'] = intval(date_to_timestamp($_GET['datefrom']));
+} else {
+    $params['datefrom'] = null;
 }
 
 // dateto filter
 if (!empty($_GET['dateto'])) {
     $params['dateto'] = intval(date_to_timestamp($_GET['dateto']));
+} else {
+    $params['dateto'] = null;
 }
 
 // net currency valuefrom filter

@@ -8,10 +8,10 @@
     <td>
         {icon name="clipboard" class="lms-ui-button-clipboard nocolor" data_clipboard_text=$pd.fullnumber|escape label=$pd.fullnumber}
     </td>
-    <td data-order="{$pd.netcurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
+    <td data-order="{$pd.doc_netcurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
         {$pd.doc_netcurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
     </td>
-    <td data-order="{$pd.grosscurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
+    <td data-order="{$pd.doc_grosscurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
         {$pd.doc_grosscurrencyvalue|rtrim:'0'|rtrim:'.'|escape}  {$pd.currency}
     </td>
     <td data-target-url="?m=pdview&id={$pd.id}">

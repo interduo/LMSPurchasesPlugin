@@ -113,7 +113,7 @@
                     {if ConfigHelper::checkPrivilege("purchases_add_purchase_to_anteroom")}
                         {button id="massadbtn" icon="upload" accesskey="u" label="Document uploads" href="?m=pduploads" tip="Document uploads"}
                     {/if}
-                    {if ConfigHelper::checkPrivilege("purchases_export_purchases")}
+                    {if empty($params.expences) && ConfigHelper::checkPrivilege("purchases_export_purchases")}
                         {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export" onclick="document.getElementById('export-input').value=1; document.filter.submit();" tip="Eksport przelewów"}
                     {/if}
                 {/buttons}

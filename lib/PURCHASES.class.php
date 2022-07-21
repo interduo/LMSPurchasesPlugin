@@ -151,7 +151,7 @@ class PURCHASES
         }
 
         // DATE FROM FILTER
-        $datefromfilter = $params['datefrom'] ? ($datefromfilter = !empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
+        $datefromfilter = $params['datefrom'] ? (!empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
 
         // DATE TO FILTER
         $datetofilter = $params['dateto'] ? (!empty(intval($dateto)) ? ' AND sdate >= ' . intval($dateto) : null) : null;
@@ -215,18 +215,19 @@ class PURCHASES
             $split = ' SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue-pdc.netcurrencyvalue) AS doc_vatcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue) AS doc_grosscurrencyvalue';
-            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id';
+            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id, dv.name, va.location';
         } else {
             $split = 'pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue, pdc.grosscurrencyvalue,
                 pdc.description, pdc.id AS expenceid';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id, dv.name, va.location';
         }
 
         $result = $this->db->GetAll(
             'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag,
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
-                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,'
+                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
+                    dv.name AS division_name, va.location AS division_address,'
                     . $split
                     . ' FROM pds
                     LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
@@ -236,6 +237,8 @@ class PURCHASES
                     LEFT JOIN taxes tx ON (tx.id = pdc.taxid)
                     LEFT JOIN pdtypes pt ON (pt.id = pds.typeid)
                     LEFT JOIN vusers vu ON (vu.id = pds.userid)
+                    LEFT JOIN divisions dv ON (dv.id = pds.divisionid)
+                    LEFT JOIN vaddresses va ON (va.id = dv.address_id) 
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $divisionfilter
@@ -289,13 +292,56 @@ class PURCHASES
                 }
             }
 
+            function array2csv($data, $delimiter = ',', $enclosure = '"', $escape_char = "\\")
+            {
+                $f = fopen('php://memory', 'r+');
+                foreach ($data as $item) {
+                    fputcsv($f, $item, $delimiter, $enclosure, $escape_char);
+                }
+                rewind($f);
+                return stream_get_contents($f);
+            }
+
             if (!empty($export) && $export_privileges) {
                 $exported = '';
                 foreach ($result as $r) {
-                    $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                        . $r['doc_grosscurrnecyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
+                    switch ($export) {
+                        case '1': // Bank spółdzielczy - przelew zwykły
+                            $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
+                                . $r['doc_grosscurrnecyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
+                            break;
+                        case '2': // Alior Bank - przelew zwykły
+                            $title = $r['typename'] . ' ' . $r['fullnumber'];
+                            $sender = $r['division_name'] . $r['division_address'];
+                            $receiver = $r['supplier_name'] . $r['supplier_address'];
+
+                            $fields = array(
+                                '110', // (1) kod zlecenia
+                                date("Y-m-d"), // (2) data wykonania
+                                $r['doc_grosscurrnecyvalue'], // (3) kwota przelewu w groszach
+                                '24900005', // (4) nr rozliczeniowy banku zleceniodawcy
+                                '0', // (5) pole zerowe
+                                $src_iban, // (6) nr rachunku zleceniodawcy
+                                $r['iban'], // (7) nr rachunku odbiorcy
+                                $sender, // (8) nazwa i adres zleceniodawcy
+                                $receiver, // (9) nazwa i adres odbiorcy
+                                '0', // (10) pole zerowe
+                                $r['iban'],// (11) nr rozliczeniowy banku odbiorcy
+                                $title, // (12) title
+                                null, // (13) empty
+                                null, // (14) empty
+                                '51', // (15) klasyfikacja polecenia
+                                '0', // (16) split payment
+                            );
+                            $exported .= array2csv(array($fields));
+                            break;
+                        default:
+                            break;
+                    }
                 }
+                header("Content-type: application/octet-stream");
                 header('Content-Disposition: attachment; filename=' . $export_filename);
+                header('Content-Type: text/csv');
                 die($exported);
             }
         }
