@@ -43,7 +43,7 @@ function getColumnFromArray(matrix, col) {
 
 function clear_pd_form(formid) {
     $("#" + formid)[0].reset();
-    $("#column2").html('').addClass('hidden').removeClass('pdf-loaded');
+    $("#column2").html('').addClass('hidden').removeClass('attachment-loaded');
     $("input[form='" + formid + "']").val('');
     $("select[form='" + formid + "'] option:selected").removeAttr('selected');
     $( "#files").removeClass('hidden');

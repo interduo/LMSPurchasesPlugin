@@ -360,15 +360,10 @@
             return;
         }
 
-        $('#column2').addClass('pdf-loaded').html('<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>').removeClass('hidden');
+        $('#column2').addClass('attachment-loaded').html('<object data="' + pdflink + '" type="application/pdf" height="100%" width="100%"></object>').removeClass('hidden');
         $( "#addpdmodal" ).dialog( { width: window.innerWidth*0.9, height: window.innerHeight*0.9 } );
     }
 
-    $( '#files').on('lms:fileupload:complete',
-        function() {
-            console.log('pokazuje podglada pliku X');
-        }, false
-    );
 
     document.getElementById('dialog-paytype').addEventListener("change", e => change_pay_type(), false);
     document.getElementById('dialog-currency').addEventListener("change", e => change_currency(), false);
