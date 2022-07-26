@@ -77,6 +77,13 @@ class PurchasesInitHandler
                         'prio' => 40,
                         'key' => 'pdcategorylist',
                     ),
+                    'pdconfiguration' => array(
+                        'name' => trans('Configuration'),
+                        'link' => '?m=configlist&s=pd',
+                        'tip' => trans('Configuration'),
+                        'prio' => 50,
+                        'key' => 'pdconfig',
+                    ),
                 ),
             ),
         );

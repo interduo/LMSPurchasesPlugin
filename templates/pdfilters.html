@@ -105,7 +105,7 @@
                 <input type="text" size="12" name="docnumber" placeholder="{trans("document number")}" value="{if isset($params.docnumber)}{$params.docnumber}{/if}" onchange="document.filter.submit();" class="filters">
             </td>
             <td class="nobr">
-                <input type="hidden" name="export" id="export-input" value="0">
+                <input type="hidden" name="export" id="export-input">
                 {buttons}
                     {if ConfigHelper::checkPrivilege("purchases_add_purchase")}
                         {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add Purchase" onclick="open_add_dialog()" tip="Add Purchase"}
@@ -115,7 +115,7 @@
                     {/if}
                     {if empty($params.expences) && ConfigHelper::checkPrivilege("purchases_export_purchases")}
                         {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export BS" onClick="document.getElementById('export-input').value=1; document.filter.submit();" tip="Eksport przelewów do Banku Spółdzielczego"}
-                        {button name="exportpd" id="exportpdbtn2" icon="importsource" label="Export Alior" onClick="document.getElementById('export-input').value=1; document.filter.submit();" tip="Eksport przelewów do Alior Bank"}
+                        {button name="exportpd2" id="exportpdbtn2" icon="importsource" label="Export Alior" onClick="document.getElementById('export-input').value=2; document.filter.submit();" tip="Eksport przelewów do Alior Bank"}
                     {/if}
                 {/buttons}
             </td>

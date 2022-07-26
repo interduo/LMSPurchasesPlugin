@@ -215,11 +215,11 @@ class PURCHASES
             $split = ' SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue-pdc.netcurrencyvalue) AS doc_vatcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue) AS doc_grosscurrencyvalue';
-            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id, dv.name, va.location';
+            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id, dv.name, va.location, vc.location';
         } else {
             $split = 'pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue, pdc.grosscurrencyvalue,
                 pdc.description, pdc.id AS expenceid';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id, dv.name, va.location';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id, dv.name, va.location, vc.location';
         }
 
         $result = $this->db->GetAll(
@@ -227,6 +227,7 @@ class PURCHASES
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
+                    vc.location AS supplier_address,
                     dv.name AS division_name, va.location AS division_address,'
                     . $split
                     . ' FROM pds
@@ -239,6 +240,8 @@ class PURCHASES
                     LEFT JOIN vusers vu ON (vu.id = pds.userid)
                     LEFT JOIN divisions dv ON (dv.id = pds.divisionid)
                     LEFT JOIN vaddresses va ON (va.id = dv.address_id) 
+                    LEFT JOIN customer_addresses ca ON (ca.customer_id = cv.id)
+                    LEFT JOIN vaddresses vc ON (vc.id = ca.address_id)
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $divisionfilter
@@ -308,31 +311,32 @@ class PURCHASES
                     switch ($export) {
                         case '1': // Bank spółdzielczy - przelew zwykły
                             $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                                . $r['doc_grosscurrnecyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
+                                . $r['doc_grosscurrencyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
                         case '2': // Alior Bank - przelew zwykły
                             $title = $r['typename'] . ' ' . $r['fullnumber'];
-                            $sender = $r['division_name'] . $r['division_address'];
-                            $receiver = $r['supplier_name'] . $r['supplier_address'];
+                            $sender = trim($r['division_name']) . '|' . trim($r['division_address']);
+                            $receiver = trim($r['supplier_name']) . '|' . trim($r['supplier_address']);
 
                             $fields = array(
                                 '110', // (1) kod zlecenia
                                 date("Y-m-d"), // (2) data wykonania
-                                $r['doc_grosscurrnecyvalue'], // (3) kwota przelewu w groszach
-                                '24900005', // (4) nr rozliczeniowy banku zleceniodawcy
+                                round(($r['doc_grosscurrencyvalue']*100), 2), // (3) kwota przelewu w groszach
+                                substr($src_iban, 2, 4), // (4) nr rozliczeniowy banku zleceniodawcy
                                 '0', // (5) pole zerowe
-                                $src_iban, // (6) nr rachunku zleceniodawcy
-                                $r['iban'], // (7) nr rachunku odbiorcy
+                                preg_replace("/[^0-9]/", '', $src_iban), // (6) nr rachunku zleceniodawcy
+                                preg_replace("/[^0-9]/", '', $r['iban']), // (7) nr rachunku odbiorcy
                                 $sender, // (8) nazwa i adres zleceniodawcy
                                 $receiver, // (9) nazwa i adres odbiorcy
                                 '0', // (10) pole zerowe
-                                $r['iban'],// (11) nr rozliczeniowy banku odbiorcy
+                                substr($r['iban'], 2, 4), // (11) nr rozliczeniowy banku odbiorcy
                                 $title, // (12) title
                                 null, // (13) empty
                                 null, // (14) empty
                                 '51', // (15) klasyfikacja polecenia
-                                '0', // (16) split payment
+                                ($r['doc_grosscurrnecyvalue'] > 15000) ? '1' : '0', // (16) split payment
                             );
+
                             $exported .= array2csv(array($fields));
                             break;
                         default:
