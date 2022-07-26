@@ -337,7 +337,7 @@ class PURCHASES
                                 ($r['doc_grosscurrnecyvalue'] > 15000) ? 1 : 0, // (16) split payment
                             );
 
-                            $exported .= iconv('UTF-8', 'CP1250', array2csv(array($fields)));
+                            $exported .= array2csv(array($fields));
                             break;
                         default:
                             break;
@@ -346,7 +346,8 @@ class PURCHASES
                 header("Content-type: application/octet-stream");
                 header('Content-Disposition: attachment; filename=' . $export_filename);
                 header('Content-Type: text/csv');
-                die($exported);
+
+                die(iconv('UTF-8', 'CP1250', $exported));
             }
         }
 
