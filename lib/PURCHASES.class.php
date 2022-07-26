@@ -313,7 +313,7 @@ class PURCHASES
                             $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
                                 . $r['doc_grosscurrencyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
-                        case '2': // Alior Bank - przelew zwykły
+                        case '2': // MT103
                             $title = $r['typename'] . ' ' . $r['fullnumber'] . '[ID:' . $r['id'] .']';
                             $sender = trim($r['division_name']) . '|' . trim($r['division_address']);
                             $receiver = trim($r['supplier_name']) . '|' . trim($r['supplier_address']);

@@ -115,7 +115,7 @@
                     {/if}
                     {if empty($params.expences) && ConfigHelper::checkPrivilege("purchases_export_purchases")}
                         {button name="exportpd" id="exportpdbtn" icon="importsource" label="Export BS" onClick="document.getElementById('export-input').value=1; document.filter.submit();" tip="Eksport przelewów do Banku Spółdzielczego"}
-                        {button name="exportpd2" id="exportpdbtn2" icon="importsource" label="Export Alior" onClick="document.getElementById('export-input').value=2; document.filter.submit();" tip="Eksport przelewów do Alior Bank"}
+                        {button name="exportpd2" id="exportpdbtn2" icon="importsource" label="Export MT103" onClick="document.getElementById('export-input').value=2; document.filter.submit();" tip="Eksport przelewów w formacie MT103 np. Alior Bank"}
                     {/if}
                 {/buttons}
             </td>
