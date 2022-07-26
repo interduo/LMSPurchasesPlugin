@@ -314,7 +314,7 @@ class PURCHASES
                                 . $r['doc_grosscurrencyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
                         case '2': // Alior Bank - przelew zwykły
-                            $title = $r['typename'] . ' ' . $r['fullnumber'];
+                            $title = $r['typename'] . ' ' . $r['fullnumber'] . '[ID:' . $r['id'] .']';
                             $sender = trim($r['division_name']) . '|' . trim($r['division_address']);
                             $receiver = trim($r['supplier_name']) . '|' . trim($r['supplier_address']);
 
