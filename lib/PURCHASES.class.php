@@ -39,7 +39,7 @@ class PURCHASES
 
     public function GetPurchaseList($params = array())
     {
-        $src_iban = ConfigHelper::getConfig('pd.source_iban');
+        $src_iban = preg_replace('/\D/', '', ConfigHelper::getConfig('pd.source_iban'));
         $export_filename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d') . '.txt'));
         $export_privileges = ConfigHelper::checkPrivilege('purchases_export_purchases');
 
@@ -223,7 +223,7 @@ class PURCHASES
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag, iban,
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
@@ -319,25 +319,25 @@ class PURCHASES
                             $receiver = trim($r['supplier_name']) . '|' . trim($r['supplier_address']);
 
                             $fields = array(
-                                '110', // (1) kod zlecenia
+                                110, // (1) kod zlecenia
                                 date("Y-m-d"), // (2) data wykonania
                                 round(($r['doc_grosscurrencyvalue']*100), 2), // (3) kwota przelewu w groszach
                                 substr($src_iban, 2, 4), // (4) nr rozliczeniowy banku zleceniodawcy
-                                '0', // (5) pole zerowe
+                                0, // (5) pole zerowe
                                 preg_replace("/[^0-9]/", '', $src_iban), // (6) nr rachunku zleceniodawcy
                                 preg_replace("/[^0-9]/", '', $r['iban']), // (7) nr rachunku odbiorcy
                                 $sender, // (8) nazwa i adres zleceniodawcy
                                 $receiver, // (9) nazwa i adres odbiorcy
-                                '0', // (10) pole zerowe
+                                0, // (10) pole zerowe
                                 substr($r['iban'], 2, 4), // (11) nr rozliczeniowy banku odbiorcy
                                 $title, // (12) title
                                 null, // (13) empty
                                 null, // (14) empty
-                                '51', // (15) klasyfikacja polecenia
-                                ($r['doc_grosscurrnecyvalue'] > 15000) ? '1' : '0', // (16) split payment
+                                51, // (15) klasyfikacja polecenia
+                                ($r['doc_grosscurrnecyvalue'] > 15000) ? 1 : 0, // (16) split payment
                             );
 
-                            $exported .= array2csv(array($fields));
+                            $exported .= iconv('UTF-8', 'CP1250', array2csv(array($fields)));
                             break;
                         default:
                             break;
