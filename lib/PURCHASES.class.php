@@ -320,7 +320,7 @@ class PURCHASES
 
                             $fields = array(
                                 110, // (1) kod zlecenia
-                                date("Y-m-d"), // (2) data wykonania
+                                date("Ymd"), // (2) data wykonania
                                 round(($r['doc_grosscurrencyvalue']*100), 2), // (3) kwota przelewu w groszach
                                 substr($src_iban, 2, 4), // (4) nr rozliczeniowy banku zleceniodawcy
                                 0, // (5) pole zerowe
