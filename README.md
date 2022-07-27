@@ -15,7 +15,6 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 - wsparcie dla LMS > 28.x (obecna gałąź master),
 - żeby wszystko grało wtyczka wymaga dogrania do mastera:
 https://github.com/chilek/lms/pull/2258
-https://github.com/chilek/lms/pull/2276
 https://github.com/chilek/lms/pull/2265
 
 **Instalacja wtyczki:**
