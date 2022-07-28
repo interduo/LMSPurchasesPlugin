@@ -14,11 +14,13 @@ if (empty($attid) && empty($id)) {
 
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
-if (!empty($id) && $PURCHASES->IsThisUserAllowedToViewThisPurchase(Auth::GetCurrentUser(), $id)) {
+$attachmentlocation = empty($id) ? array('attid' => $attid) : array('pdid' => $id);
+
+if (!$PURCHASES->IsLoggedUserAllowedToViewThisAttachment($attachmentlocation)) {
     die(trans('No access - check privileges for categories'));
 }
 
-$files = $PURCHASES->GetPurchaseFiles((empty($id) ? array('attid' => $attid) : array('pdid' => $id)));
+$files = $PURCHASES->GetPurchaseFiles($attachmentlocation);
 
 if (!empty($files)) {
     $file = array_shift(array_values($files));

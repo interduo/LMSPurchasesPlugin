@@ -983,41 +983,50 @@ class PURCHASES
 
     private function GetUserPurchaseCategories($userid)
     {
-        return $this->db->GetCol(
+        $result = $this->db->GetCol(
             'SELECT DISTINCT categoryid
             FROM pdusercategories
             WHERE userid = ?',
             array($userid)
         );
+        return is_array($result) ? $result : array($result);
     }
 
-    public function IsThisUserAllowedToViewThisPurchase($userid, $docid)
+    public function IsLoggedUserAllowedToViewThisAttachment($params)
     {
-        $userid = intval($userid) ?? Auth::GetCurrentUser();
-        if (empty($docid)) {
+        extract($params);
+
+        if (empty($pdid) && empty($attid)) {
             return false;
         }
 
         ///dostep gdy faktura nie ma kategorii
         ///użytkownik musi mieć uprawnienia do co najmniej jednej kategorii z wydatku faktury
-        $doccategories = $this->GetCategoriesUsingDocumentId($docid);
-        $usercategories = $this->GetUserPurchaseCategories($userid);
+        if (empty($pdid)) {
+            $doccategories = $this->GetCategoriesUsingDocumentId($this->GetPurchaseDocumentIdUsingAttid($attid));
+        } else {
+            $doccategories = $this->GetCategoriesUsingDocumentId($pdid);
+        }
+
+        $usercategories = $this->GetUserPurchaseCategories(Auth::GetCurrentUser());
 
         if (empty($doccategories) || ConfigHelper::checkPrivilege('superuser')) {
             return true;
         }
 
-        if (empty($usercategories)) {
+        if (empty($usercategories) && !empty($doccategories)) {
             return false;
-        } else {
-            if (!empty(array_intersect(
-                $doccategories,
-                is_array($usercategories) ? $usercategories : array($usercategories)
-            ))) {
-                return true;
-            }
         }
-        return false;
+
+        return !empty(array_intersect($doccategories, $usercategories));
+    }
+
+    public function GetPurchaseDocumentIdUsingAttid($attid)
+    {
+        return $this->db->GetOne(
+            'SELECT pdid FROM pdattachments WHERE id = ?',
+            array($attid)
+        );
     }
 
     public function DeletePurchaseCategory($id)
