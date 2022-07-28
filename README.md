@@ -16,6 +16,7 @@ Wtyczka nie jest i nie będzie substytutem systemu księgowego ani magazynu.
 - żeby wszystko grało wtyczka wymaga dogrania do mastera:
 https://github.com/chilek/lms/pull/2258
 https://github.com/chilek/lms/pull/2265
+https://github.com/chilek/lms/pull/2300
 
 **Instalacja wtyczki:**
 1. Przejdź do głównego katalogu LMS.
@@ -49,4 +50,6 @@ chmod -R 750 storage/pd/anteroom;
 Jarosław Kłopotek <jkl@interduo.pl>,
 
 Podziękowania dla:
-Grzegorz Cichowski <gc@ptlanet.pl>
+Grzegorz Cichowski - PTLANET,
+Damian Kieliszek - PROIP,
+Rafał Wójcik - AWBNET,
