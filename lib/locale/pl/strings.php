@@ -21,6 +21,7 @@ $_LANG['Document uploads'] = 'Wrzutnia dokumentów';
 $_LANG['There is the same full document number in database for this supplier - this is probably duplicate'] = 'W bazie danych znajduje się już taki numer dokumentu dla tego dostawcy - jest to najprawdopodobniej duplikat';
 $_LANG['Add empty row'] = 'Dodaj pusty wiersz';
 $_LANG['Payment export'] = 'Eksport płatności';
+$_LANG['Split payment'] = 'Podzielona płatność';
 $_LANG['expences'] = 'wydatki';
 $_LANG['Expences'] = 'Wydatki';
 $_LANG['Default'] = 'Domyślny';

@@ -57,6 +57,7 @@ CREATE TABLE pds (
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
     divisionid smallint NOT NULL,
     iban varchar(26),
+    preferred_splitpayment boolean,
     typeid integer
         CONSTRAINT pds_typeid_fkey REFERENCES pdtypes (id) ON DELETE SET NULL ON UPDATE CASCADE,
     userid integer

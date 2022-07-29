@@ -223,7 +223,7 @@ class PURCHASES
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag, iban,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag, iban, preferred_splitpayment,
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
@@ -334,7 +334,7 @@ class PURCHASES
                                 null, // (13) empty
                                 null, // (14) empty
                                 51, // (15) klasyfikacja polecenia
-                                ($r['doc_grosscurrnecyvalue'] > 15000) ? 1 : 0, // (16) split payment
+                                ($r['doc_grosscurrnecyvalue'] > 15000) ? 1 : (empty($r['preferred_splitpayment']) ? 0 : 1), // (16) split payment
                             );
 
                             $exported .= array2csv(array($fields));
@@ -488,7 +488,7 @@ class PURCHASES
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
-            pds.paytype, pds.supplierid, pds.divisionid, pds.iban, cv.ten AS supplier_ten,'
+            pds.paytype, pds.supplierid, pds.divisionid, pds.iban, pds.preferred_splitpayment :: int, cv.ten AS supplier_ten,'
             . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
             SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue, 
             SUM(pd.grosscurrencyvalue*pd.amount) AS doc_grosscurrencyvalue,
@@ -685,13 +685,14 @@ class PURCHASES
             'divisionid' => intval($args['divisionid']),
             'userid' => Auth::GetCurrentUser(),
             'attid' => empty($args['attid']) ? null : $args['attid'],
+            'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? true : false,
         );
 
         $this->db->Execute(
-            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, userid)
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, preferred_splitpayment, userid)
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
-                    $params['paydate'], $params['supplierid'], $params['divisionid'], $params['iban'], $params['userid'])
+                    $params['paydate'], $params['supplierid'], $params['divisionid'], $params['iban'], $params['preferred_splitpayment'], $params['userid'])
         );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
@@ -754,14 +755,15 @@ class PURCHASES
             'supplierid' => $args['supplierid'],
             'divisionid' => intval($args['divisionid']),
             'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
+            'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 0 : 1,
         );
 
         $this->db->Execute(
             'UPDATE pds SET typeid = ?, currency = ?, vatplnvalue = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
-                    paydate = ?, supplierid = ?, divisionid = ?, iban = ? WHERE id = ?',
+                    paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ? WHERE id = ?',
             array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'],
                     $params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
-                    $params['iban'], $params['id'])
+                    $params['iban'], $params['preferred_splitpayment'], $params['id'])
         );
 
         $this->db->Execute(

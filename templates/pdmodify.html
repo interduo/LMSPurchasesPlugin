@@ -175,6 +175,14 @@
                             <span class="nobr" id="bankaccounts-container"></span>
                         </td>
                     </tr>
+                    <tr id="dialog-preferred_splitpayment-tr">
+                        <td class="nobr">
+                            {icon name="money" label="Split payment" tip="Preferowana podzielona płatność"}
+                        </td>
+                        <td>
+                            <input type='checkbox' name='addpd[preferred_splitpayment]' id='dialog-preferred_splitpayment' {if !empty($pdinfo.preferred_splitpayment)}checked{/if} data-default-value='0' autocomplete='off'><br>
+                        </td>
+                    </tr>
                     <tr>
                         <td class="nobr">
                             {icon name="deadline" label="Deadline"}

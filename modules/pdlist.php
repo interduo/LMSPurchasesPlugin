@@ -44,6 +44,9 @@ if (!empty($_GET['get_customer_ten'])) {
 if (isset($_POST['addpd'])) {
     $addpd = $_POST['addpd'];
 
+    // split payments checkbox
+    $_POST['addpd']['preferred_splitpayment'] == 'on' ? $addpd['preferred_splitpayment'] = 1 : null;
+
     $result = handle_file_uploads('files', $error);
 
     extract($result);
@@ -189,7 +192,7 @@ if (isset($_GET['confirm'])) {
     switch ($_GET['confirm']) {
         case "0":
         case "1":
-            $params['confirm'] = $_GET['confirm'];
+            $params['confirm'] = intval($_GET['confirm']);
             break;
         default:
             break;

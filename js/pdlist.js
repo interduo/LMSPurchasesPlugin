@@ -99,6 +99,11 @@
             change_pay_type();
 
             $("#dialog-iban").val(pd.iban);
+            if (pd.preferred_splitpayment === '1') {
+                $("#dialog-preferred_splitpayment").prop('checked', true);
+            } else {
+                $("#dialog-preferred_splitpayment").prop('checked', false);
+            }
 
             $("#dialog-supplierid").val(pd.supplierid).trigger('input');
 
@@ -267,28 +272,36 @@
     function change_pay_type() {
         var elem = document.getElementById('dialog-paytype');
         var paytype = elem.value;
-        var iban = document.getElementById("dialog-iban-tr");
+        var ibantr = document.getElementById("dialog-iban-tr");
         var ibaninput = document.getElementById("dialog-iban");
         var iban_button = document.getElementById("import_iban_button");
+        var splitpayment = document.getElementById("dialog-preferred_splitpayment-tr");
 
-        if (paytype != 2 && paytype != 3) {
-            iban.removeAttribute('required');
-            iban.classList.add("lms-ui-disabled");
-            iban_button.disabled = true;
-            ibaninput.removeAttribute('required');
-            ibaninput.disabled = true;
-            if (paytype == 1 || paytype == 8) {
-                let paydate = document.getElementById("dialog-paydate");
-                let deadline = document.getElementById("dialog-deadline");
+        switch(paytype) {
+            case '2':
+            case '3':
+                ibantr.classList.remove("lms-ui-disabled");
+                ibaninput.setAttribute('required','');
+                ibaninput.disabled = false;
+                iban_button.disabled = false;
+                if (splitpayment.classList.contains("lms-ui-disabled")) {
+                    splitpayment.classList.remove("lms-ui-disabled");
+                    document.getElementById("dialog-preferred_splitpayment").disabled = false;
+                }
+                break;
+            case '1':
+            case '8':
                 let sdate = document.getElementById("dialog-sdate").value;
-                paydate.value = sdate;
-                deadline.value = sdate;
-            }
-        } else {
-            iban.classList.remove("lms-ui-disabled");
-            ibaninput.setAttribute('required','');
-            ibaninput.disabled = false;
-            iban_button.disabled = false;
+                document.getElementById("dialog-paydate").value = sdate;
+                document.getElementById("dialog-deadline").value = sdate;
+            default:
+                ibaninput.removeAttribute('required');
+                ibaninput.disabled = true;
+                ibantr.classList.add("lms-ui-disabled");
+                iban_button.disabled = true;
+                splitpayment.classList.add("lms-ui-disabled");
+                $( "#dialog-preferred_splitpayment" ).prop('checked', false).val('');
+                break;
         }
     }
 
