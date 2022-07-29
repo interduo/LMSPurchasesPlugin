@@ -46,11 +46,7 @@ chmod -R 750 storage/pd/anteroom;
 - płatności cykliczne,
 - automatyczne zaczytywanie faktur od kontrachentów, którzy udostępniają je w XML,
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
-
-**Wish list**
-[ ] import potwierdzeń płatności wykonanych w banku
-[ ] dodanie obsługi wielu banków (wielu użyszkodników ma kilka kont bankowych) przy exporcie płatności do banku 
-[ ] dokumentacja z opisem zmiennych konfiguracyjnych, przypadków użycia (diagramów sterowania)
+- import potwierdzeń płatności wykonanych w banku,
 
 Jarosław Kłopotek <jkl@interduo.pl>,
 
