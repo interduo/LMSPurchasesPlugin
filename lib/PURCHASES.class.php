@@ -47,6 +47,7 @@ class PURCHASES
             extract($params);
         }
 
+/*
         if (isset($orderby)) {
             $orderby = ' ORDER BY '
                 . match ($orderby) {
@@ -62,6 +63,9 @@ class PURCHASES
         } else {
             $orderby = '';
         }
+*/
+
+$orderby = '';
 
         // DIVISION FILTER
         if (!empty($divisionid)) {
@@ -685,7 +689,7 @@ class PURCHASES
             'divisionid' => intval($args['divisionid']),
             'userid' => Auth::GetCurrentUser(),
             'attid' => empty($args['attid']) ? null : $args['attid'],
-            'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? true : false,
+            'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
         );
 
         $this->db->Execute(
@@ -755,7 +759,7 @@ class PURCHASES
             'supplierid' => $args['supplierid'],
             'divisionid' => intval($args['divisionid']),
             'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
-            'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 0 : 1,
+            'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
         );
 
         $this->db->Execute(
