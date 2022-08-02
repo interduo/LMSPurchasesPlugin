@@ -244,7 +244,7 @@ $orderby = '';
                     LEFT JOIN vusers vu ON (vu.id = pds.userid)
                     LEFT JOIN divisions dv ON (dv.id = pds.divisionid)
                     LEFT JOIN vaddresses va ON (va.id = dv.address_id) 
-                    LEFT JOIN customer_addresses ca ON (ca.customer_id = cv.id)
+                    LEFT JOIN customer_addresses ca ON (ca.customer_id = cv.id) AND ca.type = 1
                     LEFT JOIN vaddresses vc ON (vc.id = ca.address_id)
                     LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'

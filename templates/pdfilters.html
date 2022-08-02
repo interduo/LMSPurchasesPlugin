@@ -108,7 +108,7 @@
                 <input type="hidden" name="export" id="export-input">
                 {buttons}
                     {if ConfigHelper::checkPrivilege("purchases_add_purchase")}
-                        {button name="addpd" id="addpdbtn" icon="add" accesskey="a" label="Add Purchase" onclick="open_add_dialog()" tip="Add Purchase"}
+                        {button name='addpd' id='addpdbtn' icon='add' accesskey='a' label='Add Purchase' onclick='open_add_dialog()' tip='Add Purchase'}
                     {/if}
                     {if ConfigHelper::checkPrivilege("purchases_add_purchase_to_anteroom")}
                         {button id="massadbtn" icon="download" accesskey="u" label="Document uploads" href="?m=pduploads" tip="Document uploads"}
