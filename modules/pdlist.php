@@ -294,7 +294,7 @@ if (!empty($_GET['action'])) {
             break;
     }
     if (!empty($id) || !empty($attid) || !empty($addpd)) {
-        $SESSION->redirect('?m=pdlist');
+        $SESSION->redirect_to_history_entry('?m=pdlist');
     }
     $SMARTY->assign('action', $action);
 }
@@ -317,5 +317,7 @@ $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);
 $SMARTY->assign('pagetitle', $layout['pagetitle']);
 $SMARTY->assign('pagelimit', $pagelimit);
+
+$SESSION->add_history_entry();
 
 $SMARTY->display('pdlist.html');
