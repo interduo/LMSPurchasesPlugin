@@ -227,11 +227,11 @@ $orderby = '';
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag, iban, preferred_splitpayment,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag, iban,
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
-                    vc.location AS supplier_address,
+                    vc.location AS supplier_address, preferred_splitpayment :: int,
                     dv.name AS division_name, va.location AS division_address,'
                     . $split
                     . ' FROM pds
@@ -338,7 +338,7 @@ $orderby = '';
                                 null, // (13) empty
                                 null, // (14) empty
                                 51, // (15) klasyfikacja polecenia
-                                ($r['doc_grosscurrnecyvalue'] > 15000) ? 1 : (empty($r['preferred_splitpayment']) ? 0 : 1), // (16) split payment
+                                ($r['doc_grosscurrnecyvalue'] > 15000) ? '1' : (empty($r['preferred_splitpayment']) ? '0' : '1'), // (16) split payment
                             );
 
                             $exported .= array2csv(array($fields));
