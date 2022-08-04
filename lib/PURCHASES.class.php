@@ -22,7 +22,7 @@ class PURCHASES
 
     public function SetConfirmationFlag($ids, bool $state)
     {
-        $state = empty($state) ? false : true;
+        $state = empty($state) ? 'false' : 'true';
 
         if (empty($ids) || !ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
             return;
