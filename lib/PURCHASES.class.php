@@ -33,8 +33,6 @@ class PURCHASES
         }
 
         $this->db->Execute('UPDATE pds SET confirmflag = ? WHERE id IN ( ? )', array($state, $ids));
-
-        return;
     }
 
     public function GetPurchaseList($params = array())
