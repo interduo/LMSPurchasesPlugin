@@ -696,10 +696,12 @@ $orderby = '';
         );
 
         $this->db->Execute(
-            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, preferred_splitpayment, confirmflag, userid)
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
-                    $params['paydate'], $params['supplierid'], $params['divisionid'], $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['userid'])
+            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate,
+                 supplierid, divisionid, iban, preferred_splitpayment, confirmflag, userid)
+                 VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'],
+                $params['deadline'],$params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
+                $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['userid'])
         );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
@@ -774,10 +776,10 @@ $orderby = '';
 
         $this->db->Execute(
             'UPDATE pds SET typeid = ?, currency = ?, vatplnvalue = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
-                    paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ?, confirmflag = ? WHERE id = ?',
+                    paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ? WHERE id = ?',
             array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'],
                     $params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
-                    $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['id'])
+                    $params['iban'], $params['preferred_splitpayment'], $params['id'])
         );
 
         if ($allow_to_confirm_purchase) {
