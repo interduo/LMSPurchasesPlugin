@@ -287,7 +287,7 @@ if (!empty($_GET['action'])) {
             break;
         case 'markasconfirmed':
             if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
-                $PURCHASES->MarkAsConfirmed($id);
+                $PURCHASES->SetConfirmationFlag($id, true);
             }
             break;
         default:

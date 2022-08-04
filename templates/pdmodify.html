@@ -180,9 +180,19 @@
                             {icon name="money" label="Split payment" tip="Preferowana podzielona płatność"}
                         </td>
                         <td>
-                            <input type='checkbox' name='addpd[preferred_splitpayment]' id='dialog-preferred_splitpayment' {if !empty($pdinfo.preferred_splitpayment)}checked{/if} data-default-value='0' autocomplete='off'><br>
+                            <input type='checkbox' name='addpd[preferred_splitpayment]' id='dialog-preferred_splitpayment' {if !empty($pdinfo.preferred_splitpayment)}checked{/if} data-default-value='0' autocomplete='off'>
                         </td>
                     </tr>
+                    {if ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')}
+                        <tr id="dialog-commited-tr">
+                            <td class="nobr">
+                                {icon name='confirm' label='Confirm flag' tip='Oznaczenie wydatku jako zatwierdzony'}
+                            </td>
+                            <td>
+                                <input type='checkbox' name='addpd[confirmflag]' id='dialog-confirmflag' {if !empty($pdinfo.confirmflag)}checked{/if} data-default-value='0' autocomplete='off'>
+                            </td>
+                        </tr>
+                    {/if}
                     <tr>
                         <td class="nobr">
                             {icon name="deadline" label="Deadline"}

@@ -20,19 +20,19 @@ class PURCHASES
         );
     }*/
 
-    public function MarkAsConfirmed($ids)
+    public function SetConfirmationFlag($ids, bool $state)
     {
-        if (!ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
-            die("You don't have permission to confirm purchases");
-        };
+        $state = empty($state) ? false : true;
+
+        if (empty($ids) || !ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
+            return;
+        }
 
         if (is_array($ids)) {
             $ids = implode(",", $ids);
         }
 
-        if (!empty($ids)) {
-            $this->db->Execute('UPDATE pds SET confirmflag = 1 WHERE id IN ( ? )', array($ids));
-        }
+        $this->db->Execute('UPDATE pds SET confirmflag = ? WHERE id IN ( ? )', array($state, $ids));
 
         return true;
     }
@@ -227,7 +227,7 @@ $orderby = '';
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag, iban,
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag :: int, iban,
                     cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                     supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
                     . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
@@ -492,11 +492,11 @@ $orderby = '';
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
-            pds.paytype, pds.supplierid, pds.divisionid, pds.iban, pds.preferred_splitpayment :: int, cv.ten AS supplier_ten,'
+            pds.paytype, pds.supplierid, pds.divisionid, pds.iban, pds.preferred_splitpayment :: int,'
             . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
-            SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue, 
+            SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue, cv.ten AS supplier_ten,
             SUM(pd.grosscurrencyvalue*pd.amount) AS doc_grosscurrencyvalue,
-            COUNT(pd.pdid) AS expences_count
+            COUNT(pd.pdid) AS expences_count, pds.confirmflag :: int
             FROM pds
                 LEFT JOIN customers cv ON (cv.id = pds.supplierid)
                 LEFT JOIN pdcontents pd ON (pd.pdid = pds.id)
@@ -675,6 +675,8 @@ $orderby = '';
 
     public function AddPurchase($args, $files = null)
     {
+        $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
+
         $params = array(
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
@@ -690,13 +692,14 @@ $orderby = '';
             'userid' => Auth::GetCurrentUser(),
             'attid' => empty($args['attid']) ? null : $args['attid'],
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
+            'confirmflag' => empty($allow_to_confirm_purchase) ? 'false' : (empty($args['confirmflag']) ? 'false' : 'true'),
         );
 
         $this->db->Execute(
-            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, preferred_splitpayment, userid)
-                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate, supplierid, divisionid, iban, preferred_splitpayment, confirmflag, userid)
+                    VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'], $params['paytype'],
-                    $params['paydate'], $params['supplierid'], $params['divisionid'], $params['iban'], $params['preferred_splitpayment'], $params['userid'])
+                    $params['paydate'], $params['supplierid'], $params['divisionid'], $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['userid'])
         );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
@@ -746,8 +749,10 @@ $orderby = '';
 
     public function UpdatePurchaseDocument($args)
     {
+        $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
+
         $params = array(
-            'id' => $args['id'],
+            'id' => intval($args['id']),
             'typeid' => empty($args['typeid']) ? null : $args['typeid'],
             'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
             'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
@@ -760,22 +765,27 @@ $orderby = '';
             'divisionid' => intval($args['divisionid']),
             'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
+            'confirmflag' => empty($allow_to_confirm_purchase) ? 'false' : (empty($args['confirmflag']) ? 'false' : 'true'),
         );
+
+        if (empty($params['id'])) {
+            return null;
+        }
 
         $this->db->Execute(
             'UPDATE pds SET typeid = ?, currency = ?, vatplnvalue = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
-                    paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ? WHERE id = ?',
+                    paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ?, confirmflag = ? WHERE id = ?',
             array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'],
                     $params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
-                    $params['iban'], $params['preferred_splitpayment'], $params['id'])
+                    $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['id'])
         );
 
         $this->db->Execute(
             'DELETE FROM pdcontents WHERE pdid = ?',
-            array($args['id'])
+            array($params['id'])
         );
 
-        $this->AddExpense($args['id'], $args['expenses']);
+        $this->AddExpense($params['id'], $args['expenses']);
 
         return null;
     }

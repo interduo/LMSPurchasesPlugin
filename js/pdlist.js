@@ -101,8 +101,10 @@
             $("#dialog-iban").val(pd.iban);
             if (pd.preferred_splitpayment === '1') {
                 $("#dialog-preferred_splitpayment").prop('checked', true);
-            } else {
-                $("#dialog-preferred_splitpayment").prop('checked', false);
+            }
+
+            if (pd.confirmflag === '1') {
+                $("#dialog-confirmflag").prop('checked', true);
             }
 
             $("#dialog-supplierid").val(pd.supplierid).trigger('input');
