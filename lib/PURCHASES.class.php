@@ -20,7 +20,7 @@ class PURCHASES
         );
     }*/
 
-    public function SetConfirmationFlag($ids, bool $state)
+    public function SetConfirmationFlag($ids, bool $state) : void
     {
         $state = empty($state) ? 'false' : 'true';
 
@@ -34,7 +34,7 @@ class PURCHASES
 
         $this->db->Execute('UPDATE pds SET confirmflag = ? WHERE id IN ( ? )', array($state, $ids));
 
-        return true;
+        return;
     }
 
     public function GetPurchaseList($params = array())
@@ -47,7 +47,7 @@ class PURCHASES
             extract($params);
         }
 
-/*
+/* PHP 8.0 fragment
         if (isset($orderby)) {
             $orderby = ' ORDER BY '
                 . match ($orderby) {
@@ -65,7 +65,7 @@ class PURCHASES
         }
 */
 
-$orderby = '';
+        $orderby = '';
 
         // DIVISION FILTER
         if (!empty($divisionid)) {
@@ -517,7 +517,7 @@ $orderby = '';
         extract($params);
 
         if (empty($files)) {
-            return;
+            return null;
         }
 
         $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 33);
@@ -690,7 +690,6 @@ $orderby = '';
             'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
             'divisionid' => intval($args['divisionid']),
             'userid' => Auth::GetCurrentUser(),
-            'attid' => empty($args['attid']) ? null : $args['attid'],
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
             'confirmflag' => empty($allow_to_confirm_purchase) ? 'false' : (empty($args['confirmflag']) ? 'false' : 'true'),
         );
@@ -743,8 +742,7 @@ $orderby = '';
         }
 
         return $this->db->Execute(
-            'UPDATE pds SET paydate = ?NOW?
-                    WHERE id = ?',
+            'UPDATE pds SET paydate = ?NOW? WHERE id = ?',
             array($id)
         );
     }
@@ -948,11 +946,7 @@ $orderby = '';
     {
         $results = $this->db->GetRow('SELECT id, name, description FROM pdcategories WHERE id = ?', array($categoryid));
 
-        if (empty($results)) {
-            return;
-        }
-
-        foreach ($results as $r) {
+        if (!empty($results)) {
             $results['userids'] = $this->GetUsersForCategory($categoryid);
         }
 
@@ -1000,7 +994,7 @@ $orderby = '';
             );
         }
 
-        return;
+        return null;
     }
 
     private function GetUserPurchaseCategories($userid)
@@ -1080,7 +1074,7 @@ $orderby = '';
             $this->ReplaceUserPdCategories($params['userids'], $args['id'], true);
         }
 
-        return;
+        return null;
     }
 
     public function AddExpense($pdid, $expenses)
