@@ -765,7 +765,7 @@ $orderby = '';
             'divisionid' => intval($args['divisionid']),
             'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
-            'confirmflag' => empty($allow_to_confirm_purchase) ? 'false' : (empty($args['confirmflag']) ? 'false' : 'true'),
+            'confirmflag' => empty($args['confirmflag']) ? 'false' : 'true',
         );
 
         if (empty($params['id'])) {
@@ -779,6 +779,10 @@ $orderby = '';
                     $params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
                     $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['id'])
         );
+
+        if ($allow_to_confirm_purchase) {
+            $this->SetConfirmationFlag($params['id'], $params['confirmflag']);
+        }
 
         $this->db->Execute(
             'DELETE FROM pdcontents WHERE pdid = ?',
