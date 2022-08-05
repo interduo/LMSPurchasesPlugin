@@ -580,15 +580,15 @@ class PURCHASES
                 'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath, createtime, sender, sender_mail, comment)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 array(
-                    empty($pdid) ? null : $pdid,
+                    empty($pdid) ?: $pdid,
                     $dstfilename,
                     $file['type'],
                     empty($anteroom) ? 'false' : 'true',
                     $attdir,
                     time(),
-                    empty($sender) ? null : $sender,
-                    empty($sender_mail) ? null : $sender_mail,
-                    empty($comment) ? null : $comment,
+                    empty($sender) ?: $sender,
+                    empty($sender_mail) ?: $sender_mail,
+                    empty($comment) ?: $comment,
                 )
             );
         }
@@ -676,16 +676,16 @@ class PURCHASES
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
 
         $params = array(
-            'typeid' => empty($args['typeid']) ? null : $args['typeid'],
+            'typeid' => empty($args['typeid']) ?: $args['typeid'],
             'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
-            'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
+            'vatplnvalue' => empty($args['vatplnvalue']) ?: $args['vatplnvalue'],
             'fullnumber' => $args['fullnumber'],
-            'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
-            'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
+            'sdate' => empty($args['sdate']) ?: date_to_timestamp($args['sdate']),
+            'deadline' => empty($args['deadline']) ?: date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
-            'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
+            'paydate' => empty($args['paydate']) ?: date_to_timestamp($args['paydate']),
             'supplierid' => $args['supplierid'],
-            'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
+            'iban' => empty($args['iban']) ?: str_replace(' ', '', $args['iban']),
             'divisionid' => intval($args['divisionid']),
             'userid' => Auth::GetCurrentUser(),
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
@@ -751,17 +751,17 @@ class PURCHASES
 
         $params = array(
             'id' => intval($args['id']),
-            'typeid' => empty($args['typeid']) ? null : $args['typeid'],
+            'typeid' => empty($args['typeid']) ?: $args['typeid'],
             'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
-            'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
+            'vatplnvalue' => empty($args['vatplnvalue']) ?: $args['vatplnvalue'],
             'fullnumber' => $args['fullnumber'],
-            'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
-            'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
+            'sdate' => empty($args['sdate']) ?: date_to_timestamp($args['sdate']),
+            'deadline' => empty($args['deadline']) ?: date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
-            'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
+            'paydate' => empty($args['paydate']) ?: date_to_timestamp($args['paydate']),
             'supplierid' => $args['supplierid'],
             'divisionid' => intval($args['divisionid']),
-            'iban' => empty($args['iban']) ? null : str_replace(' ', '', $args['iban']),
+            'iban' => empty($args['iban']) ?: str_replace(' ', '', $args['iban']),
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
             'confirmflag' => empty($args['confirmflag']) ? 'false' : 'true',
         );
@@ -850,7 +850,7 @@ class PURCHASES
     {
         $args = array(
             'name' => $args['name'],
-            'description' => empty($args['description']) ? null : $args['description'],
+            'description' => empty($args['description']) ?: $args['description'],
             'defaultflag' => empty($args['defaultflag']) ? 'false' : 'true',
         );
 
@@ -873,7 +873,7 @@ class PURCHASES
     {
         $args = array(
             'name' => $args['name'],
-            'description' => empty($args['description']) ? null : $args['description'],
+            'description' => empty($args['description']) ?: $args['description'],
             'defaultflag' => empty($args['defaultflag']) ? 'false' : 'true',
             'id' => $args['id'],
         );
@@ -955,8 +955,8 @@ class PURCHASES
     {
         $args = array(
             'name' => $args['name'],
-            'description' => empty($args['description']) ? null : $args['description'],
-            'userids' => empty($args['userids']) ? null : $args['userids'],
+            'description' => empty($args['description']) ?: $args['description'],
+            'userids' => empty($args['userids']) ?: $args['userids'],
         );
 
         $this->db->Execute(
@@ -1059,7 +1059,7 @@ class PURCHASES
 
         $args = array(
             'name' => $params['name'],
-            'description' => empty($params['description']) ? null : $params['description'],
+            'description' => empty($params['description']) ?: $params['description'],
             'id' => intval($params['id']),
         );
 
@@ -1083,9 +1083,9 @@ class PURCHASES
                 'grosscurrencyvalue' => str_replace(",", ".", $e['grosscurrencyvalue']),
                 'amount' => $e['amount'],
                 'taxid' => intval($e['taxid']),
-                'description' => empty($args['description']) ? null : $e['description'],
-                'invprojects' => empty($args['invprojects']) ? null : $e['invprojects'],
-                'categories' => empty($args['categories']) ? null : $e['categories'],
+                'description' => empty($args['description']) ?: $e['description'],
+                'invprojects' => empty($args['invprojects']) ?: $e['invprojects'],
+                'categories' => empty($args['categories']) ?: $e['categories'],
             );
 
             $this->db->Execute(

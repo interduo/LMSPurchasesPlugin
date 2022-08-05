@@ -428,7 +428,7 @@ EOF;
               $params = array(
                 'createtime' => $timestamp,
                 'sender' => (empty($fromname) ? substr(trim($mh_from), 0, 254) : substr(trim($fromname), 0, 254)),
-                'sender_mail' => (empty($fromemail) ? null : substr(trim($fromemail), 0, 254)),
+                'sender_mail' => (empty($fromemail) ?: substr(trim($fromemail), 0, 254)),
                 'comment' => substr(trim($mh_subject), 0, 254),
                 'files' => $files,
                 'anteroom' => true,
