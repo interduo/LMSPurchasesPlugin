@@ -462,15 +462,25 @@ class PURCHASES
             $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($r['expenceid']);
             $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
 
-            ////round money values depending on document currency
-            switch ($result[$idx]['currency']) {
-                case 'PLN':
-                default:
-                    $precision = 2;
-                    break;
-            }
-            $result[$idx]['netcurrencyvalue'] = round($result[$idx]['netcurrencyvalue'], $precision);
-            $result[$idx]['grosscurrencyvalue'] = round($result[$idx]['grosscurrencyvalue'], $precision);
+            $result[$idx]['netcurrencyvalue'] = $this->RoundByCurrency($result[$idx]['currency'], $result[$idx]['netcurrencyvalue']);
+            $result[$idx]['grosscurrencyvalue'] = $this->RoundByCurrency($result[$idx]['currency'], $result[$idx]['grosscurrencyvalue']);
+        }
+
+        return $result;
+    }
+
+    public function RoundByCurrency($currency, $values)
+    {
+        ////round money values depending on currency
+        switch ($currency) {
+            case 'PLN':
+            default:
+                $precision = 2;
+                break;
+        }
+
+        foreach ($values as $idx => $val) {
+            $result[$idx] = round($val, $precision);
         }
 
         return $result;
