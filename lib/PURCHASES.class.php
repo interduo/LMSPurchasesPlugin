@@ -858,6 +858,9 @@ class PURCHASES
 
     public function AddPurchaseDocumentType($args)
     {
+        /// set propper serial - some day i will find better way
+        $this->db->Execute("SELECT setval('pdtypes_id_seq',(SELECT GREATEST(MAX(id)+1,nextval('pdtypes_id_seq'))-1 FROM pdtypes))");
+
         $args = array(
             'name' => $args['name'],
             'description' => empty($args['description']) ?: $args['description'],
