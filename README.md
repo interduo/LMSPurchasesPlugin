@@ -42,6 +42,7 @@ chmod -R 750 storage/pd/anteroom;
 - usunięci klienci / zmiana danych nie powinna generować zmian dokonanych płatności,
 
 **TODO v2:**
+- wiązanie wrzucanych proform z dokumentami finansowymi,
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - płatności cykliczne,
 - automatyczne zaczytywanie faktur od kontrachentów, którzy udostępniają je w XML,
