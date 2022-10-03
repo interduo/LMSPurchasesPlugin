@@ -161,4 +161,4 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('phpui', 'allowed_document_scan_mime_types', 'application/pdf', 'Pozwól dodawać jedynie zdefiniowane typy plików w tej zmiennej', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
-INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2022041400') ON CONFLICT (keytype) DO UPDATE SET keyvalue='2022041400';
+INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2022062200') ON CONFLICT (keytype) DO UPDATE SET keyvalue='2022062200';
