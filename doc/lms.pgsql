@@ -144,7 +144,7 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'pd', 'Katalog ze skanami dokumentów kosztowych domyślnie podkatalog pd w zdefiniowanym w lms.ini, storage_dir', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_divisionid', '1', 'ID domyślnego oddziału', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_currency', 'PLN', 'domyślna waluta', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'pagelimit', '50', 'ilość pozycji na stronie', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'pagelimit', '200', 'ilość pozycji na stronie', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_server', 'mail.domain.pl', 'adres serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_port', '993', 'port serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
