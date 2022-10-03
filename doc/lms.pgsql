@@ -149,8 +149,8 @@ INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_server', 'mail.domain.pl', 'adres serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_port', '993', 'port serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_options', '/imap/ssl', 'opcje połączenia IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_username', 'username_not_set1', 'login skrzynki imap', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_password', 'password_not_set1', 'login skrzynki imap', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_username', 'username_not_set1', 'login skrzynki parsera', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_password', 'password_not_set1', 'hasło skrzynki parsera', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_use_seen_flag', true, 'oznacz wiadomosc jako odczytaną po pobraniu zamiast kasować', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_folder', 'INBOX', 'folder IMAP z którego pobieramy wiadomości', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'move_to_trashbin', true, 'przenieś maila do kosza', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
