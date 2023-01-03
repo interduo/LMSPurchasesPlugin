@@ -48,6 +48,9 @@ chmod -R 750 storage/pd/anteroom;
 - automatyczne zaczytywanie faktur od kontrachentów, którzy udostępniają je w XML,
 - refaktoring/naprawa modułu dashboard - rozbudowa funkcji GetPurchaseList() o liczenie sum, (Grzegorz)
 - import potwierdzeń płatności wykonanych w banku,
+- przekazywanie dokumentu na magazyn,
+- pozwól opłatami stałymi z core LMS dodawać wydatki do wtyczki,
+- parser rozliczający wpłaty z importu bankowego,
 
 Jarosław Kłopotek <jkl@interduo.pl>,
 
