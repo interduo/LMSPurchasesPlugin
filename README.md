@@ -55,6 +55,6 @@ chmod -R 750 storage/pd/anteroom;
 Jarosław Kłopotek <jkl@interduo.pl>,
 
 Podziękowania dla:
-  Grzegorz Cichowski - PTLANET,
-  Damian Kieliszek - PROIP,
-  Rafał Wójcik - AWBNET,
+- Grzegorz Cichowski - PTLANET,
+- Damian Kieliszek - PROIP,
+- Rafał Wójcik - AWBNET.
