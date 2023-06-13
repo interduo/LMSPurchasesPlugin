@@ -46,7 +46,7 @@ if (isset($_POST['pduploads'])) {
         'anteroom' => true,
         'cleanup' => false,
     );
-    $PURCHASES->AddPurchaseFiles($params);
+    $PURCHASES->addPurchaseFiles($params);
     $SESSION->redirect('?m=pdlist');
 } else {
     $SMARTY->assign('pagetitle', $layout['pagetitle']);

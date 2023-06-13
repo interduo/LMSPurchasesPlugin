@@ -48,6 +48,7 @@ function clear_pd_form(formid) {
     $("select[form='" + formid + "'] option:selected").removeAttr('selected');
     $( "#files").removeClass('hidden');
     $( "#fileanteroom" ).addClass('hidden');
+    $( "input[form='" + formid + "'][name='use_current_supplier_info']" ).val('1').prop( "disabled", true );
 
     $("#dialog-iban").show();
     $("#bankaccounts-container").empty();

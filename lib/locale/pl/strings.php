@@ -1,5 +1,6 @@
 <?php
 
+$_LANG['Use current supplier info'] = 'Użyj bieżących danych dostawcy';
 $_LANG['confirmed'] = 'zatwierdzony';
 $_LANG['unconfirmed'] = 'niezatwierdzony';
 $_LANG['with invproject'] = 'z przypisanym projektem';

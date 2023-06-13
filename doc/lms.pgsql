@@ -55,6 +55,8 @@ CREATE TABLE pds (
     paytype smallint NOT NULL,
     supplierid integer NOT NULL
         CONSTRAINT pds_supplierid_fkey REFERENCES customers (id) ON DELETE SET NULL ON UPDATE CASCADE,
+    supplier_fullname text,
+    supplier_ten varchar(255),
     divisionid smallint NOT NULL,
     iban varchar(26),
     preferred_splitpayment boolean,

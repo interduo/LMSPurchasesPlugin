@@ -73,7 +73,7 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id).attr('data-templateid-number', template_id);
         change_currency();
         change_pay_type();
-
+        $( "input[form='addpd-form'][id='use_current_supplier_info']" ).val('1').prop('disabled', false);
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
 
         if (template_id) {

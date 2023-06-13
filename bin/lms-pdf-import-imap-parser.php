@@ -435,7 +435,7 @@ EOF;
               );
 
               $PURCHASES1 = new PURCHASES;
-              $PURCHASES1->AddPurchaseFiles($params);
+              $PURCHASES1->addPurchaseFiles($params);
           }
       }
 

@@ -19,15 +19,15 @@
     </td>
     <td data-target-url="?m=pdview&id={$pd.id}">
         {if isset($pd.deadline)}{$pd.deadline|escape|date_format:'%Y/%m/%d'}{/if}
-        <br>{trans("{$_PAYTYPES[{$pd.paytype}]}")}
+        <br>{trans("{$_PAYTYPES[{$pd.paytype}]['label']}")}
     </td>
     <td data-target-url="?m=pdview&id={$pd.id}">
         {if isset($pd.paydate)}{$pd.paydate|escape|date_format:'%Y/%m/%d'}{/if}
     </td>
-    <td {tip text=$pd.supplier_name}>
-        {if isset($pd.supplier_name)}
+    <td {tip text=$pd.supplier_fullname}>
+        {if isset($pd.supplier_fullname)}
             <a href="?m=customerinfo&id={$pd.supplierid}">
-                {$pd.supplier_name|trunescape:25:"&hellip;":true}
+                {$pd.supplier_fullname|trunescape:25:"&hellip;":true}
             </a>
         {/if}
     </td>
@@ -57,7 +57,7 @@
             {/foreach}
         {/if}
         {if !$pd.paydate && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')}
-            {button type="link" icon="money" tip="Mark purchase as paid" href="?m=pdlist&action=markaspaid&id={$pd.id}" class="payment-pd"}
+            {button type="link" icon="money" tip="Mark purchase as paid" href="?m=pdlist&action=markAsPaid&id={$pd.id}" class="payment-pd"}
         {/if}
         {if !$pd.confirmflag && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')}
             {button type="link" icon="confirm" tip="Mark purchase as confirmed" href="?m=pdlist&action=markasconfirmed&id={$pd.id}" class="confirm-pd"}

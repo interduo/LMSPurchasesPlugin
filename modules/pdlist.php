@@ -1,5 +1,5 @@
 <?php
-if (ConfigHelper::checkPrivilege('purchases') || ConfigHelper::checkPrivilege('superuser')) {
+if (ConfigHelper::checkPrivilege('purchases')) {
     $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 } else {
     access_denied();
@@ -31,21 +31,21 @@ check_file_uploads();
 
 if (!empty($_GET['pdid'])) {
     $pdid = intval($_GET['pdid']);
-    print_r(json_encode($PURCHASES->GetPurchaseDocumentInfo($pdid)));
+    print_r(json_encode($PURCHASES->getPurchaseDocumentInfo($pdid)));
     die();
 }
 
 if (!empty($_GET['get_customer_ten'])) {
     $customerid = intval($_GET['get_customer_ten']);
-    print_r(json_encode($PURCHASES->GetCustomerTen($customerid)));
+    print_r(json_encode($PURCHASES->getCustomerTen($customerid)));
     die();
 }
 
 if (isset($_POST['addpd'])) {
     $addpd = $_POST['addpd'];
 
-    // split payments checkbox
-    $_POST['addpd']['preferred_splitpayment'] == 'on' ? $addpd['preferred_splitpayment'] = 1 : null;
+    $addpd['preferred_splitpayment'] = ($_POST['addpd']['preferred_splitpayment'] != 'on'
+        || empty($_POST['addpd']['preferred_splitpayment'])) ? 0 : 1;
 
     $result = handle_file_uploads('files', $error);
 
@@ -243,7 +243,7 @@ if (isset($_GET['export'])) {
     $params['export'] = intval($_GET['export']);
 }
 
-$pdlist = $PURCHASES->GetPurchaseList($params);
+$pdlist = $PURCHASES->getPurchaseList($params);
 
 if (!empty($_GET['action'])) {
     $id = isset($_GET['id']) ? intval($_GET['id']) : '';
@@ -253,41 +253,41 @@ if (!empty($_GET['action'])) {
     switch ($action) {
         case 'add':
             if (!empty($addpd) && ConfigHelper::checkPrivilege('purchases_add_purchase')) {
-                $PURCHASES->AddPurchase($addpd, $files);
+                $PURCHASES->addPurchase($addpd, $files);
             }
             break;
         case 'acceptfile':
             if (!empty($addpd) && ConfigHelper::checkPrivilege('purchases_add_purchase')) {
-                $addedid = $PURCHASES->AddPurchase($addpd, $files);
-                $PURCHASES->MovePurchaseFileFromAnteroom(array('attid' => $attid, 'pdid' => $addedid));
+                $addedid = $PURCHASES->addPurchase($addpd, $files);
+                $PURCHASES->movePurchaseFileFromAnteroom(array('attid' => $attid, 'pdid' => $addedid));
             }
             break;
         case 'modify':
-            $pdinfo = $PURCHASES->GetPurchaseDocumentInfo($id);
+            $pdinfo = $PURCHASES->getPurchaseDocumentInfo($id);
             $SMARTY->assign('pdinfo', $pdinfo);
             if (isset($addpd) && ConfigHelper::checkPrivilege('purchases_modify_purchase')) {
                 $addpd['id'] = $id;
-                $PURCHASES->UpdatePurchaseDocument($addpd);
+                $PURCHASES->updatePurchaseDocument($addpd);
             }
             break;
         case 'delete':
             if (!empty($id) && ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
-                $PURCHASES->DeletePurchaseDocument($id);
+                $PURCHASES->deletePurchaseDocument($id);
             }
             break;
         case 'delete-attachment':
             if (!empty($attid) && ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
-                $PURCHASES->DeleteAttachementFile($attid);
+                $PURCHASES->deleteAttachementFile($attid);
             }
             break;
-        case 'markaspaid':
+        case 'markAsPaid':
             if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')) {
-                $PURCHASES->MarkAsPaid($id);
+                $PURCHASES->markAsPaid($id);
             }
             break;
         case 'markasconfirmed':
             if (!empty($id) && ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed')) {
-                $PURCHASES->SetConfirmationFlag($id, true);
+                $PURCHASES->setConfirmationFlag($id, true);
             }
             break;
         default:
@@ -299,19 +299,19 @@ if (!empty($_GET['action'])) {
     $SMARTY->assign('action', $action);
 }
 
-$SMARTY->assign('anteroom', $PURCHASES->GetPurchaseFiles(array('anteroom' => true)));
+$SMARTY->assign('anteroom', $PURCHASES->getPurchaseFiles(array('anteroom' => true)));
 
 if (!empty($_GET['attid'])) {
     $SMARTY->assign('attid', intval($_GET['attid']));
 }
-$SMARTY->assign('supplierslist', $PURCHASES->GetSuppliers());
+$SMARTY->assign('supplierslist', $PURCHASES->getSuppliers());
 $SMARTY->assign('projectslist', $LMS->GetProjects());
-$SMARTY->assign('typeslist', $PURCHASES->GetPurchaseDocumentTypesList());
-$SMARTY->assign('categorylist', $PURCHASES->GetPurchaseCategoryList());
+$SMARTY->assign('typeslist', $PURCHASES->getPurchaseDocumentTypesList());
+$SMARTY->assign('categorylist', $PURCHASES->getPurchaseCategoryList());
 $SMARTY->assign('taxrates', $LMS->GetTaxes());
 
 $SMARTY->assign('default_taxrate', $default_taxrate);
-$SMARTY->assign('default_document_typeid', $PURCHASES->GetDefaultDocumentTypeid());
+$SMARTY->assign('default_document_typeid', $PURCHASES->getDefaultDocumentTypeid());
 
 $SMARTY->assign('params', $params);
 $SMARTY->assign('pdlist', $pdlist);

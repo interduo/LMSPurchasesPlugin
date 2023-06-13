@@ -20,7 +20,7 @@ class PURCHASES
         );
     }*/
 
-    public function SetConfirmationFlag($ids, bool $state) : void
+    public function setConfirmationFlag($ids, bool $state) : void
     {
         $state = empty($state) ? 'false' : 'true';
 
@@ -35,9 +35,9 @@ class PURCHASES
         $this->db->Execute('UPDATE pds SET confirmflag = ? WHERE id IN ( ? )', array($state, $ids));
     }
 
-    public function GetPurchaseList($params = array())
+    public function getPurchaseList($params = array())
     {
-        $src_iban = preg_replace('/\D/', '', ConfigHelper::getConfig('pd.source_iban'));
+        $src_iban = preg_replace('/\D/', '', ConfigHelper::getConfig('pd.source_iban', 0));
         $export_filename = ConfigHelper::getConfig('pd.export_filename', ('pdexport-' . date('Y-m-d') . '.txt'));
         $export_privileges = ConfigHelper::checkPrivilege('purchases_export_purchases');
 
@@ -153,10 +153,12 @@ class PURCHASES
         }
 
         // DATE FROM FILTER
-        $datefromfilter = $params['datefrom'] ? (!empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
+        $datefromfilter = $params['datefrom'] ?
+            (!empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
 
         // DATE TO FILTER
-        $datetofilter = $params['dateto'] ? (!empty(intval($dateto)) ? ' AND sdate >= ' . intval($dateto) : null) : null;
+        $datetofilter = $params['dateto'] ?
+            (!empty(intval($dateto)) ? ' AND sdate >= ' . intval($dateto) : null) : null;
 
 
         // NET CURRENCY VALUE FROM FILTER
@@ -217,34 +219,32 @@ class PURCHASES
             $split = ' SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue-pdc.netcurrencyvalue) AS doc_vatcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue) AS doc_grosscurrencyvalue';
-            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pds.id, dv.name, va.location, vc.location';
+            $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, pds.id, dv.name, va.location';
         } else {
-            $split = 'pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue, pdc.grosscurrencyvalue,
-                pdc.description, pdc.id AS expenceid';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, cv.lastname, cv.name, pdc.description, pdc.id, dv.name, va.location, vc.location';
+            $split = 'pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue,
+             pdc.grosscurrencyvalue, pdc.description, pdc.id AS expenceid';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, pdc.description, pdc.id, dv.name,
+             va.location';
         }
 
         $result = $this->db->GetAll(
-            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag :: int, iban,
-                    cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
-                    supplierid, pds.userid, vu.name AS username, tx.value AS tax_value, tx.label AS tax_label,'
-                    . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
-                    vc.location AS supplier_address, preferred_splitpayment :: int,
-                    dv.name AS division_name, va.location AS division_address,'
-                    . $split
-                    . ' FROM pds
-                    LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
-                    LEFT JOIN pdcontentcat pdcc ON (pdcc.contentid = pdc.id)
-                    LEFT JOIN pdcontentinvprojects pdci ON (pdci.contentid = pdc.id)
-                    LEFT JOIN customers cv ON (cv.id = pds.supplierid)
-                    LEFT JOIN taxes tx ON (tx.id = pdc.taxid)
-                    LEFT JOIN pdtypes pt ON (pt.id = pds.typeid)
-                    LEFT JOIN vusers vu ON (vu.id = pds.userid)
-                    LEFT JOIN divisions dv ON (dv.id = pds.divisionid)
-                    LEFT JOIN vaddresses va ON (va.id = dv.address_id) 
-                    LEFT JOIN customer_addresses ca ON (ca.customer_id = cv.id) AND ca.type = 1
-                    LEFT JOIN vaddresses vc ON (vc.id = ca.address_id)
-                    LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
+            'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag :: int,
+                iban,
+                cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
+                supplierid, supplier_fullname, supplier_ten, pds.userid, vu.name AS username, tx.value AS tax_value,
+                tx.label AS tax_label, preferred_splitpayment :: int, dv.name AS division_name,
+                va.location AS division_address,'
+                . $split
+                . ' FROM pds
+                LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
+                LEFT JOIN pdcontentcat pdcc ON (pdcc.contentid = pdc.id)
+                LEFT JOIN pdcontentinvprojects pdci ON (pdci.contentid = pdc.id)
+                LEFT JOIN taxes tx ON (tx.id = pdc.taxid)
+                LEFT JOIN pdtypes pt ON (pt.id = pds.typeid)
+                LEFT JOIN vusers vu ON (vu.id = pds.userid)
+                LEFT JOIN divisions dv ON (dv.id = pds.divisionid)
+                LEFT JOIN vaddresses va ON (va.id = dv.address_id) 
+                LEFT JOIN pdattachments pda ON (pda.pdid = pds.id)
                 WHERE 1=1'
             . $divisionfilter
             . $docnumberfilter
@@ -257,13 +257,17 @@ class PURCHASES
             . $datefromfilter
             . $datetofilter
             . $groupby
-            . ((!empty($grosscurrencyvaluefromhavingfilter) || !empty($grosscurrencyvaluetohavingfilter)) ? ' HAVING' : '' )
+            . ((!empty($grosscurrencyvaluefromhavingfilter) || !empty($grosscurrencyvaluetohavingfilter)) ?
+                ' HAVING' : '' )
             . $grosscurrencyvaluefromhavingfilter
-            . ((!empty($grosscurrencyvaluefromhavingfilter) && !empty($grosscurrencyvaluetohavingfilter)) ? ' AND ' : '')
+            . ((!empty($grosscurrencyvaluefromhavingfilter) && !empty($grosscurrencyvaluetohavingfilter)) ?
+                ' AND ' : '')
             . $grosscurrencyvaluetohavingfilter
-            . ((!empty($netcurrencyvaluefromhavingfilter) || !empty($netcurrencyvaluetohavingfilter)) ? ' HAVING' : '' )
+            . ((!empty($netcurrencyvaluefromhavingfilter) || !empty($netcurrencyvaluetohavingfilter)) ?
+                ' HAVING' : '' )
             . $netcurrencyvaluefromhavingfilter
-            . ((!empty($netcurrencyvaluefromhavingfilter) && !empty($netcurrencyvaluetohavingfilter)) ? ' AND ' : '')
+            . ((!empty($netcurrencyvaluefromhavingfilter) && !empty($netcurrencyvaluetohavingfilter)) ?
+                ' AND ' : '')
             . $netcurrencyvaluetohavingfilter
             . $orderby
         );
@@ -271,26 +275,26 @@ class PURCHASES
         if (!empty($result)) {
             foreach ($result as $idx => $r) {
                 $params['pdid'] = $r['id'];
-                $docfiles = $this->GetPurchaseFiles($params);
+                $docfiles = $this->getPurchaseFiles($params);
                 if (!empty($docfiles)) {
                     $result[$idx]['files'] = $docfiles;
                 }
                 if (empty($expences)) {
-                    $docexpencecategory = $this->GetCategoriesUsingDocumentId($r['id']);
+                    $docexpencecategory = $this->getCategoriesUsingDocumentId($r['id']);
                     if (!empty($docexpencecategory)) {
                         $result[$idx]['categories'] = $docexpencecategory;
                     }
-                    $docexpenceinvprojects = $this->GetInvProjectsUsingDocumentId($r['id']);
+                    $docexpenceinvprojects = $this->getInvProjectsUsingDocumentId($r['id']);
                     if (!empty($docexpenceinvprojects)) {
                         $result[$idx]['invprojects'] = $docexpenceinvprojects;
                     }
                 } else {
-                    $result[$idx]['expences'] = $this->GetPurchaseDocumentExpences($r['id']);
-                    $expencecategories = $this->GetCategoriesUsingExpenceId($r['expenceid']);
+                    $result[$idx]['expences'] = $this->getPurchaseDocumentExpences($r['id']);
+                    $expencecategories = $this->getCategoriesUsingExpenceId($r['expenceid']);
                     if (!empty($expencecategories)) {
                         $result[$idx]['categories'] = $expencecategories;
                     }
-                    $expenceinvprojects = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
+                    $expenceinvprojects = $this->getInvProjectsUsingExpenceId($r['expenceid']);
                     if (!empty($expenceinvprojects)) {
                         $result[$idx]['invprojects'] = $expenceinvprojects;
                     }
@@ -312,8 +316,9 @@ class PURCHASES
                 foreach ($result as $r) {
                     switch ($export) {
                         case '1': // Bank spółdzielczy - przelew zwykły
-                            $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_name'] . ';;;;' . $r['iban'] . ';'
-                                . $r['doc_grosscurrencyvalue'] . ';' . $r['typename'] . ' ' . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
+                            $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_fullname'] . ';;;;'
+                                . $r['iban'] . ';' . $r['doc_grosscurrencyvalue'] . ';' . $r['typename'] . ' '
+                                . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
                         case '2': // MT103
                             $title = $r['typename'] . ' ' . $r['fullnumber'] . '|ID:' . $r['id'] .'|';
@@ -336,7 +341,8 @@ class PURCHASES
                                 null, // (13) empty
                                 null, // (14) empty
                                 51, // (15) klasyfikacja polecenia
-                                ($r['doc_grosscurrnecyvalue'] > 15000) ? '1' : (empty($r['preferred_splitpayment']) ? '0' : '1'), // (16) split payment
+                                ($r['doc_grosscurrnecyvalue'] > 15000) ? '1'
+                                    : (empty($r['preferred_splitpayment']) ? '0' : '1'), // (16) split payment
                             );
 
                             $exported .= array2csv(array($fields));
@@ -356,7 +362,7 @@ class PURCHASES
         return $result;
     }
 
-    public function GetCategoriesUsingDocumentId($id)
+    public function getCategoriesUsingDocumentId($id)
     {
         return $this->db->GetAllByKey(
             'SELECT DISTINCT pcc.categoryid, pdc.name
@@ -370,7 +376,7 @@ class PURCHASES
         );
     }
 
-    public function GetCategoriesUsingExpenceId($expenceid)
+    public function getCategoriesUsingExpenceId($expenceid)
     {
         return $this->db->GetAll(
             'SELECT categoryid, pdc.name 
@@ -381,7 +387,7 @@ class PURCHASES
         );
     }
 
-    public function GetInvProjectsUsingDocumentId($pdid)
+    public function getInvProjectsUsingDocumentId($pdid)
     {
         return $this->db->GetAll(
             'SELECT DISTINCT invprojectid, inv.name
@@ -394,7 +400,7 @@ class PURCHASES
         );
     }
 
-    public function GetInvProjectsUsingExpenceId($id)
+    public function getInvProjectsUsingExpenceId($id)
     {
         return $this->db->GetAll(
             'SELECT pdp.invprojectid, inv.name 
@@ -405,7 +411,7 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseFiles($params)
+    public function getPurchaseFiles($params)
     {
         if (!empty($params)) {
             extract($params);
@@ -441,12 +447,12 @@ class PURCHASES
         );
     }
 
-    public function GetDefaultDocumentTypeid()
+    public function getDefaultDocumentTypeid()
     {
         return $this->db->GetOne('SELECT id FROM pdtypes WHERE defaultflag IS TRUE');
     }
 
-    public function GetPurchaseDocumentExpences($pdid)
+    public function getPurchaseDocumentExpences($pdid)
     {
         $result = $this->db->GetAll(
             'SELECT pdid, pdc.id AS expenceid, pdc.netcurrencyvalue, pdc.grosscurrencyvalue, pdc.taxid,
@@ -459,17 +465,23 @@ class PURCHASES
         );
 
         foreach ($result as $idx => $r) {
-            $result[$idx]['categories'] = $this->GetCategoriesUsingExpenceId($r['expenceid']);
-            $result[$idx]['invprojects'] = $this->GetInvProjectsUsingExpenceId($r['expenceid']);
+            $result[$idx]['categories'] = $this->getCategoriesUsingExpenceId($r['expenceid']);
+            $result[$idx]['invprojects'] = $this->getInvProjectsUsingExpenceId($r['expenceid']);
 
-            $result[$idx]['netcurrencyvalue'] = $this->RoundByCurrency($result[$idx]['currency'], $result[$idx]['netcurrencyvalue']);
-            $result[$idx]['grosscurrencyvalue'] = $this->RoundByCurrency($result[$idx]['currency'], $result[$idx]['grosscurrencyvalue']);
+            $result[$idx]['netcurrencyvalue'] = $this->roundByCurrency(
+                $result[$idx]['currency'],
+                $result[$idx]['netcurrencyvalue']
+            );
+            $result[$idx]['grosscurrencyvalue'] = $this->roundByCurrency(
+                $result[$idx]['currency'],
+                $result[$idx]['grosscurrencyvalue']
+            );
         }
 
         return $result;
     }
 
-    public function RoundByCurrency($currency, $values)
+    public function roundByCurrency($currency, $values)
     {
         ////round money values depending on currency
         switch ($currency) {
@@ -479,6 +491,10 @@ class PURCHASES
                 break;
         }
 
+        if (!is_array($values)) {
+            $values = array($values);
+        }
+
         foreach ($values as $idx => $val) {
             $result[$idx] = round($val, $precision);
         }
@@ -486,41 +502,40 @@ class PURCHASES
         return $result;
     }
 
-    public function GetCustomerTen($customerid)
+    public function getCustomerTen($customerid)
     {
         $customerten = $this->db->GetOne('SELECT ten FROM customers WHERE id = ?', array($customerid));
         return (int) filter_var($customerten, FILTER_SANITIZE_NUMBER_INT);
     }
 
-    public function GetPurchaseDocumentInfo($id)
+    public function getPurchaseDocumentInfo($id)
     {
         $result = $this->db->GetRow(
             'SELECT pds.id, pds.typeid, pds.fullnumber, pds.currency, pds.vatplnvalue,
+            pds.supplier_fullname, pds.supplier_ten,
             pds.cdate, to_char(TO_TIMESTAMP(pds.cdate), \'YYYY/MM/DD\') AS cdate_formatted, 
             pds.sdate, to_char(TO_TIMESTAMP(pds.sdate), \'YYYY/MM/DD\') AS sdate_formatted, 
             pds.deadline, to_char(TO_TIMESTAMP(pds.deadline), \'YYYY/MM/DD\') AS deadline_formatted, 
             pds.paydate, to_char(TO_TIMESTAMP(pds.paydate), \'YYYY/MM/DD\') AS paydate_formatted,
-            pds.paytype, pds.supplierid, pds.divisionid, pds.iban, pds.preferred_splitpayment :: int,'
-            . $this->db->Concat('cv.lastname', "' '", 'cv.name') . ' AS supplier_name,
-            SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue, cv.ten AS supplier_ten,
+            pds.paytype, pds.supplierid, pds.divisionid, pds.iban, pds.preferred_splitpayment :: int,
+            SUM(pd.netcurrencyvalue*pd.amount) AS doc_netcurrencyvalue,
             SUM(pd.grosscurrencyvalue*pd.amount) AS doc_grosscurrencyvalue,
             COUNT(pd.pdid) AS expences_count, pds.confirmflag :: int
             FROM pds
-                LEFT JOIN customers cv ON (cv.id = pds.supplierid)
                 LEFT JOIN pdcontents pd ON (pd.pdid = pds.id)
                 LEFT JOIN taxes tx ON (tx.id = pd.taxid)
             WHERE pds.id = ?
-            GROUP BY pds.id, cv.lastname, cv.name, cv.ten, tx.value',
+            GROUP BY pds.id, pds.supplier_fullname, pds.supplier_ten, tx.value',
             array($id)
         );
         $result['iban'] = format_bankaccount($result['iban']);
-        $result['expences'] = $this->GetPurchaseDocumentExpences($id);
-        $result['fileupload'] = $this->GetPurchaseFiles(array('pdid' => $id));
+        $result['expences'] = $this->getPurchaseDocumentExpences($id);
+        $result['fileupload'] = $this->getPurchaseFiles(array('pdid' => $id));
 
         return $result;
     }
 
-    public function AddPurchaseFiles($params)
+    public function addPurchaseFiles($params)
     {
         extract($params);
 
@@ -575,7 +590,8 @@ class PURCHASES
                 $i = 1;
                 while (file_exists($dstfile)) {
                     $pathinfo = pathinfo($dstfile);
-                    $dstfile = $pathinfo['dirname'] . DIRECTORY_SEPARATOR . $pathinfo['basename'] . '-' . $i . '.' . $pathinfo['extension'];
+                    $dstfile = $pathinfo['dirname'] . DIRECTORY_SEPARATOR
+                        . $pathinfo['basename'] . '-' . $i . '.' . $pathinfo['extension'];
                     $i++;
                 }
                 file_put_contents($dstfile, $file['content'], LOCK_EX);
@@ -587,7 +603,8 @@ class PURCHASES
             @chgrp($dstfile, $storage_dir_ownergid);
 
             $result = $this->db->Execute(
-                'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath, createtime, sender, sender_mail, comment)
+                'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath,
+                    createtime, sender, sender_mail, comment)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 array(
                     empty($pdid) ?: $pdid,
@@ -614,7 +631,7 @@ class PURCHASES
         return $result;
     }
 
-    public function MovePurchaseFileFromAnteroom($params)
+    public function movePurchaseFileFromAnteroom($params)
     {
         extract($params);
 
@@ -651,7 +668,7 @@ class PURCHASES
         );
     }
 
-    public function DeleteAttachementFile($attid)
+    public function deleteAttachementFile($attid)
     {
         if (empty($attid) || !ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
             die();
@@ -681,58 +698,69 @@ class PURCHASES
         );
     }
 
-    public function AddPurchase($args, $files = null)
+    public function addPurchase($args, $files = null)
     {
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
-
+        if (!empty($args['supplierid'])) {
+            $LMS = LMS::getInstance();
+            $supplierinfo = $LMS->GetCustomer($args['supplierid']);
+        }
         $params = array(
             'typeid' => empty($args['typeid']) ?: $args['typeid'],
             'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
-            'vatplnvalue' => empty($args['vatplnvalue']) ?: $args['vatplnvalue'],
-            'fullnumber' => $args['fullnumber'],
+            'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
+            'fullnumber' => empty($args['fullnumber']) ? null : $args['fullnumber'],
             'sdate' => empty($args['sdate']) ?: date_to_timestamp($args['sdate']),
             'deadline' => empty($args['deadline']) ?: date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
-            'paydate' => empty($args['paydate']) ?: date_to_timestamp($args['paydate']),
-            'supplierid' => $args['supplierid'],
+            'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
+            'supplierid' => empty($args['supplierid']) ? null : $args['supplierid'],
+            'supplier_fullname' => empty($supplierinfo['customername']) ? null : $supplierinfo['customername'],
+            'supplier_ten' => empty($supplierinfo['ten']) ? null : $supplierinfo['ten'],
             'iban' => empty($args['iban']) ?: str_replace(' ', '', $args['iban']),
             'divisionid' => intval($args['divisionid']),
             'userid' => Auth::GetCurrentUser(),
             'preferred_splitpayment' => empty($args['preferred_splitpayment']) ? 'false' : 'true',
-            'confirmflag' => empty($allow_to_confirm_purchase) ? 'false' : (empty($args['confirmflag']) ? 'false' : 'true'),
+            'confirmflag' => empty($allow_to_confirm_purchase) ? 'false'
+                : (empty($args['confirmflag']) ? 'false' : 'true'),
         );
 
         $this->db->Execute(
             'INSERT INTO pds (typeid, currency, vatplnvalue, fullnumber, cdate, sdate, deadline, paytype, paydate,
-                 supplierid, divisionid, iban, preferred_splitpayment, confirmflag, userid)
-                 VALUES (?, ?, ?, ?, ?NOW?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'],
-                $params['deadline'],$params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
-                $params['iban'], $params['preferred_splitpayment'], $params['confirmflag'], $params['userid'])
+                 supplierid, supplier_fullname, supplier_ten, divisionid, iban,
+                 preferred_splitpayment, confirmflag, userid)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], time(),
+                $params['sdate'], $params['deadline'],$params['paytype'], $params['paydate'], $params['supplierid'],
+                $params['supplier_fullname'], $params['supplier_ten'], $params['divisionid'], $params['iban'],
+                $params['preferred_splitpayment'], $params['confirmflag'], $params['userid'])
         );
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        $this->AddExpense($params['pdid'], $args['expenses']);
+        $this->dddExpense($params['pdid'], $args['expenses']);
 
         if (!empty($files)) {
             $argv = array(
                 'pdid' => $params['pdid'],
                 'files' => $files
             );
-            $this->AddPurchaseFiles($argv);
+            $this->addPurchaseFiles($argv);
         }
 
         return $params['pdid'];
     }
 
-    public function DeletePurchaseDocument($id)
+    public function deletePurchaseDocument($id)
     {
         if (empty($id) || !ConfigHelper::checkPrivilege('purchases_delete_purchase')) {
             die();
         }
 
-        $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd' . DIRECTORY_SEPARATOR . $id);
+        $pd_dir = ConfigHelper::getConfig(
+            'pd.storage_dir',
+            STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd' . DIRECTORY_SEPARATOR . $id
+        );
         if (file_exists($pd_dir)) {
             @rrmdir($pd_dir);
         }
@@ -743,32 +771,33 @@ class PURCHASES
         );
     }
 
-    public function MarkAsPaid($id)
+    public function markAsPaid($id)
     {
         if (empty($id) || !ConfigHelper::checkPrivilege('purchases_mark_purchase_as_paid')) {
             exit;
         }
 
         return $this->db->Execute(
-            'UPDATE pds SET paydate = ?NOW? WHERE id = ?',
-            array($id)
+            'UPDATE pds SET paydate = ? WHERE id = ?',
+            array($id, time())
         );
     }
 
-    public function UpdatePurchaseDocument($args)
+    public function updatePurchaseDocument($args)
     {
+        global $LMS;
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
 
         $params = array(
             'id' => intval($args['id']),
             'typeid' => empty($args['typeid']) ?: $args['typeid'],
             'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
-            'vatplnvalue' => empty($args['vatplnvalue']) ?: $args['vatplnvalue'],
+            'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
             'fullnumber' => $args['fullnumber'],
             'sdate' => empty($args['sdate']) ?: date_to_timestamp($args['sdate']),
-            'deadline' => empty($args['deadline']) ?: date_to_timestamp($args['deadline']),
+            'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
             'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
-            'paydate' => empty($args['paydate']) ?: date_to_timestamp($args['paydate']),
+            'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'supplierid' => $args['supplierid'],
             'divisionid' => intval($args['divisionid']),
             'iban' => empty($args['iban']) ?: str_replace(' ', '', $args['iban']),
@@ -781,15 +810,28 @@ class PURCHASES
         }
 
         $this->db->Execute(
-            'UPDATE pds SET typeid = ?, currency = ?, vatplnvalue = ?, fullnumber = ?, sdate = ?, deadline = ?, paytype = ?,
-                    paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ? WHERE id = ?',
-            array($params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'], $params['sdate'], $params['deadline'],
-                    $params['paytype'], $params['paydate'], $params['supplierid'], $params['divisionid'],
-                    $params['iban'], $params['preferred_splitpayment'], $params['id'])
+            'UPDATE pds SET typeid = ?, currency = ?, vatplnvalue = ?, fullnumber = ?, sdate = ?, deadline = ?,
+               paytype = ?, paydate = ?, supplierid = ?, divisionid = ?, iban = ?, preferred_splitpayment = ?
+            WHERE id = ?',
+            array(
+                $params['typeid'], $params['currency'], $params['vatplnvalue'], $params['fullnumber'],
+                $params['sdate'], $params['deadline'], $params['paytype'], $params['paydate'],
+                $params['supplierid'], $params['divisionid'], $params['iban'], $params['preferred_splitpayment'],
+                $params['id']
+            )
         );
 
+        if ($args['use_current_supplier_info'] == 'on') {
+            $supplierinfo = $LMS->GetCustomer($params['supplierid']);
+
+            $this->db->Execute(
+                'UPDATE pds SET supplier_fullname = ?, supplier_ten = ? WHERE id = ?',
+                array($supplierinfo['customername'], $supplierinfo['ten'], $params['id'])
+            );
+        }
+
         if ($allow_to_confirm_purchase) {
-            $this->SetConfirmationFlag($params['id'], $params['confirmflag']);
+            $this->setConfirmationFlag($params['id'], $params['confirmflag']);
         }
 
         $this->db->Execute(
@@ -797,11 +839,11 @@ class PURCHASES
             array($params['id'])
         );
 
-        $this->AddExpense($params['id'], $args['expenses']);
+        $this->dddExpense($params['id'], $args['expenses']);
 
         return null;
     }
-    public function GetSuppliers()
+    public function getSuppliers()
     {
         return $this->db->GetAllByKey(
             'SELECT *
@@ -815,7 +857,7 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseDocumentTypesList($params = array())
+    public function getPurchaseDocumentTypesList($params = array())
     {
         if (!empty($params)) {
             extract($params);
@@ -846,7 +888,7 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseTypeInfo($id)
+    public function getPurchaseTypeInfo($id)
     {
         return $this->db->GetAll(
             'SELECT pdtypes.id, pdtypes.name, pdtypes.description, pdtypes.defaultflag :: int
@@ -856,10 +898,12 @@ class PURCHASES
         );
     }
 
-    public function AddPurchaseDocumentType($args)
+    public function addPurchaseDocumentType($args)
     {
-        /// set propper serial - some day i will find better way
-        $this->db->Execute("SELECT setval('pdtypes_id_seq',(SELECT GREATEST(MAX(id)+1,nextval('pdtypes_id_seq'))-1 FROM pdtypes))");
+        /// TODO: set propper serial - some day i will find better way
+        $this->db->Execute(
+            "SELECT setval('pdtypes_id_seq', (SELECT GREATEST(MAX(id)+1,nextval('pdtypes_id_seq'))-1 FROM pdtypes))"
+        );
 
         $args = array(
             'name' => $args['name'],
@@ -877,12 +921,12 @@ class PURCHASES
         );
     }
 
-    public function DeletePurchaseDocumentType($id)
+    public function deletePurchaseDocumentType($id)
     {
         return $this->db->Execute('DELETE FROM pdtypes WHERE id = ?', array($id));
     }
 
-    public function UpdatePurchaseDocumentType($args)
+    public function updatePurchaseDocumentType($args)
     {
         $args = array(
             'name' => $args['name'],
@@ -901,7 +945,7 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseCategoryList($params = array())
+    public function getPurchaseCategoryList($params = array())
     {
         if (!empty($params)) {
             extract($params);
@@ -933,14 +977,19 @@ class PURCHASES
             'id'
         );
 
-        foreach ($results as &$r) {
-            $r['userids'] = $this->GetUsersForCategory($r['id']);
+        if (!empty($results)) {
+            if (!is_array($results)) {
+                $results = array($results);
+            }
+            foreach ($results as &$r) {
+                $r['userids'] = $this->getUsersForCategory($r['id']);
+            }
         }
 
         return $results;
     }
 
-    private function GetUsersForCategory($categoryid)
+    private function getUsersForCategory($categoryid)
     {
         return $this->db->GetAllByKey(
             'SELECT ' . $this->db->Concat('u.lastname', "' '", 'u.firstname')
@@ -953,18 +1002,18 @@ class PURCHASES
         );
     }
 
-    public function GetPurchaseCategoryInfo($categoryid)
+    public function getPurchaseCategoryInfo($categoryid)
     {
         $results = $this->db->GetRow('SELECT id, name, description FROM pdcategories WHERE id = ?', array($categoryid));
 
         if (!empty($results)) {
-            $results['userids'] = $this->GetUsersForCategory($categoryid);
+            $results['userids'] = $this->getUsersForCategory($categoryid);
         }
 
         return $results;
     }
 
-    public function AddPurchaseCategory($args)
+    public function addPurchaseCategory($args)
     {
         $args = array(
             'name' => $args['name'],
@@ -979,13 +1028,13 @@ class PURCHASES
 
         if ($args['userids']) {
             $catid = $this->db->GetLastInsertID('pdcategories');
-            $this->ReplaceUserPdCategories($args['userids'], $catid, true);
+            $this->replaceUserPdCategories($args['userids'], $catid, true);
         }
 
         return null;
     }
 
-    private function ReplaceUserPdCategories($userids, $categoryid, $nodelete)
+    private function replaceUserPdCategories($userids, $categoryid, $nodelete)
     {
         if (!empty($nodelete)) {
             $this->db->Execute(
@@ -1008,7 +1057,7 @@ class PURCHASES
         return null;
     }
 
-    private function GetUserPurchaseCategories($userid)
+    private function getUserPurchaseCategories($userid)
     {
         $result = $this->db->GetCol(
             'SELECT DISTINCT categoryid
@@ -1019,7 +1068,7 @@ class PURCHASES
         return is_array($result) ? $result : array($result);
     }
 
-    public function IsLoggedUserAllowedToViewThisAttachment($params)
+    public function isLoggedUserAllowedToViewThisAttachment($params)
     {
         extract($params);
 
@@ -1030,12 +1079,12 @@ class PURCHASES
         ///dostep gdy faktura nie ma kategorii
         ///użytkownik musi mieć uprawnienia do co najmniej jednej kategorii z wydatku faktury
         if (empty($pdid)) {
-            $doccategories = $this->GetCategoriesUsingDocumentId($this->GetPurchaseDocumentIdUsingAttid($attid));
+            $doccategories = $this->getCategoriesUsingDocumentId($this->getPurchaseDocumentIdUsingAttid($attid));
         } else {
-            $doccategories = $this->GetCategoriesUsingDocumentId($pdid);
+            $doccategories = $this->getCategoriesUsingDocumentId($pdid);
         }
 
-        $usercategories = $this->GetUserPurchaseCategories(Auth::GetCurrentUser());
+        $usercategories = $this->getUserPurchaseCategories(Auth::GetCurrentUser());
 
         if (empty($doccategories) || ConfigHelper::checkPrivilege('superuser')) {
             return true;
@@ -1048,7 +1097,7 @@ class PURCHASES
         return !empty(array_intersect($doccategories, $usercategories));
     }
 
-    public function GetPurchaseDocumentIdUsingAttid($attid)
+    public function getPurchaseDocumentIdUsingAttid($attid)
     {
         return $this->db->GetOne(
             'SELECT pdid FROM pdattachments WHERE id = ?',
@@ -1056,7 +1105,7 @@ class PURCHASES
         );
     }
 
-    public function DeletePurchaseCategory($id)
+    public function deletePurchaseCategory($id)
     {
         return $this->db->Execute(
             'DELETE FROM pdcategories WHERE id = ?',
@@ -1064,7 +1113,7 @@ class PURCHASES
         );
     }
 
-    public function UpdatePurchaseCategory($params)
+    public function updatePurchaseCategory($params)
     {
         if (empty($params['id'])) {
             die();
@@ -1082,13 +1131,13 @@ class PURCHASES
         );
 
         if (isset($params['userids'])) {
-            $this->ReplaceUserPdCategories($params['userids'], $args['id'], true);
+            $this->replaceUserPdCategories($params['userids'], $args['id'], true);
         }
 
         return null;
     }
 
-    public function AddExpense($pdid, $expenses)
+    public function dddExpense($pdid, $expenses)
     {
         foreach ($expenses as $idx => $e) {
             $expenses[$idx] = array(
@@ -1104,7 +1153,8 @@ class PURCHASES
             $this->db->Execute(
                 'INSERT INTO pdcontents (pdid, netcurrencyvalue, grosscurrencyvalue, amount, taxid, description)
                     VALUES (?, ?, ?, ?, ?, ?)',
-                array($pdid, $e['netcurrencyvalue'], $e['grosscurrencyvalue'], $e['amount'], $e['taxid'], $e['description'])
+                array($pdid, $e['netcurrencyvalue'], $e['grosscurrencyvalue'],
+                    $e['amount'], $e['taxid'], $e['description'])
             );
 
             $contentid = $this->db->GetLastInsertID('pdcontents');

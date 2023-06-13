@@ -27,7 +27,7 @@
 $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
 if (!empty($_GET['catid'])) {
-    print_r(json_encode($PURCHASES->GetPurchaseCategoryInfo(intval($_GET['catid']))));
+    print_r(json_encode($PURCHASES->getPurchaseCategoryInfo(intval($_GET['catid']))));
     die();
 }
 
@@ -39,25 +39,25 @@ $layout['pagetitle'] = trans('Purchase categories');
 
 $params['orderby'] = $_GET['orderby'];
 
-$pdclist = $PURCHASES->GetPurchaseCategoryList($params);
+$pdclist = $PURCHASES->getPurchaseCategoryList($params);
 
 switch ($action) {
     case 'add':
-        $PURCHASES->AddPurchaseCategory($addpdc);
+        $PURCHASES->addPurchaseCategory($addpdc);
         $SESSION->redirect('?m=pdcategorylist');
         break;
     case 'modify':
-        $pdcinfo = $PURCHASES->GetPurchaseCategoryInfo($id);
+        $pdcinfo = $PURCHASES->getPurchaseCategoryInfo($id);
         $SMARTY->assign('pdcinfo', $pdcinfo);
         if (isset($pdcinfo)) {
             $addpdc['id'] = $id;
-            $PURCHASES->UpdatePurchaseCategory($addpdc);
+            $PURCHASES->updatePurchaseCategory($addpdc);
             $SESSION->redirect('?m=pdcategorylist');
         }
         break;
     case 'delete':
         if (!empty($id)) {
-            $PURCHASES->DeletePurchaseCategory($id);
+            $PURCHASES->deletePurchaseCategory($id);
             $SESSION->redirect('?m=pdcategorylist');
         }
         break;

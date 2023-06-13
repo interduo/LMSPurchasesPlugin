@@ -34,25 +34,25 @@ $layout['pagetitle'] = trans('Purchase document types');
 
 $params['orderby'] = $_GET['orderby'];
 
-$pdtlist = $PURCHASES->GetPurchaseDocumentTypesList($params);
+$pdtlist = $PURCHASES->getPurchaseDocumentTypesList($params);
 
 switch ($action) {
     case 'add':
-            $PURCHASES->AddPurchaseDocumentType($addpdt);
+            $PURCHASES->addPurchaseDocumentType($addpdt);
             $SESSION->redirect('?m=pdtlist');
         break;
     case 'modify':
-        $pdtinfo = $PURCHASES->GetPurchaseTypeInfo($id);
+        $pdtinfo = $PURCHASES->getPurchaseTypeInfo($id);
         $SMARTY->assign('pdtinfo', $pdtinfo);
         if (isset($pdtinfo)) {
             $addpdt['id'] = $id;
-            $PURCHASES->UpdatePurchaseDocumentType($addpdt);
+            $PURCHASES->updatePurchaseDocumentType($addpdt);
             $SESSION->redirect('?m=pdtlist');
         }
         break;
     case 'delete':
         if (!empty($id)) {
-            $PURCHASES->DeletePurchaseDocumentType($id);
+            $PURCHASES->deletePurchaseDocumentType($id);
             $SESSION->redirect('?m=pdtlist');
         }
         break;

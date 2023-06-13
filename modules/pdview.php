@@ -16,11 +16,11 @@ $PURCHASES = LMSPurchasesPlugin::getPurchasesInstance();
 
 $attachmentlocation = empty($id) ? array('attid' => $attid) : array('pdid' => $id);
 
-if (!$PURCHASES->IsLoggedUserAllowedToViewThisAttachment($attachmentlocation)) {
+if (!$PURCHASES->isLoggedUserAllowedToViewThisAttachment($attachmentlocation)) {
     die(trans('No access - check privileges for categories'));
 }
 
-$files = $PURCHASES->GetPurchaseFiles($attachmentlocation);
+$files = $PURCHASES->getPurchaseFiles($attachmentlocation);
 
 if (!empty($files)) {
     $file = array_shift(array_values($files));
