@@ -22,7 +22,7 @@
     </td>
     <td data-target-url="?m=pdview&id={$pd.id}">
         {if isset($pd.deadline)}{$pd.deadline|escape|date_format:'%Y/%m/%d'}{/if}
-        <br>{trans("{$_PAYTYPES[{$pd.paytype}]}")}
+        <br>{trans("{$_PAYTYPES[{$pd.paytype}]['label']}")}
     </td>
     <td data-target-url="?m=pdview&id={$pd.id}">
         {if isset($pd.paydate)}{$pd.paydate|escape|date_format:'%Y/%m/%d'}{/if}

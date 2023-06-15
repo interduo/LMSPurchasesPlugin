@@ -124,10 +124,10 @@ class PURCHASES
         if (isset($confirm)) {
             switch ($confirm) {
                 case '1':
-                    $confirmfilter = ' AND confirmflag = 1';
+                    $confirmfilter = ' AND confirmflag IS TRUE';
                     break;
                 case '0':
-                    $confirmfilter = ' AND confirmflag = 0';
+                    $confirmfilter = ' AND confirmflag IS FALSE';
                     break;
                 case '-1':
                 default:
@@ -169,7 +169,7 @@ class PURCHASES
             if ($expences) {
                 $netcurrencyvaluefromhavingfilter = ' pdc.netcurrencyvalue >= ' . $netcurrencyvaluefrom;
             } else {
-                $netcurrencyvaluefromhavingfilter = ' doc_netcurrencyvalue >= ' . $netcurrencyvaluefrom;
+                $netcurrencyvaluefromhavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvaluefrom;
             }
         }
 
@@ -181,7 +181,7 @@ class PURCHASES
             if ($expences) {
                 $netcurrencyvaluetohavingfilter = ' pdc.netcurrencyvalue >= ' . $netcurrencyvalueto;
             } else {
-                $netcurrencyvaluetohavingfilter = ' doc_netcurrencyvalue >= ' . $netcurrencyvalueto;
+                $netcurrencyvaluetohavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvalueto;
             }
         }
 
@@ -193,7 +193,7 @@ class PURCHASES
             if ($expences) {
                 $grosscurrencyvaluefromhavingfilter = ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvaluefrom;
             } else {
-                $grosscurrencyvaluefromhavingfilter = ' doc_grosscurrencyvalue >= ' . $grosscurrencyvaluefrom;
+                $grosscurrencyvaluefromhavingfilter = ' SUM(pdc.grosscurrencyvalue) >= ' . $grosscurrencyvaluefrom;
             }
         }
 
@@ -205,7 +205,7 @@ class PURCHASES
             if ($expences) {
                 $grosscurrencyvaluetohavingfilter = ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvalueto;
             } else {
-                $grosscurrencyvaluetohavingfilter = ' doc_grosscurrencyvalue >= ' . $grosscurrencyvalueto;
+                $grosscurrencyvaluetohavingfilter = ' SUM(pdc.grosscurrencyvalue) >= ' . $grosscurrencyvalueto;
             }
         }
 
@@ -216,24 +216,23 @@ class PURCHASES
         }
 
         if (empty($expences)) {
-            $split = ' SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
+            $split = ', SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue-pdc.netcurrencyvalue) AS doc_vatcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue) AS doc_grosscurrencyvalue';
             $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, pds.id, dv.name, va.location';
         } else {
-            $split = 'pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue,
-             pdc.grosscurrencyvalue, pdc.description, pdc.id AS expenceid';
-            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, pdc.description, pdc.id, dv.name,
-             va.location';
+            $split = ', pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue,
+                pdc.grosscurrencyvalue, pdc.description, pdc.id AS expenceid';
+            $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, pdc.description, pdc.id,
+                dv.name, va.location';
         }
 
         $result = $this->db->GetAll(
             'SELECT pds.id, pds.typeid, pt.name AS typename, fullnumber, currency, vatplnvalue, confirmflag :: int,
-                iban,
-                cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
+                iban, cdate, sdate, deadline, pds.paytype, paydate, COUNT(pdc.netcurrencyvalue) AS expencescount,
                 supplierid, supplier_fullname, supplier_ten, pds.userid, vu.name AS username, tx.value AS tax_value,
                 tx.label AS tax_label, preferred_splitpayment :: int, dv.name AS division_name,
-                va.location AS division_address,'
+                va.location AS division_address'
                 . $split
                 . ' FROM pds
                 LEFT JOIN pdcontents pdc ON (pdc.pdid = pds.id)
@@ -738,7 +737,7 @@ class PURCHASES
 
         $params['pdid'] = $this->db->GetLastInsertID('pds');
 
-        $this->dddExpense($params['pdid'], $args['expenses']);
+        $this->addExpense($params['pdid'], $args['expenses']);
 
         if (!empty($files)) {
             $argv = array(
@@ -839,7 +838,7 @@ class PURCHASES
             array($params['id'])
         );
 
-        $this->dddExpense($params['id'], $args['expenses']);
+        $this->addExpense($params['id'], $args['expenses']);
 
         return null;
     }
@@ -1137,7 +1136,7 @@ class PURCHASES
         return null;
     }
 
-    public function dddExpense($pdid, $expenses)
+    public function addExpense($pdid, $expenses)
     {
         foreach ($expenses as $idx => $e) {
             $expenses[$idx] = array(
