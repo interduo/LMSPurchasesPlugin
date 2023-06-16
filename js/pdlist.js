@@ -17,7 +17,6 @@
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
         change_currency();
         change_pay_type();
-        $( "input[id='use_current_supplier_info']" ).val('1').prop( "disabled", true );
 
         $( "#addpdmodal" ).dialog({
           width: 'auto',
@@ -32,10 +31,9 @@
         change_currency();
         change_pay_type();
 
+        $( "#use_current_supplier_info-tr" ).removeClass('lms-ui-disabled');
         $( "#files" ).addClass('hidden');
-        $( "#fileanteroom" ).val(attid);
-        $( "#fileanteroom" ).removeClass('hidden');
-        $( "#fileanteroom" ).html(filename);
+        $( "#fileanteroom" ).val(attid).removeClass('hidden').html(filename);
 
         show_inline_pdf_from_link('?m=pdview&attid=' + attid);
 
@@ -74,7 +72,8 @@
         $( "#addpd-form" ).attr('action', '?m=pdlist&action=modify&id=' + template_id).attr('data-templateid-number', template_id);
         change_currency();
         change_pay_type();
-        $( "input[form='addpd-form'][id='use_current_supplier_info']" ).val('1').prop('disabled', false);
+        $( "#use_current_supplier_info" ).val('1').removeAttr('disabled');
+        $( "#use_current_supplier_info-tr" ).removeClass('lms-ui-disabled');
         $( "#submit-modal-button" ).html('<i class="lms-ui-icon-submit"></i><span class="lms-ui-label">{trans("Submit")}</span>');
 
         if (template_id) {
