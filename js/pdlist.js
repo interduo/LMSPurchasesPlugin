@@ -17,6 +17,7 @@
         document.getElementById("addpd-form").setAttribute('action', '?m=pdlist&action=add');
         change_currency();
         change_pay_type();
+        $( "input[id='use_current_supplier_info']" ).val('1').prop( "disabled", true );
 
         $( "#addpdmodal" ).dialog({
           width: 'auto',
