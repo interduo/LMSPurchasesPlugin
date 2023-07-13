@@ -612,9 +612,9 @@ class PURCHASES
                     empty($anteroom) ? 'false' : 'true',
                     $attdir,
                     time(),
-                    empty($sender) ?: $sender,
-                    empty($sender_mail) ?: $sender_mail,
-                    empty($comment) ?: $comment,
+                    empty($sender) ? null : $sender,
+                    empty($sender_mail) ? null : $sender_mail,
+                    empty($comment) ? null : $comment,
                 )
             );
         }
@@ -699,19 +699,22 @@ class PURCHASES
 
     public function addPurchase($args, $files = null)
     {
+        $default_currency =  ConfigHelper::getConfig('pd.default_currency', 'PLN');
+        $default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2);
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
+        
         if (!empty($args['supplierid'])) {
             $LMS = LMS::getInstance();
             $supplierinfo = $LMS->GetCustomer($args['supplierid']);
         }
         $params = array(
-            'typeid' => empty($args['typeid']) ?: $args['typeid'],
-            'currency' => empty($args['currency']) ? 'PLN' : $args['currency'],
+            'typeid' => empty($args['typeid']) ? null : $args['typeid'],
+            'currency' => empty($args['currency']) ? $default_currency : $args['currency'],
             'vatplnvalue' => empty($args['vatplnvalue']) ? null : $args['vatplnvalue'],
             'fullnumber' => empty($args['fullnumber']) ? null : $args['fullnumber'],
-            'sdate' => empty($args['sdate']) ?: date_to_timestamp($args['sdate']),
-            'deadline' => empty($args['deadline']) ?: date_to_timestamp($args['deadline']),
-            'paytype' => empty($args['paytype']) ? ConfigHelper::getConfig('pd.default_paytype', 2) : $args['paytype'],
+            'sdate' => empty($args['sdate']) ? null : date_to_timestamp($args['sdate']),
+            'deadline' => empty($args['deadline']) ? null : date_to_timestamp($args['deadline']),
+            'paytype' => empty($args['paytype']) ? $default_paytype : $args['paytype'],
             'paydate' => empty($args['paydate']) ? null : date_to_timestamp($args['paydate']),
             'supplierid' => empty($args['supplierid']) ? null : $args['supplierid'],
             'supplier_fullname' => empty($supplierinfo['customername']) ? null : $supplierinfo['customername'],
