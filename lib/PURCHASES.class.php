@@ -606,7 +606,7 @@ class PURCHASES
                     createtime, sender, sender_mail, comment)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 array(
-                    empty($pdid) ?: $pdid,
+                    empty($pdid) ? null : $pdid,
                     $dstfilename,
                     $file['type'],
                     empty($anteroom) ? 'false' : 'true',
