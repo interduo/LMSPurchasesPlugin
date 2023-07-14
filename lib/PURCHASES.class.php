@@ -699,6 +699,9 @@ class PURCHASES
 
     public function addPurchase($args, $files = null)
     {
+        //bardzo brzydkie no cóż ... serial datatype min postgresql v10 tego już nie potrzebuje
+        $this->db->Execute('SELECT setval(\'pds_id_seq\', (SELECT max(id) FROM pds))');
+        
         $default_currency =  ConfigHelper::getConfig('pd.default_currency', 'PLN');
         $default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2);
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
