@@ -24,6 +24,7 @@ if (isset($_GET['documentexist'])) {
 
 $default_taxrate = ConfigHelper::getConfig('phpui.default_taxrate', '23.00');
 $default_divisionid = ConfigHelper::getConfig('pd.default_divisionid');
+$default_period_filter = ConfigHelper::getConfig('pd.default_period_filter', 6);
 $pagelimit = ConfigHelper::getConfig('pd.pagelimit', 50);
 $force_global_division_context = ConfigHelper::getConfig('phpui.force_global_division_context', false);
 
@@ -120,6 +121,22 @@ if (!empty($_GET['dateto'])) {
     $params['dateto'] = intval(date_to_timestamp($_GET['dateto']));
 } else {
     $params['dateto'] = null;
+}
+
+//default period filter set
+if (empty($params['datefrom']) && empty($params['dateto']) && !empty($default_period_filter)) {
+    switch ($default_period_filter) {
+        case 6:
+            $params['datefrom'] = strtotime('first day of january this year');
+            $params['dateto'] = strtotime('first day of january next year')-1;
+            break;
+        case 3:
+            $params['datefrom'] = strtotime('first day of this month');
+            $params['dateto'] = strtotime('first day of next month')-1;
+            break;
+        default:
+            break;
+    }
 }
 
 // net currency valuefrom filter
@@ -299,25 +316,26 @@ if (!empty($_GET['action'])) {
     $SMARTY->assign('action', $action);
 }
 
-$SMARTY->assign('anteroom', $PURCHASES->getPurchaseFiles(array('anteroom' => true)));
-
 if (!empty($_GET['attid'])) {
     $SMARTY->assign('attid', intval($_GET['attid']));
 }
-$SMARTY->assign('supplierslist', $PURCHASES->getSuppliers());
-$SMARTY->assign('projectslist', $LMS->GetProjects());
-$SMARTY->assign('typeslist', $PURCHASES->getPurchaseDocumentTypesList());
-$SMARTY->assign('categorylist', $PURCHASES->getPurchaseCategoryList());
-$SMARTY->assign('taxrates', $LMS->GetTaxes());
 
-$SMARTY->assign('default_taxrate', $default_taxrate);
-$SMARTY->assign('default_document_typeid', $PURCHASES->getDefaultDocumentTypeid());
-
-$SMARTY->assign('params', $params);
-$SMARTY->assign('pdlist', $pdlist);
-$SMARTY->assign('pagetitle', $layout['pagetitle']);
-$SMARTY->assign('pagelimit', $pagelimit);
+$SMARTY->assign(
+    array(
+        'anteroom' => $PURCHASES->getPurchaseFiles(array('anteroom' => true)),
+        'supplierslist' => $PURCHASES->getSuppliers(),
+        'projectslist' => $LMS->GetProjects(),
+        'typeslist' => $PURCHASES->getPurchaseDocumentTypesList(),
+        'categorylist' => $PURCHASES->getPurchaseCategoryList(),
+        'taxrates' => $LMS->GetTaxes(),
+        'default_taxrate' => $default_taxrate,
+        'default_document_typeid' => $PURCHASES->getDefaultDocumentTypeid(),
+        'params' => $params,
+        'pdlist' => $pdlist,
+        'pagetitle' => $layout['pagetitle'],
+        'pagelimit' => $pagelimit,
+    )
+);
 
 $SESSION->add_history_entry();
-
 $SMARTY->display('pdlist.html');
