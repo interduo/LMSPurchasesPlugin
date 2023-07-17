@@ -536,6 +536,9 @@ class PURCHASES
 
     public function addPurchaseFiles($params)
     {
+        //bardzo brzydkie no cóż...
+        $this->db->Execute('SELECT setval(\'pds_id_seq\', (SELECT max(id) FROM pds))');
+        
         extract($params);
 
         if (empty($files)) {
