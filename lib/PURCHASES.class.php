@@ -154,7 +154,7 @@ class PURCHASES
 
         // DATE FROM FILTER
         $datefromfilter = $params['datefrom'] ?
-            (!empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
+            (!empty(intval($datefrom)) ? ' AND sdate <= ' . intval($datefrom) : null) : null;
 
         // DATE TO FILTER
         $datetofilter = $params['dateto'] ?
