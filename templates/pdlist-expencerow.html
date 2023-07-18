@@ -9,13 +9,13 @@
         {icon name="clipboard" class="lms-ui-button-clipboard nocolor" data_clipboard_text=$pd.fullnumber|escape label=$pd.fullnumber}
     </td>
     <td data-order="{$pd.netcurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
-        {$pd.netcurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
+        {$pd.expence_netcurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
     </td>
     <td data-order="{$pd.tax_value}" data-target-url="?m=pdview&id={$pd.id}">
         {$pd.tax_value|escape} %
     </td>
     <td data-order="{$pd.grosscurrencyvalue}" data-target-url="?m=pdview&id={$pd.id}">
-        {$pd.grosscurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
+        {$pd.expence_grosscurrencyvalue|rtrim:'0'|rtrim:'.'|escape} {$pd.currency}
     </td>
     <td data-target-url="?m=pdview&id={$pd.id}">
         {$pd.sdate|escape|date_format:"%Y/%m/%d"}

@@ -181,13 +181,13 @@ class PURCHASES
         $expencedescriptionfilter = empty($description) ? '' : ' AND pdc.description ILIKE \'%' . $description . '%\'';
 
         if (empty($expences)) {
-            $split = ', SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
+            $split = ', SUM(pdc.netcurrencyvalue*pdc.amount) AS doc_netcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue-pdc.netcurrencyvalue) AS doc_vatcurrencyvalue,
                 SUM(pdc.grosscurrencyvalue) AS doc_grosscurrencyvalue';
             $groupby = ' GROUP BY pt.name, vu.name, tx.value, tx.label, pds.id, dv.name, va.location';
         } else {
-            $split = ', pdc.netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue,
-                pdc.grosscurrencyvalue, pdc.description, pdc.id AS expenceid';
+            $split = ', pdc.netcurrencyvalue*pdc.amount AS expence_netcurrencyvalue, pdc.grosscurrencyvalue-pdc.netcurrencyvalue AS vatcurrencyvalue,
+                pdc.grosscurrencyvalue*pdc.amount AS expence_grosscurrencyvalue, pdc.description, pdc.id AS expenceid';
             $groupby = ' GROUP BY pds.id, pt.name, vu.name, tx.value, tx.label, pdc.description, pdc.id,
                 dv.name, va.location';
         }
@@ -1105,9 +1105,10 @@ class PURCHASES
     public function addExpense($pdid, $expenses)
     {
         foreach ($expenses as $idx => $e) {
+	    $grossval = $e['grosscurrencyvalue'] / $e['amount'];
             $expenses[$idx] = array(
                 'netcurrencyvalue' => round(str_replace(",", ".", $e['netcurrencyvalue']), 3),
-                'grosscurrencyvalue' => round(str_replace(",", ".", $e['grosscurrencyvalue']), 3),
+                'grosscurrencyvalue' => round(str_replace(",", ".", $grossval), 3),
                 'amount' => $e['amount'],
                 'taxid' => intval($e['taxid']),
                 'description' => empty($args['description']) ? null : $e['description'],
