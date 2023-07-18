@@ -1105,8 +1105,8 @@ class PURCHASES
     {
         foreach ($expenses as $idx => $e) {
             $expenses[$idx] = array(
-                'netcurrencyvalue' => str_replace(",", ".", $e['netcurrencyvalue']),
-                'grosscurrencyvalue' => str_replace(",", ".", $e['grosscurrencyvalue']),
+                'netcurrencyvalue' => round(str_replace(",", ".", $e['netcurrencyvalue']), 3),
+                'grosscurrencyvalue' => round(str_replace(",", ".", $e['grosscurrencyvalue']), 3),
                 'amount' => $e['amount'],
                 'taxid' => intval($e['taxid']),
                 'description' => empty($args['description']) ? null : $e['description'],
