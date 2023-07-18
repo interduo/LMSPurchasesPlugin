@@ -207,7 +207,7 @@ if (!empty($_GET['invprojectids'])) {
 }
 
 // filters: expence description
-$params['description'] = empty($_GET['description'])) ? null : htmlspecialchars($_GET['description']);
+$params['description'] = empty($_GET['description']) ? null : htmlspecialchars($_GET['description']);
 
 // filters: expences or documents
 if (!empty($_GET['expences'])) {

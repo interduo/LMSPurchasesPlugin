@@ -67,7 +67,8 @@ class PURCHASES
 
         // DIVISION FILTER
         $divisionid = !empty($divisionid) && is_array($divisionid) ? $divisionid : array($divisionid);
-        $divisionfilter = empty($divisionid) ? '' : ' AND pds.divisionid IN (' . implode(',', Utils::filterIntegers($divisionid)) . ')'
+        $divisionfilter = empty($divisionid) ? ''
+            : ' AND pds.divisionid IN (' . implode(',', Utils::filterIntegers($divisionid)) . ')';
 
         // SUPPLIER FILTER
         $supplierfilter = empty($supplier) ? '' : ' AND supplierid = ' . intval($supplier);
@@ -124,7 +125,7 @@ class PURCHASES
         }
 
         // CATEGORY FILTER
-        $categoriesfilter = empty($catids) ? ' AND pdcc.categoryid IN (' . implode(',', Utils::filterIntegers($catids)) . ')' : '';
+        $categoriesfilter = empty($catids) ? '' : ' AND pdcc.categoryid IN (' . implode(',', Utils::filterIntegers($catids)) . ')';
 
         // CATEGORY FILTER
         $invprojectsfilter = empty($invprojectids) ? '' : ' AND pdci.invprojectid IN (' . implode(',', $invprojectids) . ')';
