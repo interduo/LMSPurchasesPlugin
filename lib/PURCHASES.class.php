@@ -601,8 +601,8 @@ class PURCHASES
                 rename($file['fullpath'], $dstfile);
             }
 
-            @chown($dstfile, $storage_dir_owneruid);
-            @chgrp($dstfile, $storage_dir_ownergid);
+            chown($dstfile, $storage_dir_owneruid);
+            chgrp($dstfile, $storage_dir_ownergid);
 
             $result = $this->db->Execute(
                 'INSERT INTO pdattachments (pdid, filename, contenttype, anteroom, filepath,
@@ -648,9 +648,9 @@ class PURCHASES
             @mkdir($pdid_dir, $storage_dir_permission, true);
         }
 
-        @chmod($pdid_dir, $storage_dir_permission);
-        @chown($pdid_dir, $storage_dir_owneruid);
-        @chgrp($pdid_dir, $storage_dir_ownergid);
+        chmod($pdid_dir, $storage_dir_permission);
+        chown($pdid_dir, $storage_dir_owneruid);
+        chgrp($pdid_dir, $storage_dir_ownergid);
 
         $filename = $this->db->GetOne(
             'SELECT filename FROM pdattachments WHERE id = ?',
@@ -661,8 +661,8 @@ class PURCHASES
         $dstfile = $pd_dir . DIRECTORY_SEPARATOR . $pdid . DIRECTORY_SEPARATOR
             . preg_replace('/[^\w\.-_]/', '_', $filename);
         rename($srcfile, $dstfile);
-        @chown($dstfile, $storage_dir_owneruid);
-        @chgrp($dstfile, $storage_dir_ownergid);
+        chown($dstfile, $storage_dir_owneruid);
+        chgrp($dstfile, $storage_dir_ownergid);
 
         return $this->db->Execute(
             'UPDATE pdattachments SET anteroom = ?, pdid = ?, filepath = ? WHERE id = ?',
