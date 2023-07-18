@@ -66,22 +66,11 @@ class PURCHASES
         $orderby = '';
 
         // DIVISION FILTER
-        if (!empty($divisionid)) {
-            if (is_array($divisionid)) {
-                $divisionfilter = ' AND pds.divisionid IN (' . implode(',', Utils::filterIntegers($divisionid)) . ')';
-            } else {
-                $divisionfilter = ' AND pds.divisionid = ' . intval($divisionid);
-            }
-        } else {
-            $divisionfilter = '';
-        }
+        $divisionid = !empty($divisionid) && is_array($divisionid) ? $divisionid : array($divisionid);
+        $divisionfilter = empty($divisionid) ? '' : ' AND pds.divisionid IN (' . implode(',', Utils::filterIntegers($divisionid)) . ')'
 
         // SUPPLIER FILTER
-        if (!empty($supplier)) {
-            $supplierfilter = ' AND supplierid = ' . intval($supplier);
-        } else {
-            $supplierfilter = '';
-        }
+        $supplierfilter = empty($supplier) ? '' : ' AND supplierid = ' . intval($supplier);
 
         // PAYMENT FILTER
         if (isset($payments)) {
@@ -114,11 +103,7 @@ class PURCHASES
         }
 
         // DOCNUMBER FILTER
-        if (!empty($docnumber)) {
-            $docnumberfilter = ' AND fullnumber LIKE \'%' . htmlspecialchars($docnumber) . '%\'';
-        } else {
-            $docnumberfilter = '';
-        }
+        $docnumberfilter = empty($docnumber) ? '' : ' AND fullnumber LIKE \'%' . htmlspecialchars($docnumber) . '%\'';
 
         // CONFIRM FLAG FILTER
         if (isset($confirm)) {
@@ -139,38 +124,27 @@ class PURCHASES
         }
 
         // CATEGORY FILTER
-        if (!empty($catids)) {
-            $categoriesfilter = ' AND pdcc.categoryid IN (' . implode(',', $catids) . ')';
-        } else {
-            $categoriesfilter = '';
-        }
+        $categoriesfilter = empty($catids) ? ' AND pdcc.categoryid IN (' . implode(',', Utils::filterIntegers($catids)) . ')' : '';
 
         // CATEGORY FILTER
-        if (!empty($invprojectids)) {
-            $invprojectsfilter = ' AND pdci.invprojectid IN (' . implode(',', $invprojectids) . ')';
-        } else {
-            $invprojectsfilter = '';
-        }
+        $invprojectsfilter = empty($invprojectids) ? '' : ' AND pdci.invprojectid IN (' . implode(',', $invprojectids) . ')';
 
         // DATE FROM FILTER
-        $datefromfilter = $params['datefrom'] ?
+        $datefromfilter = intval($params['datefrom']) ?
             (!empty(intval($datefrom)) ? ' AND sdate >= ' . intval($datefrom) : null) : null;
 
         // DATE TO FILTER
-        $datetofilter = $params['dateto'] ?
+        $datetofilter = intval($params['dateto']) ?
             (!empty(intval($dateto)) ? ' AND sdate <= ' . intval($dateto) : null) : null;
-
 
         // NET CURRENCY VALUE FROM FILTER
         $netcurrencyvaluefrom = intval($netcurrencyvaluefrom);
         if (empty($netcurrencyvaluefrom)) {
             $netcurrencyvaluefromhavingfilter = '';
         } else {
-            if ($expences) {
-                $netcurrencyvaluefromhavingfilter = ' pdc.netcurrencyvalue >= ' . $netcurrencyvaluefrom;
-            } else {
-                $netcurrencyvaluefromhavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvaluefrom;
-            }
+            $netcurrencyvaluefromhavingfilter = $expences ?
+                ' pdc.netcurrencyvalue >= ' . $netcurrencyvaluefrom
+                : ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvaluefrom;
         }
 
         // NET CURRENCY VALUE TO FILTER
@@ -178,11 +152,9 @@ class PURCHASES
         if (empty($netcurrencyvalueto)) {
             $netcurrencyvaluetohavingfilter = '';
         } else {
-            if ($expences) {
-                $netcurrencyvaluetohavingfilter = ' pdc.netcurrencyvalue >= ' . $netcurrencyvalueto;
-            } else {
-                $netcurrencyvaluetohavingfilter = ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvalueto;
-            }
+            $netcurrencyvaluetohavingfilter = $expences ?
+                ' pdc.netcurrencyvalue >= ' . $netcurrencyvalueto
+                : ' SUM(pdc.netcurrencyvalue) >= ' . $netcurrencyvalueto;
         }
 
         // GROSS CURRENCY VALUE FROM FILTER
@@ -190,11 +162,9 @@ class PURCHASES
         if (empty($grosscurrencyvaluefrom)) {
             $grosscurrencyvaluefromhavingfilter = '';
         } else {
-            if ($expences) {
-                $grosscurrencyvaluefromhavingfilter = ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvaluefrom;
-            } else {
-                $grosscurrencyvaluefromhavingfilter = ' SUM(pdc.grosscurrencyvalue) >= ' . $grosscurrencyvaluefrom;
-            }
+            $grosscurrencyvaluefromhavingfilter = $expences ?
+                ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvaluefrom
+                : ' SUM(pdc.grosscurrencyvalue) >= ' . $grosscurrencyvaluefrom;
         }
 
         // GROSS CURRENCY VALUE TO FILTER
@@ -202,18 +172,12 @@ class PURCHASES
         if (empty($grosscurrencyvalueto)) {
             $grosscurrencyvaluetohavingfilter = '';
         } else {
-            if ($expences) {
-                $grosscurrencyvaluetohavingfilter = ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvalueto;
-            } else {
-                $grosscurrencyvaluetohavingfilter = ' SUM(pdc.grosscurrencyvalue) >= ' . $grosscurrencyvalueto;
-            }
+            $grosscurrencyvaluetohavingfilter = $expences ?
+                ' pdc.grosscurrencyvalue >= ' . $grosscurrencyvalueto
+                : ' SUM(pdc.grosscurrencyvalue) >= ' . $grosscurrencyvalueto;
         }
 
-        if (!empty($description)) {
-            $expencedescriptionfilter = ' AND pdc.description ILIKE \'%' . $description . '%\'';
-        } else {
-            $expencedescriptionfilter = '';
-        }
+        $expencedescriptionfilter = empty($description) ? '' : ' AND pdc.description ILIKE \'%' . $description . '%\'';
 
         if (empty($expences)) {
             $split = ', SUM(pdc.netcurrencyvalue) AS doc_netcurrencyvalue,
@@ -545,8 +509,8 @@ class PURCHASES
             return null;
         }
 
-        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 33);
-        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 33);
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
         $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0770'), 8);
         $plugin_storage_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR .'pd');
         $attdir = empty($pdid) ? 'anteroom' : $pdid;
@@ -639,13 +603,13 @@ class PURCHASES
 
         $pd_dir = ConfigHelper::getConfig('pd.storage_dir', STORAGE_DIR . DIRECTORY_SEPARATOR . 'pd');
         $storage_dir_permission = intval(ConfigHelper::getConfig('storage.dir_permission', '0770'), 8);
-        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', '33');
-        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', '33');
+        $storage_dir_owneruid = ConfigHelper::getConfig('storage.dir_owneruid', 'www-data');
+        $storage_dir_ownergid = ConfigHelper::getConfig('storage.dir_ownergid', 'www-data');
         $pdid_dir = $pd_dir . DIRECTORY_SEPARATOR . $pdid;
 
-        @umask(0007);
+        umask(0007);
         if (!is_dir($pdid_dir)) {
-            @mkdir($pdid_dir, $storage_dir_permission, true);
+            mkdir($pdid_dir, $storage_dir_permission, true);
         }
 
         chmod($pdid_dir, $storage_dir_permission);
@@ -702,9 +666,6 @@ class PURCHASES
 
     public function addPurchase($args, $files = null)
     {
-        //bardzo brzydkie no cóż ... serial datatype min postgresql v10 tego już nie potrzebuje
-        $this->db->Execute('SELECT setval(\'pds_id_seq\', (SELECT max(id) FROM pds))');
-        
         $default_currency =  ConfigHelper::getConfig('pd.default_currency', 'PLN');
         $default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2);
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
@@ -910,11 +871,6 @@ class PURCHASES
 
     public function addPurchaseDocumentType($args)
     {
-        /// TODO: set propper serial - some day i will find better way
-        $this->db->Execute(
-            "SELECT setval('pdtypes_id_seq', (SELECT GREATEST(MAX(id)+1,nextval('pdtypes_id_seq'))-1 FROM pdtypes))"
-        );
-
         $args = array(
             'name' => $args['name'],
             'description' => empty($args['description']) ? null : $args['description'],
@@ -1071,8 +1027,8 @@ class PURCHASES
     {
         $result = $this->db->GetCol(
             'SELECT DISTINCT categoryid
-            FROM pdusercategories
-            WHERE userid = ?',
+                FROM pdusercategories
+                WHERE userid = ?',
             array($userid)
         );
         return is_array($result) ? $result : array($result);
@@ -1088,11 +1044,9 @@ class PURCHASES
 
         ///dostep gdy faktura nie ma kategorii
         ///użytkownik musi mieć uprawnienia do co najmniej jednej kategorii z wydatku faktury
-        if (empty($pdid)) {
-            $doccategories = $this->getCategoriesUsingDocumentId($this->getPurchaseDocumentIdUsingAttid($attid));
-        } else {
-            $doccategories = $this->getCategoriesUsingDocumentId($pdid);
-        }
+        $doccategories = empty($pdid) ?
+            $this->getCategoriesUsingDocumentId($this->getPurchaseDocumentIdUsingAttid($attid))
+            : $this->getCategoriesUsingDocumentId($pdid);
 
         $usercategories = $this->getUserPurchaseCategories(Auth::GetCurrentUser());
 

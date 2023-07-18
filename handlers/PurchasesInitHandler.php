@@ -4,7 +4,9 @@
  * InitHandler
  *
  * @author Tomasz Chiliński <tomasz.chilinski@chilan.com>
+ * @author Jarosław Kłopotek <jkl@interduo.pl>
  */
+
 class PurchasesInitHandler
 {
     /**

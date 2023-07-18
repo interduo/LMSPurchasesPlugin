@@ -65,9 +65,12 @@ switch ($action) {
         break;
 }
 
-$SMARTY->assign('action', $action);
-$SMARTY->assign('pdclist', $pdclist);
-$SMARTY->assign('pagetitle', $layout['pagetitle']);
-$SMARTY->assign('pluginusers', $LMS->GetUserList(array('short' => true)));
+$SMARTY->assign(array(
+        'action' => $action,
+        'pdclist' => $pdclist,
+        'pagetitle' => $layout['pagetitle'],
+        'pluginusers' => $LMS->GetUserList(array('short' => true)),
+    )
+);
 
 $SMARTY->display('pdcategorylist.html');

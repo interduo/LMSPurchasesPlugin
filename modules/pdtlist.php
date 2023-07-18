@@ -60,8 +60,10 @@ switch ($action) {
         break;
 }
 
-$SMARTY->assign('action', $action);
-$SMARTY->assign('pdtlist', $pdtlist);
-$SMARTY->assign('pagetitle', $layout['pagetitle']);
+$SMARTY->assign(array(
+    'action' => $action,
+    'pdtlist' => $pdtlist,
+    'pagetitle' => $layout['pagetitle'])
+);
 
 $SMARTY->display('pdtlist.html');

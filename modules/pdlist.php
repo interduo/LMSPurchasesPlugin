@@ -14,11 +14,7 @@ if (isset($_GET['documentexist'])) {
     }
 
     $duplicate_found = $PURCHASES->documentExist($supplierid, $fullnumber);
-    if (empty($duplicate_found)) {
-        print_r(json_encode(false));
-    } else {
-        print_r(json_encode($duplicate_found));
-    }
+    print_r(json_encode((empty($duplicate_found)) ? false : $duplicate_found));
     die();
 }
 
@@ -31,14 +27,12 @@ $force_global_division_context = ConfigHelper::getConfig('phpui.force_global_div
 check_file_uploads();
 
 if (!empty($_GET['pdid'])) {
-    $pdid = intval($_GET['pdid']);
-    print_r(json_encode($PURCHASES->getPurchaseDocumentInfo($pdid)));
+    print_r(json_encode($PURCHASES->getPurchaseDocumentInfo(intval($_GET['pdid']))));
     die();
 }
 
 if (!empty($_GET['get_customer_ten'])) {
-    $customerid = intval($_GET['get_customer_ten']);
-    print_r(json_encode($PURCHASES->getCustomerTen($customerid)));
+    print_r(json_encode($PURCHASES->getCustomerTen(intval($_GET['get_customer_ten']))));
     die();
 }
 
@@ -110,18 +104,10 @@ if (!empty($_GET['payments'])) {
 }
 
 // datefrom filter
-if (!empty($_GET['datefrom'])) {
-    $params['datefrom'] = intval(date_to_timestamp($_GET['datefrom']));
-} else {
-    $params['datefrom'] = null;
-}
+$params['datefrom'] = empty($_GET['datefrom']) ? null : intval(date_to_timestamp($_GET['datefrom']));
 
 // dateto filter
-if (!empty($_GET['dateto'])) {
-    $params['dateto'] = intval(date_to_timestamp($_GET['dateto']));
-} else {
-    $params['dateto'] = null;
-}
+$params['dateto'] = empty($_GET['dateto']) ? null : intval(date_to_timestamp($_GET['dateto']));
 
 //default period filter set
 if (empty($params['datefrom']) && empty($params['dateto']) && !empty($default_period_filter)) {
@@ -144,11 +130,7 @@ if (isset($_GET['netcurrencyvaluefrom'])) {
     if (empty($_GET['netcurrencyvaluefrom'])) {
         $params['netcurrencyvaluefrom'] = '';
     } else {
-        if ($_GET['netcurrencyvaluefrom'] == 'all') {
-            $params['netcurrencyvaluefrom'] = array();
-        } else {
-            $params['netcurrencyvaluefrom'] = intval($_GET['netcurrencyvaluefrom']);
-        }
+        $params['netcurrencyvaluefrom'] = ($_GET['netcurrencyvaluefrom'] == 'all') ? array() : intval($_GET['netcurrencyvaluefrom']);
     }
 } else {
     $params['netcurrencyvaluefrom'] = null;
@@ -159,11 +141,7 @@ if (isset($_GET['netcurrencyvalueto'])) {
     if (empty($_GET['netcurrencyvalueto'])) {
         $params['netcurrencyvalueto'] = '';
     } else {
-        if ($_GET['netcurrencyvalueto'] == 'all') {
-            $params['netcurrencyvalueto'] = null;
-        } else {
-            $params['netcurrencyvalueto'] = intval($_GET['netcurrencyvalueto']);
-        }
+        $params['netcurrencyvalueto'] = ($_GET['netcurrencyvalueto'] == 'all') ? null : intval($_GET['netcurrencyvalueto']);
     }
 } else {
     $params['netcurrencyvalueto'] = null;
@@ -174,11 +152,7 @@ if (isset($_GET['grosscurrencyvaluefrom'])) {
     if (empty($_GET['grosscurrencyvaluefrom'])) {
         $params['grosscurrencyvaluefrom'] = '';
     } else {
-        if ($_GET['grosscurrencyvaluefrom'] == 'all') {
-            $params['grosscurrencyvaluefrom'] = array();
-        } else {
-            $params['grosscurrencyvaluefrom'] = intval($_GET['grosscurrencyvaluefrom']);
-        }
+        $params['grosscurrencyvaluefrom'] = ($_GET['grosscurrencyvaluefrom'] == 'all') ? array() : intval($_GET['grosscurrencyvaluefrom']);
     }
 } else {
     $params['grosscurrencyvaluefrom'] = null;
@@ -189,11 +163,7 @@ if (isset($_GET['grosscurrencyvalueto'])) {
     if (empty($_GET['grosscurrencyvalueto'])) {
         $params['grosscurrencyvalueto'] = '';
     } else {
-        if ($_GET['grosscurrencyvalueto'] == 'all') {
-            $params['grosscurrencyvalueto'] = null;
-        } else {
-            $params['grosscurrencyvalueto'] = intval($_GET['grosscurrencyvalueto']);
-        }
+        $params['grosscurrencyvalueto'] = ($_GET['grosscurrencyvalueto'] == 'all') ? null : intval($_GET['grosscurrencyvalueto']);
     }
 } else {
     $params['grosscurrencyvalueto'] = null;
@@ -224,11 +194,7 @@ if (!empty($_GET['catid'])) {
         $_GET['catid'] = array($_GET['catid']);
     }
 
-    if (in_array('all', $_GET['catid'])) {
-        $params['catids'] = null;
-    } else {
-        $params['catids'] = Utils::filterIntegers($_GET['catid']);
-    }
+    $params['catids'] = (in_array('all', $_GET['catid'])) ? null : Utils::filterIntegers($_GET['catid']);
 }
 
 // invproject filter
@@ -237,19 +203,11 @@ if (!empty($_GET['invprojectids'])) {
         $_GET['invprojectids'] = array($_GET['invprojectids']);
     }
 
-    if (in_array('all', $_GET['invprojectids'])) {
-        $params['invprojectids'] = null;
-    } else {
-        $params['invprojectids'] = Utils::filterIntegers($_GET['invprojectids']);
-    }
+    $params['invprojectids'] = (in_array('all', $_GET['invprojectids'])) ? null : Utils::filterIntegers($_GET['invprojectids']);
 }
 
 // filters: expence description
-if (!empty($_GET['description'])) {
-    $params['description'] = htmlspecialchars($_GET['description']);
-} else {
-    $params['description'] = null;
-}
+$params['description'] = empty($_GET['description'])) ? null : htmlspecialchars($_GET['description']);
 
 // filters: expences or documents
 if (!empty($_GET['expences'])) {
