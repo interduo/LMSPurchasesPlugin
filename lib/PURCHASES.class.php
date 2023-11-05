@@ -66,9 +66,8 @@ class PURCHASES
         $orderby = '';
 
         // DIVISION FILTER
-        $divisionid = is_array($divisionid) ? $divisionid : array($divisionid);
         $divisionfilter = empty($divisionid) ? ''
-            : ' AND pds.divisionid IN (' . implode(',', Utils::filterIntegers($divisionid)) . ')';
+            : ' AND pds.divisionid IN (' . implode(',', Utils::filterIntegers(is_array($divisionid) ? $divisionid : array($divisionid))) . ')';
 
         // SUPPLIER FILTER
         $supplierfilter = empty($supplier) ? '' : ' AND supplierid = ' . intval($supplier);
