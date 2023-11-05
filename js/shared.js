@@ -24,7 +24,7 @@ function convert_expence_values(changedel) {
         case 'dialog-amount' + expenceid:
         default:
             let sumnetvalue
-            grossid.value = Math.round(netsumvalue*(1+taxvalue));
+            grossid.value = Math.round(netsumvalue*(1+taxvalue)*100)/100;
             break;
     }
 }
