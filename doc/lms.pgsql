@@ -132,6 +132,11 @@ CREATE TABLE pdattachments (
     CONSTRAINT pdattachments_filename_filepath_ukey UNIQUE (filename, filepath)
 );
 
+CREATE INDEX pdcontents_pdid_idx ON pdcontents (pdid);
+CREATE INDEX pdcontentcat_contentid_idx ON pdcontentcat (contentid);
+CREATE INDEX pdcontentinvprojects_idx ON pdcontentinvprojects (contentid);
+CREATE INDEX pdattachments_idx ON pdattachments (pdid);
+
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (1, 'faktura VAT', NULL, true);
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (2, 'faktura VAT-marża', NULL, false);
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (3, 'korekta', NULL, false);
