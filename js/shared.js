@@ -17,7 +17,7 @@ function convert_expence_values(changedel) {
 
     switch(changedel) {
         case 'dialog-grosscurrencyvalue' + expenceid:
-            netid.value = Math.round(grossvalue/(1+taxvalue)/amountvalue);
+            netid.value = Math.round((grossvalue/(1+taxvalue)/amountvalue)*100)/100;
             break;
         case 'dialog-taxid' + expenceid:
         case 'dialog-netcurrencyvalue' + expenceid:
