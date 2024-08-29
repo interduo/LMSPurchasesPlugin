@@ -25,8 +25,8 @@ https://github.com/chilek/lms/pull/2300
 6. Utworzyć katalog zdefiniowany w pd.storage_dir, nadać mu uprawnienia a jeśli katalog storage_dir jest w katalogu aplikacji LMS należy dodać go do .gitignore.
 ```
 mkdir -p storage/pd/anteroom;
-chown -R www-data:www-data storage/pd/anteroom;
-chmod -R 750 storage/pd/anteroom;
+chown -R 33:33 storage/pd;
+chmod -R 750 storage/pd;
 ```
 7. Nadaj uprawnienia użytkownikom do wtyczki.
 8. (opcjonalnie) Dodaj do crontaba skrypt bin/lms-pdf-import-imap-parser.php zaciągający dokumenty kosztowe z maila
