@@ -286,7 +286,7 @@ class PURCHASES
                         case '2': // MT103
                             $title = $r['typename'] . ' ' . $r['fullnumber'] . '|ID:' . $r['id'] .'|';
                             $sender = trim($r['division_name']) . '|' . trim($r['division_address']);
-                            $receiver = trim($r['supplier_name']) . '|' . trim($r['supplier_address']);
+                            $receiver = trim($r['supplier_fullname']) . '|' . trim($r['supplier_address']);
 
                             $fields = array(
                                 110, // (1) kod zlecenia
