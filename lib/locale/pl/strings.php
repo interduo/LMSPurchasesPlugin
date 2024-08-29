@@ -35,6 +35,7 @@ $_LANG['Mark purchase as paid'] = 'Oznacz wydatek jako zapłacony';
 $_LANG['Mark purchase as confirmed'] = 'Oznacz wydatek jako zatwierdzony';
 $_LANG['Confirm flag'] = 'Flaga zatwierdzenia';
 $_LANG['Are you sure you want to confirm this purchase?'] = 'Czy chcesz zatwierdzić ten wydatek?';
+$_LANG['Are you sure you want to mark this purchase document as paid?'] = 'Czy jesteś pewien, że chcesz oznaczyć ten dokument jako zapłacony?';
 $_LANG['Purchase document list'] = 'Lista dokumentów kosztowych';
 $_LANG['Are you sure you want to delete that purchase document?'] = 'Czy jesteś pewien, że chcesz skasować ten dokument kosztowy?';
 $_LANG['Document number'] = 'Numer dokumentu';
