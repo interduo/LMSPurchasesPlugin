@@ -274,15 +274,34 @@ class PURCHASES
                 return stream_get_contents($f);
             }
 
+            function splitPaymentCheck($doc_flag, $doc_grosscurrencyvalue, $currency)
+            {
+                if ($currency == 'PLN' && $doc_grossvalue >= 15000) {
+                    return true;
+                }
+
+                if ($currency == 'PLN' && $doc_flag == false) {
+                    return false;
+                }
+
+                if ($currency != 'PLN') {
+                    return false;
+                }
+
+                return true;
+            }
+
             if (!empty($export) && $export_privileges) {
                 $exported = '';
-                $grosscurrencyvalue = number_format((float)$r['doc_grosscurrencyvalue'], 2, '.', '');
-                $title = empty($r['preferred_splitpayment']) ?
-                    $r['typename'] . '|' . $r['fullnumber'] . '|ID:' . $r['id'] :
-                    '/VAT/' . $grosscurrencyvalue
+                $grosscurrencyvalue = number_format((float)$r['doc_grosscurrencyvalue'], 2, ',', '');
+                $vatinplnvalue = number_format((float)$r['doc_vatcurrencyvalue'], 2, ',', '');
+                $splitPaymentCheck = splitPaymentCheck($r['preferred_splitpayment'], $r['doc_grosscurrencyvalue'], $r['currency']);
+                $title = $splitPaymentCheck ?
+                    '/VAT/' . $vatinplnvalue
                     . '/IDC/' . $r['supplier_ten']
                     . '/INV/' . $r['fullnumber']
-                    . '/TXT/' . $r['typename'] . '|ID:' . $r['id'];
+                    . '/TXT/' . $r['typename'] . '|ID:' . $r['id'] :
+                    $r['typename'] . '|' . $r['fullnumber'] . '|ID:' . $r['id'];
 
                 foreach ($result as $r) {
                     switch ($export) {
@@ -312,8 +331,7 @@ class PURCHASES
                                 null, // (13) empty
                                 null, // (14) empty
                                 51, // (15) klasyfikacja polecenia
-                                round(($r['doc_grosscurrencyvalue']*100), 2) > 1500000 ? 1
-                                    : (empty($r['preferred_splitpayment']) ? 0 : 1), // (16) split payment
+                                $splitPaymentCheck, // (16) split payment
                             );
 
                             $exported .= array2csv(array($fields));
@@ -326,6 +344,7 @@ class PURCHASES
                 header('Content-Disposition: attachment; filename=' . $export_filename);
                 header('Content-Type: text/csv');
 
+                unset($export);
                 die(iconv('UTF-8', $dst_charset, $exported));
             }
         }
@@ -764,7 +783,7 @@ class PURCHASES
     {
         global $LMS;
         $allow_to_confirm_purchase = ConfigHelper::checkPrivilege('purchases_mark_purchase_as_confirmed');
-        $default_currency =  ConfigHelper::getConfig('pd.default_currency', 'PLN');
+        $default_currency = ConfigHelper::getConfig('pd.default_currency', 'PLN');
         $default_paytype = ConfigHelper::getConfig('pd.default_paytype', 2);
         
         $params = array(
