@@ -30,10 +30,10 @@
     <td {tip text=$pd.description} data-target-url="?m=pdview&id={$pd.id}">
         {if isset($pd.description)}{$pd.description|trunescape:40}{/if}
     </td>
-    <td {tip text=$pd.supplier_name}>
-        {if isset($pd.supplier_name)}
+    <td {tip text=$pd.supplier_fullname}>
+        {if isset($pd.supplierid)}
             <a href="?m=customerinfo&id={$pd.supplierid}">
-                {$pd.supplier_name|trunescape:25:"&hellip;":true}
+                {$pd.supplier_fullname|trunescape:25:"&hellip;":true}
             </a>
         {/if}
     </td>

@@ -25,7 +25,7 @@
         {if isset($pd.paydate)}{$pd.paydate|escape|date_format:'%Y/%m/%d'}{/if}
     </td>
     <td {tip text=$pd.supplier_fullname}>
-        {if isset($pd.supplier_fullname)}
+        {if isset($pd.supplierid)}
             <a href="?m=customerinfo&id={$pd.supplierid}">
                 {$pd.supplier_fullname|trunescape:25:"&hellip;":true}
             </a>
