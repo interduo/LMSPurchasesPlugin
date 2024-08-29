@@ -276,15 +276,21 @@ class PURCHASES
 
             if (!empty($export) && $export_privileges) {
                 $exported = '';
+                $grosscurrencyvalue = number_format((float)$r['doc_grosscurrencyvalue'], 2, '.', '');
+                $title = empty($r['preferred_splitpayment']) ?
+                    $r['typename'] . '|' . $r['fullnumber'] . '|ID:' . $r['id'] :
+                    '/VAT/' . $grosscurrencyvalue
+                    . '/IDC/' . $r['supplier_ten']
+                    . '/INV/' . $r['fullnumber']
+                    . '/TXT/' . $r['typename'] . '|ID:' . $r['id'];
+
                 foreach ($result as $r) {
                     switch ($export) {
                         case '1': // Bank spółdzielczy - przelew zwykły
                             $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_fullname'] . ';;;;'
-                                . $r['iban'] . ';' . round(($r['doc_grosscurrencyvalue']), 2) . ';' . $r['typename'] . ' '
-                                . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
+                                . $r['iban'] . ';' . $grosscurrencyvalue . ';' . $title . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
                         case '2': // MT103
-                            $title = $r['typename'] . ' ' . $r['fullnumber'] . '|ID:' . $r['id'] .'|';
                             $sender = trim($r['division_name']) . '|' . trim($r['division_address']);
                             $receiver = trim($r['supplier_fullname']) . '|' . trim($r['supplier_address']);
 
