@@ -280,7 +280,7 @@ class PURCHASES
                     switch ($export) {
                         case '1': // Bank spółdzielczy - przelew zwykły
                             $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_fullname'] . ';;;;'
-                                . $r['iban'] . ';' . $r['doc_grosscurrencyvalue'] . ';' . $r['typename'] . ' '
+                                . $r['iban'] . ';' . round(($r['doc_grosscurrencyvalue']*100), 2)/100 . ';' . $r['typename'] . ' '
                                 . $r['fullnumber'] . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
                         case '2': // MT103
@@ -304,8 +304,8 @@ class PURCHASES
                                 null, // (13) empty
                                 null, // (14) empty
                                 51, // (15) klasyfikacja polecenia
-                                ($r['doc_grosscurrnecyvalue'] > 15000) ? '1'
-                                    : (empty($r['preferred_splitpayment']) ? '0' : '1'), // (16) split payment
+                                round(($r['doc_grosscurrencyvalue']*100), 2) > 1500000 ? '1'
+                                    : (empty($r['preferred_splitpayment']) ? 0 : 1), // (16) split payment
                             );
 
                             $exported .= array2csv(array($fields));
