@@ -287,10 +287,12 @@ class PURCHASES
                 foreach ($result as $r) {
                     switch ($export) {
                         case '1': // Bank spółdzielczy - przelew zwykły
+                            $dst_charset = 'CP1252';
                             $exported .= $r['id'] . ';' . $src_iban . ';' . $r['supplier_fullname'] . ';;;;'
-                                . $r['iban'] . ';' . $grosscurrencyvalue . ';' . $title . ';;;' . date("Y-m-d") . PHP_EOL;
+                                . $r['iban'] . ';' . ($grosscurrencyvalue*100) . ';' . $title . ';;;' . date("Y-m-d") . PHP_EOL;
                             break;
                         case '2': // MT103
+                            $dst_charset = 'UTF-8';
                             $sender = trim($r['division_name']) . '|' . trim($r['division_address']);
                             $receiver = trim($r['supplier_fullname']) . '|' . trim($r['supplier_address']);
 
@@ -324,7 +326,7 @@ class PURCHASES
                 header('Content-Disposition: attachment; filename=' . $export_filename);
                 header('Content-Type: text/csv');
 
-                die(iconv('UTF-8', 'CP1250', $exported));
+                die(iconv('UTF-8', $dst_charset, $exported));
             }
         }
 
