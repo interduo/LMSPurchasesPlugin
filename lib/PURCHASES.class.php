@@ -295,8 +295,8 @@ class PURCHASES
                 $exported = '';
                 $grosscurrencyvalue = number_format((float)$r['doc_grosscurrencyvalue'], 2, ',', '');
                 $vatinplnvalue = number_format((float)$r['doc_vatcurrencyvalue'], 2, ',', '');
-                $splitPaymentCheck = splitPaymentCheck($r['preferred_splitpayment'], $r['doc_grosscurrencyvalue'], $r['currency']);
-                $title = $splitPaymentCheck ?
+                $splitPayment = splitPaymentCheck($r['preferred_splitpayment'], $r['doc_grosscurrencyvalue'], $r['currency']);
+                $title = $splitPayment ?
                     '/VAT/' . $vatinplnvalue
                     . '/IDC/' . $r['supplier_ten']
                     . '/INV/' . $r['fullnumber']
@@ -331,7 +331,7 @@ class PURCHASES
                                 null, // (13) empty
                                 null, // (14) empty
                                 51, // (15) klasyfikacja polecenia
-                                $splitPaymentCheck, // (16) split payment
+                                $splitPayment, // (16) split payment
                             );
 
                             $exported .= array2csv(array($fields));
