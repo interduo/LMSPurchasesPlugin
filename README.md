@@ -24,9 +24,9 @@ https://github.com/chilek/lms/pull/2300
 5. Ustawić zmienne konfiguracyjne wtyczki.
 6. Utworzyć katalog zdefiniowany w pd.storage_dir, nadać mu uprawnienia a jeśli katalog storage_dir jest w katalogu aplikacji LMS należy dodać go do .gitignore.
 ```
-mkdir -p storage/pd/anteroom;
-chown -R 33:33 storage/pd;
-chmod -R 750 storage/pd;
+mkdir -p storage/pd/anteroom
+chown -R 33:33 storage/pd
+chmod -R 750 storage/pd
 ```
 7. Nadaj uprawnienia użytkownikom do wtyczki.
 8. (opcjonalnie) Dodaj do crontaba skrypt bin/lms-pdf-import-imap-parser.php zaciągający dokumenty kosztowe z maila
@@ -42,7 +42,6 @@ chmod -R 750 storage/pd;
 - wyświetlenie na wskaźnikach ilości dokumentów z krótkim terminem płatności (do 3 dni),
 - płatności cykliczne,
 - automatyczne zaczytywanie faktur od kontrachentów, którzy udostępniają je w XML,
-- refaktoring/naprawa modułu dashboard - rozbudowa funkcji getPurchaseList() o liczenie sum, (Grzegorz)
 - import potwierdzeń płatności wykonanych w banku,
 - przekazywanie dokumentu na magazyn,
 - pozwól opłatami stałymi z core LMS dodawać wydatki do wtyczki,
