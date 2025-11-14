@@ -153,25 +153,25 @@ INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (7, 'proforma', 
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (8, 'nota księgowa', NULL, false);
 INSERT INTO pdtypes (id, name, description, defaultflag) VALUES (9, 'kompensata', NULL, false);
 
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'storage_dir', 'pd', 'Katalog ze skanami dokumentów kosztowych domyślnie podkatalog pd w zdefiniowanym w lms.ini, storage_dir', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_period_filter', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_divisionid', '1', 'ID domyślnego oddziału', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'default_currency', 'PLN', 'domyślna waluta', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'pagelimit', '200', 'ilość pozycji na stronie', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_server', 'mail.domain.pl', 'adres serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_port', '993', 'port serwera IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_options', '/imap/ssl', 'opcje połączenia IMAP', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_username', 'username_not_set1', 'login skrzynki parsera', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_password', 'password_not_set1', 'hasło skrzynki parsera', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_use_seen_flag', true, 'oznacz wiadomosc jako odczytaną po pobraniu zamiast kasować', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'imap_folder', 'INBOX', 'folder IMAP z którego pobieramy wiadomości', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'move_to_trashbin', true, 'przenieś maila do kosza', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'replace_spaces_in_attachment_names', true, 'zamień spacje w nazwach plików', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'import_only_file_extensions', 'pdf', 'zaczytuj tylko załączniki z rozszerzenami zdefiniowanymi tą zmienną - rozszerzenia oddzielone przecinkami', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'allowed_sender_emails', 'mail1@domain.pl,mail2@domain.pl', 'zaczytuj tylko maile z podanych adresów zdefiniowanych tą zmienną - maile oddzielone przecinkami, pusta wartość lub wyłączona listę dostępu', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('pd', 'source_iban', '10123412345678901234567890', 'źródłowy numer rachunku bankowego - do exportu', 1) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
-
-INSERT INTO uiconfig (section, var, value, description, disabled) VALUES ('phpui', 'allowed_document_scan_mime_types', 'application/pdf', 'Pozwól dodawać jedynie zdefiniowane typy plików w tej zmiennej', 0) ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
+INSERT INTO uiconfig (section, var, value, description, disabled) VALUES 
+    ('pd', 'storage_dir', 'pd', 'Katalog ze skanami dokumentów kosztowych domyślnie podkatalog pd w zdefiniowanym w lms.ini, storage_dir', 1),
+    ('pd', 'default_period_filter', '6', 'Domyślny filtr okresu wartości: -1, 1-6', 0),
+    ('pd', 'default_divisionid', '1', 'ID domyślnego oddziału', 0),
+    ('pd', 'default_currency', 'PLN', 'domyślna waluta', 0),
+    ('pd', 'pagelimit', '200', 'ilość pozycji na stronie', 0),
+    ('pd', 'imap_server', 'mail.domain.pl', 'adres serwera IMAP', 0),
+    ('pd', 'imap_port', '993', 'port serwera IMAP', 0),
+    ('pd', 'imap_options', '/imap/ssl', 'opcje połączenia IMAP', 0),
+    ('pd', 'imap_username', 'username_not_set1', 'login skrzynki parsera', 0),
+    ('pd', 'imap_password', 'password_not_set1', 'hasło skrzynki parsera', 0),
+    ('pd', 'imap_use_seen_flag', true, 'oznacz wiadomosc jako odczytaną po pobraniu zamiast kasować', 0),
+    ('pd', 'imap_folder', 'INBOX', 'folder IMAP z którego pobieramy wiadomości', 0),
+    ('pd', 'move_to_trashbin', true, 'przenieś maila do kosza', 0),
+    ('pd', 'replace_spaces_in_attachment_names', true, 'zamień spacje w nazwach plików', 0),
+    ('pd', 'import_only_file_extensions', 'pdf', 'zaczytuj tylko załączniki z rozszerzenami zdefiniowanymi tą zmienną - rozszerzenia oddzielone przecinkami', 0),
+    ('pd', 'allowed_sender_emails', 'mail1@domain.pl,mail2@domain.pl', 'zaczytuj tylko maile z podanych adresów zdefiniowanych tą zmienną - maile oddzielone przecinkami, pusta wartość lub wyłączona listę dostępu', 1),
+    ('pd', 'source_iban', '10123412345678901234567890', 'źródłowy numer rachunku bankowego - do exportu', 1),
+    ('phpui', 'allowed_document_scan_mime_types', 'application/pdf', 'Pozwól dodawać jedynie zdefiniowane typy plików w tej zmiennej', 0)
+ON CONFLICT (section, var, userid, divisionid) DO NOTHING;
 
 INSERT INTO dbinfo (keytype, keyvalue) VALUES ('dbversion_LMSPurchasesPlugin', '2022062200') ON CONFLICT (keytype) DO UPDATE SET keyvalue='2022062200';
